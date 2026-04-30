@@ -232,7 +232,7 @@ export default function IcebergDetail() {
               <span style={{ color: '#29B5E8', fontWeight: 700, flexShrink: 0 }}>•</span>
               <span>
                 Structured off the{' '}
-                <ImageTooltip src="/snowflake-field-guide/iceberg-spec.png" alt="Iceberg Table Spec">
+                <ImageTooltip src="/snowflake-field-guide/iceberg-metadata.png" alt="Iceberg Table Spec">
                   <button
                     style={{
                       background: 'none', border: 'none', padding: 0, cursor: 'pointer',
