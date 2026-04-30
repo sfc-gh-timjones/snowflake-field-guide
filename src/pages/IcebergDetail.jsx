@@ -41,6 +41,7 @@ function SnowflakeIcon({ size = 18 }) {
 }
 
 function SpecModal({ onClose }) {
+  const screenshotUrl = 'https://image.thum.io/get/width/960/crop/900/https://iceberg.apache.org/spec/';
   return (
     <div
       onClick={onClose}
@@ -54,39 +55,35 @@ function SpecModal({ onClose }) {
         onClick={e => e.stopPropagation()}
         style={{
           background: 'white', borderRadius: 14, overflow: 'hidden',
-          width: '90vw', maxWidth: 960, height: '82vh',
+          width: '90vw', maxWidth: 980, maxHeight: '88vh',
           display: 'flex', flexDirection: 'column',
           boxShadow: '0 24px 60px rgba(0,0,0,0.3)',
         }}
       >
         <div style={{
           display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-          padding: '12px 16px', borderBottom: '1px solid #e2e8f0',
-          background: '#f8fafc',
+          padding: '12px 16px', borderBottom: '1px solid #e2e8f0', background: '#f8fafc', flexShrink: 0,
         }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
             <span style={{ fontSize: 14, fontWeight: 700, color: '#1e293b' }}>Iceberg Table Spec — Overview</span>
-            <a
-              href="https://iceberg.apache.org/spec/#overview"
-              target="_blank"
-              rel="noreferrer"
-              style={{ color: '#29B5E8', fontSize: 13 }}
-            >
+            <a href="https://iceberg.apache.org/spec/#overview" target="_blank" rel="noreferrer" style={{ color: '#29B5E8', display: 'inline-flex', alignItems: 'center' }}>
               <LinkIcon size={15} />
             </a>
           </div>
-          <button
-            onClick={onClose}
-            style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: 20, color: '#64748b', lineHeight: 1 }}
-          >
-            ×
-          </button>
+          <button onClick={onClose} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: 22, color: '#64748b', lineHeight: 1 }}>×</button>
         </div>
-        <iframe
-          src="https://iceberg.apache.org/spec/#overview"
-          title="Iceberg Table Spec"
-          style={{ flex: 1, border: 'none', width: '100%' }}
-        />
+        <div style={{ overflowY: 'auto', flex: 1 }}>
+          <img
+            src={screenshotUrl}
+            alt="Iceberg Table Spec Overview"
+            style={{ width: '100%', display: 'block' }}
+          />
+        </div>
+        <div style={{ padding: '10px 16px', borderTop: '1px solid #e2e8f0', background: '#f8fafc', flexShrink: 0 }}>
+          <a href="https://iceberg.apache.org/spec/#overview" target="_blank" rel="noreferrer" style={{ fontSize: 13, color: '#29B5E8', display: 'inline-flex', alignItems: 'center' }}>
+            Open full spec <LinkIcon size={13} />
+          </a>
+        </div>
       </div>
     </div>
   );
@@ -98,166 +95,173 @@ export default function IcebergDetail() {
   return (
     <div>
       <h2 style={{ fontSize: 24, fontWeight: 700, color: '#1e293b', marginBottom: 6 }}>Iceberg Tables</h2>
-      <p style={{ color: '#64748b', fontSize: 15, marginBottom: 28, maxWidth: 640 }}>
+      <p style={{ color: '#64748b', fontSize: 15, marginBottom: 28, maxWidth: 780 }}>
         Apache Iceberg is an open table format for large analytic datasets. Snowflake supports Iceberg tables backed by cloud object storage.
       </p>
 
-      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: 0, maxWidth: 640 }}>
+      <div style={{ display: 'flex', gap: 16, alignItems: 'flex-start', maxWidth: 780 }}>
 
-        {/* Snowflake box */}
+        {/* LEFT: Catalog definition */}
         <div style={{
-          border: '2px solid #29B5E8',
-          borderRadius: 12,
-          padding: '16px 20px 20px',
+          width: 220, flexShrink: 0,
+          border: '1.5px solid #29B5E860',
+          borderRadius: 12, padding: '14px 16px',
           background: '#f0fbff',
-          width: '100%',
         }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 16 }}>
-            <SnowflakeIcon size={22} />
-            <span style={{ fontSize: 17, fontWeight: 700, color: '#0e7490' }}>Snowflake</span>
+          <div style={{ fontSize: 15, fontWeight: 700, color: '#0e7490', marginBottom: 8 }}>Catalog</div>
+          <div style={{ fontSize: 13, color: '#475569', lineHeight: 1.6, marginBottom: 12 }}>
+            Enables a compute engine to interact with Iceberg tables.
           </div>
-
-          {/* Catalog sub-box */}
-          <div style={{
-            border: '1.5px solid #29B5E860',
-            borderRadius: 10,
-            padding: '14px 16px',
-            background: 'white',
-          }}>
-            <div style={{ fontSize: 15, fontWeight: 700, color: '#0e7490', marginBottom: 6 }}>Catalog</div>
-            <div style={{ fontSize: 13, color: '#475569', marginBottom: 10 }}>
-              Enables a compute engine to interact with Iceberg tables.
-            </div>
-            <ul style={{ paddingLeft: 0, listStyle: 'none', display: 'flex', flexDirection: 'column', gap: 7 }}>
-              <li style={{ display: 'flex', gap: 8, fontSize: 13, color: '#475569', lineHeight: 1.5 }}>
-                <span style={{ color: '#29B5E8', fontWeight: 700, flexShrink: 0 }}>•</span>
-                <span>Stores the current <Tooltip term="metadata pointer" definition="Maps a table name to the location of that table's current metadata file." /> for one or more Iceberg tables.</span>
-              </li>
-              <li style={{ display: 'flex', gap: 8, fontSize: 13, color: '#475569', lineHeight: 1.5 }}>
-                <span style={{ color: '#29B5E8', fontWeight: 700, flexShrink: 0 }}>•</span>
-                <span>Performing <Tooltip term="atomic" definition="Indivisible and all-or-nothing. A change happens as a single, complete step — guaranteeing consistency across concurrent readers and writers." /> operations so that you can update the current <Tooltip term="metadata pointer" definition="Maps a table name to the location of that table's current metadata file." /> for a table.</span>
-              </li>
-            </ul>
-          </div>
+          <ul style={{ paddingLeft: 0, listStyle: 'none', display: 'flex', flexDirection: 'column', gap: 7 }}>
+            <li style={{ display: 'flex', gap: 7, fontSize: 13, color: '#475569', lineHeight: 1.5 }}>
+              <span style={{ color: '#29B5E8', fontWeight: 700, flexShrink: 0 }}>•</span>
+              <span>Stores the current <Tooltip term="metadata pointer" definition="Maps a table name to the location of that table's current metadata file." /> for one or more Iceberg tables.</span>
+            </li>
+            <li style={{ display: 'flex', gap: 7, fontSize: 13, color: '#475569', lineHeight: 1.5 }}>
+              <span style={{ color: '#29B5E8', fontWeight: 700, flexShrink: 0 }}>•</span>
+              <span>Performing <Tooltip term="atomic" definition="Indivisible and all-or-nothing. A change happens as a single, complete step — guaranteeing consistency across concurrent readers and writers." /> operations to update the current <Tooltip term="metadata pointer" definition="Maps a table name to the location of that table's current metadata file." /> for a table.</span>
+            </li>
+          </ul>
         </div>
 
-        {/* Bidirectional arrow + External Volume */}
-        <div style={{ display: 'flex', alignItems: 'stretch', paddingLeft: 28, gap: 16, minHeight: 88 }}>
-          <div style={{ display: 'flex', justifyContent: 'center', width: 40 }}>
-            <svg width="40" height="88" viewBox="0 0 40 88" fill="none">
-              <line x1="20" y1="0" x2="20" y2="88" stroke="#29B5E8" strokeWidth="2" strokeDasharray="4 3"/>
-              <path d="M12 14 L20 4 L28 14" fill="none" stroke="#29B5E8" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-              <path d="M12 74 L20 84 L28 74" fill="none" stroke="#29B5E8" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-            </svg>
+        {/* RIGHT: Snowflake + arrow + Cloud Storage stacked */}
+        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 0 }}>
+
+          {/* Snowflake box */}
+          <div style={{
+            border: '2px solid #29B5E8', borderRadius: 12,
+            padding: '16px 20px 20px', background: '#f0fbff',
+          }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 14 }}>
+              <SnowflakeIcon size={22} />
+              <span style={{ fontSize: 17, fontWeight: 700, color: '#0e7490' }}>Snowflake</span>
+            </div>
+
+            {/* Catalog Options sub-box */}
+            <div style={{
+              border: '1.5px solid #29B5E860', borderRadius: 10,
+              padding: '12px 16px', background: 'white',
+            }}>
+              <div style={{ fontSize: 14, fontWeight: 700, color: '#0e7490', marginBottom: 8 }}>Catalog Options</div>
+              <ul style={{ paddingLeft: 0, listStyle: 'none', display: 'flex', flexDirection: 'column', gap: 6 }}>
+                <li style={{ display: 'flex', gap: 7, fontSize: 13, color: '#475569', lineHeight: 1.5 }}>
+                  <span style={{ color: '#29B5E8', fontWeight: 700, flexShrink: 0 }}>•</span>
+                  <span><span style={{ fontWeight: 600 }}>Snowflake</span> as the catalog</span>
+                </li>
+                <li style={{ display: 'flex', gap: 7, fontSize: 13, color: '#475569', lineHeight: 1.5 }}>
+                  <span style={{ color: '#29B5E8', fontWeight: 700, flexShrink: 0 }}>•</span>
+                  <span><span style={{ fontWeight: 600 }}>External catalog</span> (e.g. AWS Glue, Polaris, Nessie)</span>
+                </li>
+              </ul>
+            </div>
           </div>
 
+          {/* Bidirectional arrow + External Volume */}
+          <div style={{ display: 'flex', alignItems: 'stretch', paddingLeft: 24, gap: 16, minHeight: 88 }}>
+            <div style={{ display: 'flex', justifyContent: 'center', width: 40 }}>
+              <svg width="40" height="88" viewBox="0 0 40 88" fill="none">
+                <line x1="20" y1="0" x2="20" y2="88" stroke="#29B5E8" strokeWidth="2" strokeDasharray="4 3"/>
+                <path d="M12 14 L20 4 L28 14" fill="none" stroke="#29B5E8" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                <path d="M12 74 L20 84 L28 74" fill="none" stroke="#29B5E8" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            </div>
+            <div style={{
+              flex: 1, alignSelf: 'center',
+              border: '1.5px solid #29B5E8', borderRadius: 10,
+              padding: '14px 18px', background: 'white',
+            }}>
+              <a
+                href="https://docs.snowflake.com/en/user-guide/tables-iceberg#label-tables-iceberg-external-volume-def"
+                target="_blank" rel="noreferrer"
+                style={{ fontSize: 15, fontWeight: 700, color: '#29B5E8', textDecoration: 'none', display: 'inline-flex', alignItems: 'center', marginBottom: 10 }}
+                onMouseEnter={e => e.currentTarget.style.textDecoration = 'underline'}
+                onMouseLeave={e => e.currentTarget.style.textDecoration = 'none'}
+              >
+                External Volume <LinkIcon size={15} />
+              </a>
+              <div style={{ display: 'flex', gap: 8, fontSize: 13, color: '#475569', lineHeight: 1.5 }}>
+                <span style={{ color: '#29B5E8', fontWeight: 700, flexShrink: 0 }}>•</span>
+                <span>Stores an <span style={{ fontWeight: 600 }}>identity and access management (IAM) entity</span>{' '}
+                  <span style={{ color: '#64748b' }}>(security handshake)</span></span>
+              </div>
+              <div style={{ fontSize: 12, color: '#94a3b8', marginTop: 10 }}>⇅ read / write</div>
+            </div>
+          </div>
+
+          {/* Cloud Storage box */}
           <div style={{
-            flex: 1, alignSelf: 'center',
-            border: '1.5px solid #29B5E8',
-            borderRadius: 10, padding: '14px 18px',
-            background: 'white',
+            border: '1.5px solid #e2e8f0', borderRadius: 12,
+            padding: 24, background: '#f8fafc',
           }}>
-            <a
-              href="https://docs.snowflake.com/en/user-guide/tables-iceberg#label-tables-iceberg-external-volume-def"
-              target="_blank"
-              rel="noreferrer"
-              style={{ fontSize: 15, fontWeight: 700, color: '#29B5E8', textDecoration: 'none', display: 'inline-flex', alignItems: 'center', marginBottom: 10 }}
-              onMouseEnter={e => e.currentTarget.style.textDecoration = 'underline'}
-              onMouseLeave={e => e.currentTarget.style.textDecoration = 'none'}
-            >
-              External Volume <LinkIcon size={15} />
-            </a>
-            <div style={{ display: 'flex', gap: 8, fontSize: 13, color: '#475569', lineHeight: 1.5 }}>
+            <div style={{ fontSize: 13, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#94a3b8', marginBottom: 16 }}>
+              Cloud Storage
+            </div>
+
+            <div style={{ display: 'flex', gap: 10, marginBottom: 20 }}>
+              {CLOUDS.map(c => (
+                <div key={c.name} style={{
+                  flex: 1, border: `1.5px solid ${c.color}40`,
+                  borderRadius: 8, padding: '10px 8px',
+                  background: 'white', textAlign: 'center',
+                }}>
+                  <div style={{
+                    width: 34, height: 34, borderRadius: 8, margin: '0 auto 8px',
+                    background: `${c.color}18`,
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    fontSize: 11, fontWeight: 800, color: c.color,
+                  }}>{c.abbr}</div>
+                  <div style={{ fontSize: 12, fontWeight: 500, color: '#334155', lineHeight: 1.3 }}>{c.name}</div>
+                </div>
+              ))}
+            </div>
+
+            <div style={{ fontSize: 13, color: '#475569', lineHeight: 1.9, marginBottom: 16 }}>
+              <div><span style={{ fontWeight: 600 }}>Management of External Cloud Storage Location</span> = <span style={{ color: '#0e7490', fontWeight: 600 }}>CUSTOMER</span></div>
+              <div style={{ paddingLeft: 16, color: '#64748b' }}>
+                ↳ Management = data protection &amp; recovery <span style={{ color: '#ef4444', fontWeight: 500 }}>(No Snowflake Fail Safe)</span>
+              </div>
+              <div style={{ marginTop: 4 }}><span style={{ fontWeight: 600 }}>Storage Billing</span> = <span style={{ color: '#0e7490', fontWeight: 600 }}>Cloud Provider</span></div>
+            </div>
+
+            <div style={{ display: 'flex', gap: 8, fontSize: 13, color: '#475569', lineHeight: 1.5, marginBottom: 20 }}>
               <span style={{ color: '#29B5E8', fontWeight: 700, flexShrink: 0 }}>•</span>
               <span>
-                Stores an <span style={{ fontWeight: 600 }}>identity and access management (IAM) entity</span>{' '}
-                <span style={{ color: '#64748b' }}>(security handshake)</span>
+                Structured off the{' '}
+                <button
+                  onClick={() => setShowSpec(true)}
+                  style={{
+                    background: 'none', border: 'none', padding: 0, cursor: 'pointer',
+                    color: '#29B5E8', fontWeight: 600, fontSize: 13,
+                    display: 'inline-flex', alignItems: 'center',
+                    textDecoration: 'underline',
+                  }}
+                >
+                  Iceberg Table Spec <LinkIcon size={13} />
+                </button>
               </span>
             </div>
-            <div style={{ fontSize: 12, color: '#94a3b8', marginTop: 10 }}>⇅ read / write</div>
-          </div>
-        </div>
 
-        {/* Cloud Storage box */}
-        <div style={{
-          border: '1.5px solid #e2e8f0',
-          borderRadius: 12, padding: 24,
-          background: '#f8fafc', width: '100%',
-        }}>
-          <div style={{ fontSize: 13, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#94a3b8', marginBottom: 16 }}>
-            Cloud Storage
-          </div>
-
-          <div style={{ display: 'flex', gap: 10, marginBottom: 20 }}>
-            {CLOUDS.map(c => (
-              <div key={c.name} style={{
-                flex: 1, border: `1.5px solid ${c.color}40`,
-                borderRadius: 8, padding: '10px 8px',
-                background: 'white', textAlign: 'center',
-              }}>
-                <div style={{
-                  width: 34, height: 34, borderRadius: 8, margin: '0 auto 8px',
-                  background: `${c.color}18`,
-                  display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  fontSize: 11, fontWeight: 800, color: c.color,
-                }}>{c.abbr}</div>
-                <div style={{ fontSize: 12, fontWeight: 500, color: '#334155', lineHeight: 1.3 }}>{c.name}</div>
-              </div>
-            ))}
-          </div>
-
-          <div style={{ fontSize: 13, color: '#475569', lineHeight: 1.9, marginBottom: 20 }}>
-            <div><span style={{ fontWeight: 600 }}>Management of External Cloud Storage Location</span> = <span style={{ color: '#0e7490', fontWeight: 600 }}>CUSTOMER</span></div>
-            <div style={{ paddingLeft: 16, color: '#64748b' }}>
-              ↳ Management = data protection &amp; recovery <span style={{ color: '#ef4444', fontWeight: 500 }}>(No Snowflake Fail Safe)</span>
-            </div>
-            <div style={{ marginTop: 4 }}><span style={{ fontWeight: 600 }}>Storage Billing</span> = <span style={{ color: '#0e7490', fontWeight: 600 }}>Cloud Provider</span></div>
-          </div>
-
-          {/* Iceberg Spec bullet */}
-          <div style={{ display: 'flex', gap: 8, fontSize: 13, color: '#475569', lineHeight: 1.5, marginBottom: 20 }}>
-            <span style={{ color: '#29B5E8', fontWeight: 700, flexShrink: 0 }}>•</span>
-            <span>
-              Structured off the{' '}
-              <button
-                onClick={() => setShowSpec(true)}
-                style={{
-                  background: 'none', border: 'none', padding: 0, cursor: 'pointer',
-                  color: '#29B5E8', fontWeight: 600, fontSize: 13,
-                  display: 'inline-flex', alignItems: 'center', gap: 2,
-                  textDecoration: 'underline',
-                }}
-              >
-                Iceberg Table Spec <LinkIcon size={13} />
-              </button>
-            </span>
-          </div>
-
-          <div style={{ borderTop: '1px solid #e2e8f0', paddingTop: 16 }}>
-            <div style={{ fontSize: 13, color: '#64748b', marginBottom: 12, fontWeight: 500 }}>
-              Data files stored as:
-            </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
-              <div style={{ display: 'flex' }}>
-                {[0, 1, 2].map(i => (
-                  <div key={i} style={{ marginLeft: i > 0 ? -10 : 0, opacity: 1 - i * 0.15 }}>
-                    <ParquetFileIcon />
-                  </div>
-                ))}
-              </div>
-              <div>
-                <a
-                  href="https://parquet.apache.org/"
-                  target="_blank"
-                  rel="noreferrer"
-                  style={{ fontSize: 16, fontWeight: 700, color: '#29B5E8', textDecoration: 'none', display: 'inline-flex', alignItems: 'center' }}
-                  onMouseEnter={e => e.currentTarget.style.textDecoration = 'underline'}
-                  onMouseLeave={e => e.currentTarget.style.textDecoration = 'none'}
-                >
-                  Apache Parquet <LinkIcon size={15} />
-                </a>
-                <div style={{ fontSize: 13, color: '#64748b', marginTop: 3 }}>
-                  Open-source columnar storage format
+            <div style={{ borderTop: '1px solid #e2e8f0', paddingTop: 16 }}>
+              <div style={{ fontSize: 13, color: '#64748b', marginBottom: 12, fontWeight: 500 }}>Data files stored as:</div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+                <div style={{ display: 'flex' }}>
+                  {[0, 1, 2].map(i => (
+                    <div key={i} style={{ marginLeft: i > 0 ? -10 : 0, opacity: 1 - i * 0.15 }}>
+                      <ParquetFileIcon />
+                    </div>
+                  ))}
+                </div>
+                <div>
+                  <a
+                    href="https://parquet.apache.org/"
+                    target="_blank" rel="noreferrer"
+                    style={{ fontSize: 16, fontWeight: 700, color: '#29B5E8', textDecoration: 'none', display: 'inline-flex', alignItems: 'center' }}
+                    onMouseEnter={e => e.currentTarget.style.textDecoration = 'underline'}
+                    onMouseLeave={e => e.currentTarget.style.textDecoration = 'none'}
+                  >
+                    Apache Parquet <LinkIcon size={15} />
+                  </a>
+                  <div style={{ fontSize: 13, color: '#64748b', marginTop: 3 }}>Open-source columnar storage format</div>
                 </div>
               </div>
             </div>
