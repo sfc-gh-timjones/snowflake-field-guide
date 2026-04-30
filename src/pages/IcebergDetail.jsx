@@ -94,7 +94,7 @@ export default function IcebergDetail() {
         Apache Iceberg is an open table format for large analytic datasets. Snowflake supports Iceberg tables backed by cloud object storage.
       </p>
 
-      <div style={{ display: 'flex', gap: 16, alignItems: 'flex-start', maxWidth: 780 }}>
+      <div style={{ display: 'flex', gap: 24, alignItems: 'flex-start', maxWidth: 1100 }}>
 
         {/* LEFT: Catalog definition */}
         <div style={{
@@ -279,6 +279,77 @@ export default function IcebergDetail() {
                 </div>
               </div>
             </div>
+          </div>
+        </div>
+
+        {/* RIGHT: Query flow */}
+        <div style={{ width: 280, flexShrink: 0 }}>
+          <div style={{ fontSize: 13, fontWeight: 700, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 12 }}>
+            How a Query Works
+          </div>
+          <div style={{
+            border: '1.5px solid #e2e8f0', borderRadius: 12,
+            background: 'white', overflow: 'hidden',
+          }}>
+            {[
+              {
+                n: '1',
+                actor: 'Snowflake',
+                color: '#29B5E8',
+                text: 'Queries the Iceberg table and asks the Catalog:',
+                quote: '"Which snapshot should I use for this table?"',
+              },
+              {
+                n: '2',
+                actor: 'Catalog',
+                color: '#7C3AED',
+                text: 'Responds with the snapshot info:',
+                quote: 'Snapshot ID + path to the metadata file in storage',
+              },
+              {
+                n: '3',
+                actor: 'Snowflake',
+                color: '#29B5E8',
+                text: 'Uses the snapshot definition to know which files to read from Cloud Storage.',
+                quote: null,
+              },
+            ].map((step, i, arr) => (
+              <div key={i}>
+                <div style={{ padding: '16px 16px 14px', display: 'flex', gap: 12, alignItems: 'flex-start' }}>
+                  <div style={{
+                    width: 26, height: 26, borderRadius: '50%', flexShrink: 0,
+                    background: step.color, color: 'white',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    fontSize: 12, fontWeight: 800, marginTop: 1,
+                  }}>{step.n}</div>
+                  <div>
+                    <div style={{ fontSize: 11, fontWeight: 700, color: step.color, textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 4 }}>
+                      {step.actor}
+                    </div>
+                    <div style={{ fontSize: 13, color: '#475569', lineHeight: 1.5 }}>{step.text}</div>
+                    {step.quote && (
+                      <div style={{
+                        marginTop: 8, padding: '7px 10px',
+                        background: `${step.color}08`,
+                        border: `1px solid ${step.color}25`,
+                        borderRadius: 7,
+                        fontSize: 12, color: '#334155', fontStyle: 'italic', lineHeight: 1.5,
+                      }}>
+                        {step.quote}
+                      </div>
+                    )}
+                  </div>
+                </div>
+                {i < arr.length - 1 && (
+                  <div style={{ display: 'flex', justifyContent: 'center', paddingBottom: 2 }}>
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                      <path d="M8 2v10M4 9l4 4 4-4" stroke="#cbd5e1" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                  </div>
+                )}
+                {i < arr.length - 1 && <div style={{ height: 1, background: '#f1f5f9', margin: '0 16px' }} />}
+              </div>
+            ))}
           </div>
         </div>
 
