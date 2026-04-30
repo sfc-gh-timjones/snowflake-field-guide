@@ -10,6 +10,16 @@ function LinkIcon({ size = 14 }) {
   );
 }
 
+function PopupIcon({ size = 14 }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ display: 'inline', verticalAlign: 'middle', marginLeft: 4 }}>
+      <rect x="3" y="3" width="18" height="18" rx="2"/>
+      <path d="M3 9h18"/>
+      <path d="M9 21V9"/>
+    </svg>
+  );
+}
+
 function ImageModal({ src, alt, onClose }) {
   return (
     <div
@@ -350,7 +360,7 @@ export default function IcebergDetail() {
                       textDecoration: 'underline',
                     }}
                   >
-                    Iceberg Table Spec <LinkIcon size={13} />
+                    Iceberg Table Spec <PopupIcon size={13} />
                   </button>
                 </ImagePopup>
               </span>
@@ -387,7 +397,7 @@ export default function IcebergDetail() {
               >
                 <div style={{ fontSize: 22, lineHeight: 1, color: '#94a3b8', marginTop: 2 }}>🗂</div>
                 <div>
-                  <div style={{ fontSize: 15, fontWeight: 700, color: '#29B5E8' }}>Iceberg Metadata Files <LinkIcon size={13} /></div>
+                  <div style={{ fontSize: 15, fontWeight: 700, color: '#29B5E8' }}>Iceberg Metadata Files <PopupIcon size={13} /></div>
                   <div style={{ fontSize: 12, color: '#64748b', marginTop: 3 }}>
                     <code style={{ background: '#f1f5f9', padding: '1px 5px', borderRadius: 4, fontSize: 11 }}>metadata.json</code>
                     {', '}
