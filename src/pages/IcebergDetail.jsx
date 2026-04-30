@@ -1,3 +1,5 @@
+import Tooltip from '../components/Tooltip';
+
 function ParquetFileIcon() {
   return (
     <svg width="36" height="44" viewBox="0 0 36 44" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -63,16 +65,18 @@ export default function IcebergDetail() {
               Enables a compute engine to interact with Iceberg tables.
             </div>
             <ul style={{ paddingLeft: 0, listStyle: 'none', display: 'flex', flexDirection: 'column', gap: 6 }}>
-              {[
-                'Stores the current metadata pointer for one or more Iceberg tables.',
-                'A metadata pointer maps a table name to the location of that table\'s current metadata file.',
-                'Performing atomic operations so that you can update the current metadata pointer for a table.',
-              ].map((item, i) => (
-                <li key={i} style={{ display: 'flex', gap: 8, fontSize: 12, color: '#475569', lineHeight: 1.5 }}>
-                  <span style={{ color: '#29B5E8', fontWeight: 700, flexShrink: 0 }}>•</span>
-                  {item}
-                </li>
-              ))}
+              <li style={{ display: 'flex', gap: 8, fontSize: 12, color: '#475569', lineHeight: 1.5 }}>
+                <span style={{ color: '#29B5E8', fontWeight: 700, flexShrink: 0 }}>•</span>
+                <span>Stores the current <Tooltip term="metadata pointer" definition="Maps a table name to the location of that table's current metadata file." /> for one or more Iceberg tables.</span>
+              </li>
+              <li style={{ display: 'flex', gap: 8, fontSize: 12, color: '#475569', lineHeight: 1.5 }}>
+                <span style={{ color: '#29B5E8', fontWeight: 700, flexShrink: 0 }}>•</span>
+                <span>A <Tooltip term="metadata pointer" definition="Maps a table name to the location of that table's current metadata file." /> maps a table name to the location of that table's current metadata file.</span>
+              </li>
+              <li style={{ display: 'flex', gap: 8, fontSize: 12, color: '#475569', lineHeight: 1.5 }}>
+                <span style={{ color: '#29B5E8', fontWeight: 700, flexShrink: 0 }}>•</span>
+                <span>Performing <Tooltip term="atomic" definition="Indivisible and all-or-nothing. A change happens as a single, complete step — guaranteeing consistency across concurrent readers and writers." /> operations so that you can update the current <Tooltip term="metadata pointer" definition="Maps a table name to the location of that table's current metadata file." /> for a table.</span>
+              </li>
             </ul>
           </div>
         </div>
