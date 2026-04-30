@@ -92,7 +92,7 @@ function FileChainModal({ onClose }) {
       type: 'JSON',
       typeColor: '#f59e0b',
       note: 'New file created on every write — many exist in storage',
-      callout: 'A single metadata.json holds the full snapshot history, but always designates one as current via current-snapshot-id.',
+      callout: 'Holds snapshot history within the retention window — snapshots outside it are expired and pruned. Always designates one as current via current-snapshot-id.',
       relation: 'Each snapshot has exactly one corresponding manifest list — no more, no less.',
     },
     {
