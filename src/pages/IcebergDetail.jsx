@@ -92,7 +92,8 @@ function FileChainModal({ onClose }) {
       type: 'JSON',
       typeColor: '#f59e0b',
       note: 'New file created on every write — many exist in storage',
-      relation: 'one snapshot → one manifest list',
+      callout: 'A single metadata.json holds the full snapshot history, but always designates one as current via current-snapshot-id.',
+      relation: 'Each snapshot has exactly one corresponding manifest list — no more, no less.',
     },
     {
       file: 'manifest-list.avro',
@@ -137,7 +138,12 @@ function FileChainModal({ onClose }) {
                     <code style={{ fontSize: 13, fontWeight: 700, color: '#1e293b', background: '#f1f5f9', padding: '2px 8px', borderRadius: 5 }}>{step.file}</code>
                     <span style={{ fontSize: 10, fontWeight: 700, color: step.typeColor, background: `${step.typeColor}15`, padding: '1px 6px', borderRadius: 4, letterSpacing: '0.05em' }}>{step.type}</span>
                   </div>
-                  <div style={{ fontSize: 12, color: '#64748b', lineHeight: 1.5, marginBottom: step.relation ? 10 : 0 }}>{step.note}</div>
+                  <div style={{ fontSize: 12, color: '#64748b', lineHeight: 1.5, marginBottom: step.callout || step.relation ? 8 : 0 }}>{step.note}</div>
+                  {step.callout && (
+                    <div style={{ fontSize: 12, color: '#92400e', background: '#fffbeb', border: '1px solid #fcd34d', borderRadius: 7, padding: '7px 10px', marginBottom: 8, lineHeight: 1.5 }}>
+                      ℹ️ {step.callout}
+                    </div>
+                  )}
                   {step.relation && (
                     <div style={{ display: 'inline-flex', alignItems: 'center', gap: 5, fontSize: 11, color: '#94a3b8', fontStyle: 'italic', marginBottom: 4 }}>
                       <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M5 1v7M2 6l3 3 3-3" stroke="#cbd5e1" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
