@@ -270,15 +270,9 @@ function FileChainModal({ onClose }) {
               {CLOUDS.map(c => (
                 <div key={c.name} style={{
                   flex: 1, border: `1.5px solid ${c.color}40`,
-                  borderRadius: 8, padding: '10px 8px',
+                  borderRadius: 8, padding: '8px 10px',
                   background: 'white', textAlign: 'center',
                 }}>
-                  <div style={{
-                    width: 34, height: 34, borderRadius: 8, margin: '0 auto 8px',
-                    background: `${c.color}18`,
-                    display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    fontSize: 11, fontWeight: 800, color: c.color,
-                  }}>{c.abbr}</div>
                   <div style={{ fontSize: 12, fontWeight: 500, color: '#334155', lineHeight: 1.3 }}>{c.name}</div>
                 </div>
               ))}
