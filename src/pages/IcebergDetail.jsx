@@ -110,7 +110,7 @@ function CombinedModal({ onClose }) {
     },
     {
       file: 'manifest.avro', type: 'AVRO', typeColor: '#8b5cf6',
-      note: 'Tracks a subset of data files + their stats (reused across snapshots)',
+      note: 'Tracks a subset of data files + their stats (can be reused across snapshots)',
       relation: 'one manifest → many data files',
     },
     {
@@ -147,6 +147,24 @@ function CombinedModal({ onClose }) {
               File Reference Chain
             </div>
             <div style={{ flex: 1, overflowY: 'auto', padding: '8px 20px 20px' }}>
+
+              {/* Active per table summary */}
+              <div style={{ marginBottom: 16, padding: '10px 14px', background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 8 }}>
+                <div style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.07em', color: '#94a3b8', marginBottom: 8 }}>Active per table at any point in time</div>
+                <div style={{ display: 'flex', gap: 8 }}>
+                  {[
+                    { count: '1', label: 'Metadata File', color: '#f59e0b' },
+                    { count: '1', label: 'Manifest List', color: '#8b5cf6' },
+                    { count: 'N', label: 'Manifest Files', color: '#8b5cf6' },
+                    { count: 'N', label: 'Data Files', color: '#29B5E8' },
+                  ].map((item, i) => (
+                    <div key={i} style={{ flex: 1, textAlign: 'center', padding: '6px 4px', background: 'white', border: `1.5px solid ${item.color}30`, borderRadius: 7 }}>
+                      <div style={{ fontSize: 18, fontWeight: 800, color: item.color, lineHeight: 1 }}>{item.count}</div>
+                      <div style={{ fontSize: 10, color: '#64748b', marginTop: 3, lineHeight: 1.3 }}>{item.label}</div>
+                    </div>
+                  ))}
+                </div>
+              </div>
               {steps.map((step, i) => (
                 <div key={i}>
                   <div style={{ display: 'flex', alignItems: 'flex-start', gap: 12 }}>
