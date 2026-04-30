@@ -85,7 +85,77 @@ function SnowflakeIcon({ size = 18 }) {
 }
 
 
-export default function IcebergDetail() {
+function FileChainModal({ onClose }) {
+  const steps = [
+    {
+      file: 'metadata.json',
+      type: 'JSON',
+      typeColor: '#f59e0b',
+      note: 'New file created on every write — many exist in storage',
+      relation: 'one snapshot → one manifest list',
+    },
+    {
+      file: 'manifest-list.avro',
+      type: 'AVRO',
+      typeColor: '#8b5cf6',
+      note: 'Contains a list of all manifests for this snapshot',
+      relation: 'one manifest list → many manifests',
+    },
+    {
+      file: 'manifest.avro',
+      type: 'AVRO',
+      typeColor: '#8b5cf6',
+      note: 'Tracks a subset of data files + their stats (reused across snapshots)',
+      relation: 'one manifest → many data files',
+    },
+    {
+      file: 'data.parquet',
+      type: 'PARQUET',
+      typeColor: '#29B5E8',
+      note: 'Actual row data',
+      relation: null,
+    },
+  ];
+
+  return (
+    <div onClick={onClose} style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.55)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 200, padding: 24 }}>
+      <div onClick={e => e.stopPropagation()} style={{ background: 'white', borderRadius: 14, overflow: 'hidden', width: '90vw', maxWidth: 520, boxShadow: '0 24px 60px rgba(0,0,0,0.3)' }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px 18px', borderBottom: '1px solid #e2e8f0', background: '#f8fafc' }}>
+          <span style={{ fontSize: 14, fontWeight: 700, color: '#1e293b' }}>Iceberg File Reference Chain</span>
+          <button onClick={onClose} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: 22, color: '#64748b', lineHeight: 1, padding: '0 4px' }}>×</button>
+        </div>
+        <div style={{ padding: '20px 24px' }}>
+          {steps.map((step, i) => (
+            <div key={i}>
+              <div style={{ display: 'flex', alignItems: 'flex-start', gap: 12 }}>
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', paddingTop: 2 }}>
+                  <div style={{ width: 10, height: 10, borderRadius: '50%', background: step.typeColor, flexShrink: 0 }} />
+                  {i < steps.length - 1 && <div style={{ width: 2, flex: 1, background: '#e2e8f0', marginTop: 4, minHeight: 52 }} />}
+                </div>
+                <div style={{ paddingBottom: i < steps.length - 1 ? 0 : 0, flex: 1 }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
+                    <code style={{ fontSize: 13, fontWeight: 700, color: '#1e293b', background: '#f1f5f9', padding: '2px 8px', borderRadius: 5 }}>{step.file}</code>
+                    <span style={{ fontSize: 10, fontWeight: 700, color: step.typeColor, background: `${step.typeColor}15`, padding: '1px 6px', borderRadius: 4, letterSpacing: '0.05em' }}>{step.type}</span>
+                  </div>
+                  <div style={{ fontSize: 12, color: '#64748b', lineHeight: 1.5, marginBottom: step.relation ? 10 : 0 }}>{step.note}</div>
+                  {step.relation && (
+                    <div style={{ display: 'inline-flex', alignItems: 'center', gap: 5, fontSize: 11, color: '#94a3b8', fontStyle: 'italic', marginBottom: 4 }}>
+                      <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M5 1v7M2 6l3 3 3-3" stroke="#cbd5e1" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                      {step.relation}
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+
+  const [showFileChain, setShowFileChain] = useState(false);
 
   return (
     <div>
@@ -264,10 +334,15 @@ export default function IcebergDetail() {
                   <div style={{ fontSize: 13, color: '#64748b', marginTop: 3 }}>Data files — open-source columnar format</div>
                 </div>
               </div>
-              <div style={{ display: 'flex', alignItems: 'flex-start', gap: 10, marginTop: 14 }}>
+              <div
+                onClick={() => setShowFileChain(true)}
+                style={{ display: 'flex', alignItems: 'flex-start', gap: 10, marginTop: 14, cursor: 'pointer', borderRadius: 8, padding: '6px 8px', transition: 'background 0.15s' }}
+                onMouseEnter={e => e.currentTarget.style.background = '#f1f5f9'}
+                onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
+              >
                 <div style={{ fontSize: 22, lineHeight: 1, color: '#94a3b8', marginTop: 2 }}>🗂</div>
                 <div>
-                  <div style={{ fontSize: 15, fontWeight: 700, color: '#475569' }}>Iceberg Metadata Files</div>
+                  <div style={{ fontSize: 15, fontWeight: 700, color: '#29B5E8' }}>Iceberg Metadata Files <LinkIcon size={13} /></div>
                   <div style={{ fontSize: 12, color: '#64748b', marginTop: 3 }}>
                     <code style={{ background: '#f1f5f9', padding: '1px 5px', borderRadius: 4, fontSize: 11 }}>metadata.json</code>
                     {', '}
@@ -362,6 +437,7 @@ export default function IcebergDetail() {
 
       </div>
 
+      {showFileChain && <FileChainModal onClose={() => setShowFileChain(false)} />}
     </div>
   );
 }
