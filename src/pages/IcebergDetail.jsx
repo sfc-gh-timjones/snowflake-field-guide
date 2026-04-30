@@ -150,11 +150,11 @@ function CombinedModal({ onClose }) {
 
               {/* Active per table summary */}
               <div style={{ marginBottom: 16, padding: '10px 14px', background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 8 }}>
-                <div style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.07em', color: '#94a3b8', marginBottom: 8 }}>Active per table at any point in time</div>
+                <div style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.07em', color: '#94a3b8', marginBottom: 8 }}>Current per table at any point in time</div>
                 <div style={{ display: 'flex', gap: 8 }}>
                   {[
-                    { count: '1', label: 'Metadata File', color: '#f59e0b' },
-                    { count: '1', label: 'Manifest List', color: '#8b5cf6' },
+                    { count: '1', label: 'Current metadata file', color: '#f59e0b' },
+                    { count: '1', label: 'Manifest list (for current snapshot)', color: '#8b5cf6' },
                     { count: 'N', label: 'Manifest Files', color: '#8b5cf6' },
                     { count: 'N', label: 'Data Files', color: '#29B5E8' },
                   ].map((item, i) => (
