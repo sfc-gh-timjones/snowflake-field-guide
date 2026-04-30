@@ -95,118 +95,114 @@ function SnowflakeIcon({ size = 18 }) {
 }
 
 
-function FileChainModal({ onClose }) {
+function CombinedModal({ onClose }) {
   const steps = [
     {
-      file: 'metadata.json',
-      type: 'JSON',
-      typeColor: '#f59e0b',
+      file: 'metadata.json', type: 'JSON', typeColor: '#f59e0b',
       note: 'New file created on every write — many exist in storage',
       callout: 'Holds snapshot history within the retention window — snapshots outside it are expired and pruned. Always designates one as current via current-snapshot-id.',
       relation: 'Each snapshot has exactly one corresponding manifest list — no more, no less.',
     },
     {
-      file: 'manifest-list.avro',
-      type: 'AVRO',
-      typeColor: '#8b5cf6',
+      file: 'manifest-list.avro', type: 'AVRO', typeColor: '#8b5cf6',
       note: 'Contains a list of all manifests for this snapshot',
       relation: 'one manifest list → many manifests',
     },
     {
-      file: 'manifest.avro',
-      type: 'AVRO',
-      typeColor: '#8b5cf6',
+      file: 'manifest.avro', type: 'AVRO', typeColor: '#8b5cf6',
       note: 'Tracks a subset of data files + their stats (reused across snapshots)',
       relation: 'one manifest → many data files',
     },
     {
-      file: 'data.parquet',
-      type: 'PARQUET',
-      typeColor: '#29B5E8',
-      note: 'Actual row data',
-      relation: null,
+      file: 'data.parquet', type: 'PARQUET', typeColor: '#29B5E8',
+      note: 'Actual row data', relation: null,
     },
   ];
 
   return (
     <div onClick={onClose} style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.55)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 200, padding: 24 }}>
-      <div onClick={e => e.stopPropagation()} style={{ background: 'white', borderRadius: 14, overflow: 'hidden', width: '90vw', maxWidth: 520, boxShadow: '0 24px 60px rgba(0,0,0,0.3)' }}>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px 18px', borderBottom: '1px solid #e2e8f0', background: '#f8fafc' }}>
-          <span style={{ fontSize: 14, fontWeight: 700, color: '#1e293b' }}>Iceberg File Reference Chain</span>
+      <div onClick={e => e.stopPropagation()} style={{ background: 'white', borderRadius: 14, overflow: 'hidden', width: '95vw', maxWidth: 1060, maxHeight: '90vh', display: 'flex', flexDirection: 'column', boxShadow: '0 24px 60px rgba(0,0,0,0.3)' }}>
+
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px 18px', borderBottom: '1px solid #e2e8f0', background: '#f8fafc', flexShrink: 0 }}>
+          <span style={{ fontSize: 14, fontWeight: 700, color: '#1e293b' }}>Iceberg Reference</span>
           <button onClick={onClose} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: 22, color: '#64748b', lineHeight: 1, padding: '0 4px' }}>×</button>
         </div>
-        <div style={{ padding: '20px 24px', overflowY: 'auto', maxHeight: '75vh' }}>
-          {steps.map((step, i) => (
-            <div key={i}>
-              <div style={{ display: 'flex', alignItems: 'flex-start', gap: 12 }}>
-                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', paddingTop: 2 }}>
-                  <div style={{ width: 10, height: 10, borderRadius: '50%', background: step.typeColor, flexShrink: 0 }} />
-                  {i < steps.length - 1 && <div style={{ width: 2, flex: 1, background: '#e2e8f0', marginTop: 4, minHeight: 52 }} />}
-                </div>
-                <div style={{ paddingBottom: i < steps.length - 1 ? 0 : 0, flex: 1 }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
-                    <code style={{ fontSize: 13, fontWeight: 700, color: '#1e293b', background: '#f1f5f9', padding: '2px 8px', borderRadius: 5 }}>{step.file}</code>
-                    <span style={{ fontSize: 10, fontWeight: 700, color: step.typeColor, background: `${step.typeColor}15`, padding: '1px 6px', borderRadius: 4, letterSpacing: '0.05em' }}>{step.type}</span>
+
+        <div style={{ display: 'flex', flex: 1, minHeight: 0, overflow: 'hidden' }}>
+
+          {/* LEFT: Spec image */}
+          <div style={{ flex: 1, borderRight: '1px solid #e2e8f0', display: 'flex', flexDirection: 'column' }}>
+            <div style={{ fontSize: 12, fontWeight: 700, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.07em', padding: '10px 16px 6px', flexShrink: 0 }}>
+              Iceberg Table Spec
+              <a href="https://iceberg.apache.org/spec/#overview" target="_blank" rel="noreferrer" style={{ color: '#29B5E8', marginLeft: 6 }}><LinkIcon size={12} /></a>
+            </div>
+            <div style={{ flex: 1, overflowY: 'auto' }}>
+              <img src="/snowflake-field-guide/iceberg-metadata.png" alt="Iceberg Table Spec" style={{ width: '100%', display: 'block' }} />
+            </div>
+          </div>
+
+          {/* RIGHT: File chain */}
+          <div style={{ width: 480, flexShrink: 0, display: 'flex', flexDirection: 'column' }}>
+            <div style={{ fontSize: 12, fontWeight: 700, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.07em', padding: '10px 16px 6px', flexShrink: 0 }}>
+              File Reference Chain
+            </div>
+            <div style={{ flex: 1, overflowY: 'auto', padding: '8px 20px 20px' }}>
+              {steps.map((step, i) => (
+                <div key={i}>
+                  <div style={{ display: 'flex', alignItems: 'flex-start', gap: 12 }}>
+                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', paddingTop: 2 }}>
+                      <div style={{ width: 10, height: 10, borderRadius: '50%', background: step.typeColor, flexShrink: 0 }} />
+                      {i < steps.length - 1 && <div style={{ width: 2, flex: 1, background: '#e2e8f0', marginTop: 4, minHeight: 52 }} />}
+                    </div>
+                    <div style={{ flex: 1 }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
+                        <code style={{ fontSize: 13, fontWeight: 700, color: '#1e293b', background: '#f1f5f9', padding: '2px 8px', borderRadius: 5 }}>{step.file}</code>
+                        <span style={{ fontSize: 10, fontWeight: 700, color: step.typeColor, background: `${step.typeColor}15`, padding: '1px 6px', borderRadius: 4, letterSpacing: '0.05em' }}>{step.type}</span>
+                      </div>
+                      <div style={{ fontSize: 12, color: '#64748b', lineHeight: 1.5, marginBottom: step.callout || step.relation ? 6 : 0 }}>{step.note}</div>
+                      {step.callout && <div style={{ fontSize: 12, color: '#64748b', lineHeight: 1.5, marginBottom: 6, fontStyle: 'italic' }}>{step.callout}</div>}
+                      {step.relation && (
+                        <div style={{ display: 'inline-flex', alignItems: 'center', gap: 5, fontSize: 11, color: '#94a3b8', fontStyle: 'italic', marginBottom: 4 }}>
+                          <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M5 1v7M2 6l3 3 3-3" stroke="#cbd5e1" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                          {step.relation}
+                        </div>
+                      )}
+                    </div>
                   </div>
-                  <div style={{ fontSize: 12, color: '#64748b', lineHeight: 1.5, marginBottom: step.callout || step.relation ? 8 : 0 }}>{step.note}</div>
-                  {step.callout && (
-                    <div style={{ fontSize: 12, color: '#64748b', lineHeight: 1.5, marginBottom: 8, fontStyle: 'italic' }}>
-                      {step.callout}
+                </div>
+              ))}
+
+              <div style={{ borderTop: '1px solid #e2e8f0', marginTop: 16, paddingTop: 16 }}>
+                <div style={{ fontSize: 13, fontWeight: 700, color: '#1e293b', marginBottom: 12 }}>What gets reused vs. rewritten?</div>
+                <div style={{ marginBottom: 12 }}>
+                  <div style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.07em', color: '#ef4444', marginBottom: 6 }}>Always new per snapshot</div>
+                  {[
+                    { file: 'metadata.json', desc: 'New file written for every snapshot; old ones kept until expired.' },
+                    { file: 'manifest-list.avro', desc: 'Exactly one per snapshot — always a new file.' },
+                    { file: 'Snapshot ID', desc: 'New record added to metadata.json with a new ID.', noCode: true },
+                  ].map((item, i) => (
+                    <div key={i} style={{ display: 'flex', gap: 8, fontSize: 12, color: '#475569', lineHeight: 1.5, marginBottom: 5 }}>
+                      <span style={{ color: '#ef4444', flexShrink: 0 }}>•</span>
+                      <span>{item.noCode ? <span style={{ fontWeight: 600 }}>{item.file}</span> : <code style={{ background: '#f1f5f9', padding: '1px 5px', borderRadius: 4, fontSize: 11 }}>{item.file}</code>}{' — '}{item.desc}</span>
                     </div>
-                  )}
-                  {step.relation && (
-                    <div style={{ display: 'inline-flex', alignItems: 'center', gap: 5, fontSize: 11, color: '#94a3b8', fontStyle: 'italic', marginBottom: 4 }}>
-                      <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M5 1v7M2 6l3 3 3-3" stroke="#cbd5e1" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
-                      {step.relation}
+                  ))}
+                </div>
+                <div>
+                  <div style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.07em', color: '#16a34a', marginBottom: 6 }}>Can be reused across snapshots</div>
+                  {[
+                    { file: 'manifest.avro', desc: 'Reused if data files unchanged; new ones only for changed partitions.' },
+                    { file: 'data.parquet', desc: 'Unchanged files carried forward by reusing manifest entries.' },
+                  ].map((item, i) => (
+                    <div key={i} style={{ display: 'flex', gap: 8, fontSize: 12, color: '#475569', lineHeight: 1.5, marginBottom: 5 }}>
+                      <span style={{ color: '#16a34a', flexShrink: 0 }}>•</span>
+                      <span><code style={{ background: '#f1f5f9', padding: '1px 5px', borderRadius: 4, fontSize: 11 }}>{item.file}</code>{' — '}{item.desc}</span>
                     </div>
-                  )}
+                  ))}
+                </div>
+                <div style={{ marginTop: 12, padding: '10px 14px', background: '#f8fafc', borderRadius: 8, border: '1px solid #e2e8f0', fontSize: 12, color: '#334155', lineHeight: 1.6 }}>
+                  <span style={{ fontWeight: 700 }}>Every commit →</span> new <code style={{ background: '#e2e8f0', padding: '1px 4px', borderRadius: 3, fontSize: 11 }}>metadata.json</code> + new manifest list; manifests and data files reused wherever possible.
                 </div>
               </div>
-            </div>
-          ))}
-
-          {/* Reuse section */}
-          <div style={{ borderTop: '1px solid #e2e8f0', marginTop: 20, paddingTop: 18 }}>
-            <div style={{ fontSize: 13, fontWeight: 700, color: '#1e293b', marginBottom: 14 }}>What gets reused vs. rewritten?</div>
-
-            <div style={{ marginBottom: 14 }}>
-              <div style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.07em', color: '#ef4444', marginBottom: 8 }}>Always new per snapshot</div>
-              {[
-                { file: 'metadata.json', desc: 'New file written for every snapshot; old ones kept until expired.' },
-                { file: 'manifest-list.avro', desc: 'Exactly one per snapshot — always a new file.' },
-                { file: 'Snapshot ID', desc: 'New record added to metadata.json with a new ID.', noCode: true },
-              ].map((item, i) => (
-                <div key={i} style={{ display: 'flex', gap: 8, fontSize: 12, color: '#475569', lineHeight: 1.5, marginBottom: 6 }}>
-                  <span style={{ color: '#ef4444', flexShrink: 0 }}>•</span>
-                  <span>
-                    {item.noCode
-                      ? <span style={{ fontWeight: 600 }}>{item.file}</span>
-                      : <code style={{ background: '#f1f5f9', padding: '1px 5px', borderRadius: 4, fontSize: 11 }}>{item.file}</code>
-                    }
-                    {' — '}{item.desc}
-                  </span>
-                </div>
-              ))}
-            </div>
-
-            <div>
-              <div style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.07em', color: '#16a34a', marginBottom: 8 }}>Can be reused across snapshots</div>
-              {[
-                { file: 'manifest.avro', desc: 'Reused if their data files are unchanged; only new partitions/changed files get new manifests.' },
-                { file: 'data.parquet', desc: 'Unchanged files are carried forward by reusing the same entries in manifests.' },
-              ].map((item, i) => (
-                <div key={i} style={{ display: 'flex', gap: 8, fontSize: 12, color: '#475569', lineHeight: 1.5, marginBottom: 6 }}>
-                  <span style={{ color: '#16a34a', flexShrink: 0 }}>•</span>
-                  <span>
-                    <code style={{ background: '#f1f5f9', padding: '1px 5px', borderRadius: 4, fontSize: 11 }}>{item.file}</code>
-                    {' — '}{item.desc}
-                  </span>
-                </div>
-              ))}
-            </div>
-
-            <div style={{ marginTop: 14, padding: '10px 14px', background: '#f8fafc', borderRadius: 8, border: '1px solid #e2e8f0', fontSize: 12, color: '#334155', lineHeight: 1.6 }}>
-              <span style={{ fontWeight: 700 }}>Every commit →</span> new <code style={{ background: '#e2e8f0', padding: '1px 4px', borderRadius: 3, fontSize: 11 }}>metadata.json</code> + new manifest list; manifests and data files are reused wherever possible.
             </div>
           </div>
         </div>
@@ -216,7 +212,7 @@ function FileChainModal({ onClose }) {
 }
 
 export default function IcebergDetail() {
-  const [showFileChain, setShowFileChain] = useState(false);
+  const [showCombined, setShowCombined] = useState(false);
 
   return (
     <div>
@@ -351,18 +347,12 @@ export default function IcebergDetail() {
               <span style={{ color: '#29B5E8', fontWeight: 700, flexShrink: 0 }}>•</span>
               <span>
                 Structured off the{' '}
-                <ImagePopup src="/snowflake-field-guide/iceberg-metadata.png" alt="Iceberg Table Spec">
-                  <button
-                    style={{
-                      background: 'none', border: 'none', padding: 0, cursor: 'pointer',
-                      color: '#29B5E8', fontWeight: 600, fontSize: 13,
-                      display: 'inline-flex', alignItems: 'center',
-                      textDecoration: 'underline',
-                    }}
-                  >
-                    Iceberg Table Spec <PopupIcon size={13} />
-                  </button>
-                </ImagePopup>
+                <button
+                  onClick={() => setShowCombined(true)}
+                  style={{ background: 'none', border: 'none', padding: 0, cursor: 'pointer', color: '#29B5E8', fontWeight: 600, fontSize: 13, display: 'inline-flex', alignItems: 'center', textDecoration: 'underline' }}
+                >
+                  Iceberg Table Spec <PopupIcon size={13} />
+                </button>
               </span>
             </div>
 
@@ -390,7 +380,7 @@ export default function IcebergDetail() {
                 </div>
               </div>
               <div
-                onClick={() => setShowFileChain(true)}
+                onClick={() => setShowCombined(true)}
                 style={{ display: 'flex', alignItems: 'flex-start', gap: 10, marginTop: 14, cursor: 'pointer', borderRadius: 8, padding: '6px 8px', transition: 'background 0.15s' }}
                 onMouseEnter={e => e.currentTarget.style.background = '#f1f5f9'}
                 onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
@@ -500,7 +490,7 @@ export default function IcebergDetail() {
 
       </div>
 
-      {showFileChain && <FileChainModal onClose={() => setShowFileChain(false)} />}
+      {showCombined && <CombinedModal onClose={() => setShowCombined(false)} />}
     </div>
   );
 }
