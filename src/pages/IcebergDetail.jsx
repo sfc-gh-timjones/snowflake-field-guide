@@ -99,7 +99,7 @@ export default function IcebergDetail() {
         Apache Iceberg is an open table format for large analytic datasets. Snowflake supports Iceberg tables backed by cloud object storage.
       </p>
 
-      <div style={{ display: 'flex', gap: 16, alignItems: 'flex-start', maxWidth: 780 }}>
+      <div style={{ display: 'flex', gap: 16, alignItems: 'flex-start', maxWidth: 1200 }}>
 
         {/* LEFT: Catalog definition */}
         <div style={{
@@ -271,6 +271,29 @@ export default function IcebergDetail() {
             </div>
           </div>
         </div>
+
+        {/* RIGHT: Iceberg Spec screenshot */}
+        <div style={{ width: 320, flexShrink: 0 }}>
+          <div style={{ fontSize: 13, fontWeight: 700, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 10 }}>
+            Iceberg Table Spec
+          </div>
+          <a
+            href="https://iceberg.apache.org/spec/#overview"
+            target="_blank"
+            rel="noreferrer"
+            style={{ display: 'block', borderRadius: 10, overflow: 'hidden', border: '1.5px solid #e2e8f0', boxShadow: '0 2px 12px rgba(0,0,0,0.08)' }}
+          >
+            <img
+              src="https://image.thum.io/get/width/640/crop/900/https://iceberg.apache.org/spec/"
+              alt="Iceberg Table Spec"
+              style={{ width: '100%', display: 'block' }}
+            />
+          </a>
+          <div style={{ fontSize: 12, color: '#94a3b8', marginTop: 8, textAlign: 'center' }}>
+            Click to open full spec
+          </div>
+        </div>
+
       </div>
 
       {showSpec && <SpecModal onClose={() => setShowSpec(false)} />}
