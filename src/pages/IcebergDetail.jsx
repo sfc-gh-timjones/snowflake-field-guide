@@ -301,12 +301,12 @@ export default function IcebergDetail() {
           </div>
 
           {/* Bidirectional arrow + External Volume */}
-          <div style={{ display: 'flex', alignItems: 'stretch', paddingLeft: 24, gap: 16, minHeight: 100 }}>
+          <div style={{ display: 'flex', alignItems: 'stretch', paddingLeft: 24, gap: 16, minHeight: 130 }}>
             <div style={{ display: 'flex', justifyContent: 'center', width: 40 }}>
-              <svg width="40" height="88" viewBox="0 0 40 88" fill="none">
-                <line x1="20" y1="0" x2="20" y2="88" stroke="#29B5E8" strokeWidth="2" strokeDasharray="4 3"/>
+              <svg width="40" height="130" viewBox="0 0 40 130" fill="none">
+                <line x1="20" y1="0" x2="20" y2="130" stroke="#29B5E8" strokeWidth="2" strokeDasharray="4 3"/>
                 <path d="M12 14 L20 4 L28 14" fill="none" stroke="#29B5E8" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                <path d="M12 74 L20 84 L28 74" fill="none" stroke="#29B5E8" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                <path d="M12 116 L20 126 L28 116" fill="none" stroke="#29B5E8" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
               </svg>
             </div>
             <div style={{
