@@ -246,7 +246,7 @@ export default function IcebergDetail() {
             </div>
 
             <div style={{ borderTop: '1px solid #e2e8f0', paddingTop: 16 }}>
-              <div style={{ fontSize: 13, color: '#64748b', marginBottom: 12, fontWeight: 500 }}>Data files stored as:</div>
+              <div style={{ fontSize: 13, color: '#64748b', marginBottom: 12, fontWeight: 500 }}>Files stored:</div>
               <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
                 <div style={{ display: 'flex' }}>
                   {[0, 1, 2].map(i => (
@@ -265,7 +265,21 @@ export default function IcebergDetail() {
                   >
                     Apache Parquet <LinkIcon size={15} />
                   </a>
-                  <div style={{ fontSize: 13, color: '#64748b', marginTop: 3 }}>Open-source columnar storage format</div>
+                  <div style={{ fontSize: 13, color: '#64748b', marginTop: 3 }}>Data files — open-source columnar format</div>
+                </div>
+              </div>
+              <div style={{ display: 'flex', alignItems: 'flex-start', gap: 10, marginTop: 14 }}>
+                <div style={{ fontSize: 22, lineHeight: 1, color: '#94a3b8', marginTop: 2 }}>🗂</div>
+                <div>
+                  <div style={{ fontSize: 15, fontWeight: 700, color: '#475569' }}>Iceberg Metadata Files</div>
+                  <div style={{ fontSize: 12, color: '#64748b', marginTop: 3 }}>
+                    <code style={{ background: '#f1f5f9', padding: '1px 5px', borderRadius: 4, fontSize: 11 }}>metadata.json</code>
+                    {', '}
+                    <code style={{ background: '#f1f5f9', padding: '1px 5px', borderRadius: 4, fontSize: 11 }}>manifest lists</code>
+                    {', '}
+                    <code style={{ background: '#f1f5f9', padding: '1px 5px', borderRadius: 4, fontSize: 11 }}>manifests</code>
+                    {', etc.'}
+                  </div>
                 </div>
               </div>
             </div>
