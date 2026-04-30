@@ -384,7 +384,7 @@ export default function IcebergDetail() {
             <div style={{ fontSize: 13, color: '#475569', lineHeight: 1.9, marginBottom: 16 }}>
               <div><span style={{ fontWeight: 600 }}>Management of External Cloud Storage Location</span> = <span style={{ color: '#0e7490', fontWeight: 600 }}>CUSTOMER</span></div>
               <div style={{ paddingLeft: 16, color: '#64748b' }}>
-                ↳ Management = data protection &amp; recovery <span style={{ color: '#ef4444', fontWeight: 500 }}>(No Snowflake Fail Safe)</span>
+                ↳ Management = data protection &amp; recovery <span style={{ fontWeight: 500 }}>(No Snowflake Fail Safe)</span>
               </div>
               <div style={{ marginTop: 4 }}><span style={{ fontWeight: 600 }}>Storage Billing</span> = <span style={{ color: '#0e7490', fontWeight: 600 }}>Cloud Provider</span></div>
             </div>
