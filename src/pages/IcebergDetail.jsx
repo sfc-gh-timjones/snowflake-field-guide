@@ -221,6 +221,34 @@ function CombinedModal({ onClose }) {
                   <span style={{ fontWeight: 700 }}>Every commit →</span> new <code style={{ background: '#e2e8f0', padding: '1px 4px', borderRadius: 3, fontSize: 11 }}>metadata.json</code> + new manifest list; manifests and data files reused wherever possible.
                 </div>
               </div>
+
+              {/* Write sequence */}
+              <div style={{ borderTop: '1px solid #e2e8f0', marginTop: 16, paddingTop: 16 }}>
+                <div style={{ fontSize: 13, fontWeight: 700, color: '#1e293b', marginBottom: 4 }}>How a write commit works</div>
+                <div style={{ fontSize: 12, color: '#64748b', marginBottom: 12, lineHeight: 1.5 }}>
+                  Files are written bottom-up. The commit only becomes visible when the catalog pointer swaps in step 5. If anything fails before that, the table is never corrupted.
+                </div>
+                {[
+                  { n: '1', text: 'Write new Parquet data files → storage' },
+                  { n: '2', text: 'Write new manifest.avro referencing the new data files → storage' },
+                  { n: '3', text: 'Write new manifest-list.avro referencing all manifests for this snapshot → storage' },
+                  { n: '4', text: 'Write new metadata.json containing the new snapshot record + current-snapshot-id → storage' },
+                  { n: '5', text: 'Catalog atomically swaps its pointer to the new metadata.json → commit is now visible', highlight: true },
+                ].map((step, i) => (
+                  <div key={i} style={{ display: 'flex', gap: 10, marginBottom: 10, alignItems: 'flex-start' }}>
+                    <div style={{
+                      width: 22, height: 22, borderRadius: '50%', flexShrink: 0,
+                      background: step.highlight ? '#29B5E8' : '#f1f5f9',
+                      color: step.highlight ? 'white' : '#64748b',
+                      display: 'flex', alignItems: 'center', justifyContent: 'center',
+                      fontSize: 11, fontWeight: 700,
+                    }}>{step.n}</div>
+                    <div style={{ fontSize: 12, color: step.highlight ? '#0e7490' : '#475569', lineHeight: 1.5, fontWeight: step.highlight ? 600 : 400 }}>
+                      {step.text}
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         </div>
