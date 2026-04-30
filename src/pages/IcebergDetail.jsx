@@ -10,53 +10,47 @@ function LinkIcon({ size = 14 }) {
   );
 }
 
-function ImageTooltip({ src, alt, children }) {
-  const [visible, setVisible] = useState(false);
+function ImageModal({ src, alt, onClose }) {
   return (
-    <span
-      style={{ position: 'relative', display: 'inline' }}
-      onMouseEnter={() => setVisible(true)}
-      onMouseLeave={() => setVisible(false)}
+    <div
+      onClick={onClose}
+      style={{
+        position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.55)',
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+        zIndex: 200, padding: 24,
+      }}
     >
-      {children}
-      {visible && (
-        <span style={{
-          position: 'absolute',
-          bottom: '130%',
-          left: '50%',
-          transform: 'translateX(-50%)',
-          zIndex: 100,
-          pointerEvents: 'none',
-          display: 'block',
-          width: 480,
-          borderRadius: 10,
-          overflow: 'hidden',
-          boxShadow: '0 8px 32px rgba(0,0,0,0.25)',
-          border: '1.5px solid #e2e8f0',
-          background: 'white',
+      <div
+        onClick={e => e.stopPropagation()}
+        style={{
+          background: 'white', borderRadius: 14, overflow: 'hidden',
+          width: '90vw', maxWidth: 900, maxHeight: '88vh',
+          display: 'flex', flexDirection: 'column',
+          boxShadow: '0 24px 60px rgba(0,0,0,0.3)',
+        }}
+      >
+        <div style={{
+          display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+          padding: '10px 16px', borderBottom: '1px solid #e2e8f0', background: '#f8fafc', flexShrink: 0,
         }}>
+          <span style={{ fontSize: 14, fontWeight: 700, color: '#1e293b' }}>{alt}</span>
+          <button onClick={onClose} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: 22, color: '#64748b', lineHeight: 1, padding: '0 4px' }}>×</button>
+        </div>
+        <div style={{ overflowY: 'auto', flex: 1 }}>
           <img src={src} alt={alt} style={{ width: '100%', display: 'block' }} />
-          <span style={{
-            position: 'absolute',
-            bottom: 0, left: 0, right: 0,
-            padding: '6px 10px',
-            fontSize: 11, color: '#94a3b8',
-            background: '#f8fafc',
-            borderTop: '1px solid #e2e8f0',
-            display: 'block',
-          }}>{alt}</span>
-          <span style={{
-            position: 'absolute',
-            top: '100%',
-            left: '50%',
-            transform: 'translateX(-50%)',
-            borderWidth: '6px',
-            borderStyle: 'solid',
-            borderColor: '#e2e8f0 transparent transparent transparent',
-          }} />
-        </span>
-      )}
-    </span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function ImagePopup({ src, alt, children }) {
+  const [open, setOpen] = useState(false);
+  return (
+    <>
+      <span onClick={() => setOpen(true)} style={{ cursor: 'pointer' }}>{children}</span>
+      {open && <ImageModal src={src} alt={alt} onClose={() => setOpen(false)} />}
+    </>
   );
 }
 
@@ -120,7 +114,7 @@ export default function IcebergDetail() {
             </li>
             <li style={{ display: 'flex', gap: 7, fontSize: 13, color: '#475569', lineHeight: 1.5 }}>
               <span style={{ color: '#29B5E8', fontWeight: 700, flexShrink: 0 }}>•</span>
-              <span>Performing <Tooltip term="atomic" definition="Indivisible and all-or-nothing. A change happens as a single, complete step — guaranteeing consistency across concurrent readers and writers." /> operations to update the current <Tooltip term="metadata pointer" definition="Maps a table name to the location of that table's current metadata file." /> for a table.</span>
+              <span>Performing <Tooltip term="atomic" definition="Indivisible and all-or-nothing. A change happens as a single, complete step — guaranteeing consistency across concurrent readers and writers." /> operations to update the current metadata pointer for a table.</span>
             </li>
           </ul>
         </div>
@@ -232,7 +226,7 @@ export default function IcebergDetail() {
               <span style={{ color: '#29B5E8', fontWeight: 700, flexShrink: 0 }}>•</span>
               <span>
                 Structured off the{' '}
-                <ImageTooltip src="/snowflake-field-guide/iceberg-metadata.png" alt="Iceberg Table Spec">
+                <ImagePopup src="/snowflake-field-guide/iceberg-metadata.png" alt="Iceberg Table Spec">
                   <button
                     style={{
                       background: 'none', border: 'none', padding: 0, cursor: 'pointer',
@@ -243,7 +237,7 @@ export default function IcebergDetail() {
                   >
                     Iceberg Table Spec <LinkIcon size={13} />
                   </button>
-                </ImageTooltip>
+                </ImagePopup>
               </span>
             </div>
 
