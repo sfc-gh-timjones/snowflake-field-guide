@@ -257,7 +257,7 @@ function CombinedModal({ onClose }) {
   );
 }
 
-export default function IcebergDetail() {
+export default function IcebergDetail({ onNavigate }) {
   const [showCombined, setShowCombined] = useState(false);
 
   return (
