@@ -190,7 +190,7 @@ function FileChainModal({ onClose }) {
         </div>
 
         {/* RIGHT: Snowflake + arrow + Cloud Storage stacked */}
-        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 0 }}>
+        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 0, marginTop: 8 }}>
 
           {/* Snowflake box */}
           <div style={{
@@ -226,7 +226,7 @@ function FileChainModal({ onClose }) {
           </div>
 
           {/* Bidirectional arrow + External Volume */}
-          <div style={{ display: 'flex', alignItems: 'stretch', paddingLeft: 24, gap: 16, minHeight: 88 }}>
+          <div style={{ display: 'flex', alignItems: 'stretch', paddingLeft: 24, gap: 16, minHeight: 100 }}>
             <div style={{ display: 'flex', justifyContent: 'center', width: 40 }}>
               <svg width="40" height="88" viewBox="0 0 40 88" fill="none">
                 <line x1="20" y1="0" x2="20" y2="88" stroke="#29B5E8" strokeWidth="2" strokeDasharray="4 3"/>
@@ -259,7 +259,7 @@ function FileChainModal({ onClose }) {
 
           {/* Cloud Storage box */}
           <div style={{
-            border: '1.5px solid #e2e8f0', borderRadius: 12,
+            border: '2px solid #94a3b8', borderRadius: 12,
             padding: 24, background: '#f8fafc',
           }}>
             <div style={{ fontSize: 13, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#94a3b8', marginBottom: 16 }}>
