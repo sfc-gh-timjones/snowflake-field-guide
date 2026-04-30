@@ -1,3 +1,5 @@
+import IcebergConsiderations from './IcebergConsiderations';
+
 function LinkIcon({ size = 14 }) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ display: 'inline', verticalAlign: 'middle', marginLeft: 4 }}>
@@ -87,6 +89,8 @@ export default function CatalogOptions() {
           </div>
         ))}
       </div>
+
+      <IcebergConsiderations />
     </div>
   );
 }

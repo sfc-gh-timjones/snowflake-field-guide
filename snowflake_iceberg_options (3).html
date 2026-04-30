@@ -1,0 +1,741 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Snowflake Iceberg Options</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            color: #fff;
+            min-height: 100vh;
+            padding: 40px;
+        }
+        .slide {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        h1 {
+            text-align: center;
+            font-size: 2.8rem;
+            margin-bottom: 10px;
+            background: linear-gradient(90deg, #29b5f6, #4dd0e1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .subtitle {
+            text-align: center;
+            font-size: 1.2rem;
+            color: #8892b0;
+            margin-bottom: 40px;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 25px;
+        }
+        .card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            padding: 25px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+        .card.highlight {
+            border-color: #29b5f6;
+            background: rgba(41, 181, 246, 0.1);
+        }
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 15px;
+        }
+        .icon {
+            width: 45px;
+            height: 45px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+        .icon.blue { background: linear-gradient(135deg, #29b5f6, #0288d1); }
+        .icon.green { background: linear-gradient(135deg, #66bb6a, #43a047); }
+        .icon.purple { background: linear-gradient(135deg, #ab47bc, #7b1fa2); }
+        .icon.orange { background: linear-gradient(135deg, #ffa726, #f57c00); }
+        .icon.teal { background: linear-gradient(135deg, #26a69a, #00897b); }
+        .icon.pink { background: linear-gradient(135deg, #ec407a, #c2185b); }
+        h2 {
+            font-size: 1.3rem;
+            color: #fff;
+        }
+        .card p {
+            color: #a8b2d1;
+            font-size: 0.95rem;
+            line-height: 1.5;
+            margin-bottom: 15px;
+        }
+        .features {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        .tag {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            color: #ccd6f6;
+        }
+        .tag.new {
+            background: linear-gradient(135deg, #66bb6a, #43a047);
+            color: #fff;
+        }
+        .tag.preview {
+            background: linear-gradient(135deg, #ffa726, #f57c00);
+            color: #fff;
+        }
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+            font-size: 0.85rem;
+        }
+        .comparison-table th, .comparison-table td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .comparison-table th {
+            color: #29b5f6;
+            font-weight: 600;
+        }
+        .check { color: #66bb6a; }
+        .cross { color: #ef5350; }
+        .full-width {
+            grid-column: 1 / -1;
+        }
+        .catalog-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            margin-top: 15px;
+        }
+        .catalog-item {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+        }
+        .catalog-item h4 {
+            color: #4dd0e1;
+            font-size: 0.95rem;
+            margin-bottom: 5px;
+        }
+        .catalog-item p {
+            font-size: 0.8rem;
+            color: #8892b0;
+            margin: 0;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            color: #8892b0;
+            font-size: 0.9rem;
+        }
+        .section-title {
+            font-size: 1.1rem;
+            color: #29b5f6;
+            margin: 15px 0 10px 0;
+            border-bottom: 1px solid rgba(41, 181, 246, 0.3);
+            padding-bottom: 5px;
+        }
+        .option-list {
+            list-style: none;
+            padding: 0;
+        }
+        .option-list li {
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .option-list li:last-child {
+            border-bottom: none;
+        }
+        .option-name {
+            color: #ccd6f6;
+            font-family: 'Monaco', 'Consolas', monospace;
+            font-size: 0.85rem;
+        }
+        .option-desc {
+            color: #8892b0;
+            font-size: 0.8rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="slide">
+        <h1>Snowflake Iceberg Table Options</h1>
+        <p class="subtitle">Complete guide to Apache Iceberg integration with Snowflake</p>
+        
+        <div class="grid">
+            <div class="card highlight">
+                <div class="card-header">
+                    <div class="icon blue">&#9881;</div>
+                    <h2>Catalog Options</h2>
+                </div>
+                <p>Choose how Iceberg metadata is managed</p>
+                <div class="catalog-grid">
+                    <div class="catalog-item">
+                        <h4>Snowflake</h4>
+                        <p>Full platform support, read/write, compaction</p>
+                    </div>
+                    <div class="catalog-item">
+                        <h4>AWS Glue</h4>
+                        <p>Iceberg REST catalog integration</p>
+                    </div>
+                    <div class="catalog-item">
+                        <h4>Unity Catalog</h4>
+                        <p>Databricks integration</p>
+                    </div>
+                    <div class="catalog-item">
+                        <h4>OpenCatalog</h4>
+                        <p>Polaris / REST catalog</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <div class="icon green">&#128193;</div>
+                    <h2>Storage Options</h2>
+                </div>
+                <p>External volume configurations for data storage</p>
+                <div class="features">
+                    <span class="tag">Amazon S3</span>
+                    <span class="tag">Azure Blob</span>
+                    <span class="tag">Azure ADLS Gen2</span>
+                    <span class="tag">Google Cloud Storage</span>
+                    <span class="tag">Cross-Cloud</span>
+                    <span class="tag">Cross-Region</span>
+                </div>
+                <h4 class="section-title">Key Parameters</h4>
+                <ul class="option-list">
+                    <li><span class="option-name">EXTERNAL_VOLUME</span><span class="option-desc">Storage connection</span></li>
+                    <li><span class="option-name">BASE_LOCATION</span><span class="option-desc">Directory path</span></li>
+                    <li><span class="option-name">ALLOW_WRITES</span><span class="option-desc">Write permissions</span></li>
+                </ul>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <div class="icon purple">&#128218;</div>
+                    <h2>Table Creation Options</h2>
+                </div>
+                <h4 class="section-title">CREATE ICEBERG TABLE Parameters</h4>
+                <ul class="option-list">
+                    <li><span class="option-name">CATALOG</span><span class="option-desc">'SNOWFLAKE' or integration name</span></li>
+                    <li><span class="option-name">CATALOG_TABLE_NAME</span><span class="option-desc">External catalog table ref</span></li>
+                    <li><span class="option-name">CATALOG_NAMESPACE</span><span class="option-desc">External catalog namespace</span></li>
+                    <li><span class="option-name">METADATA_FILE_PATH</span><span class="option-desc">For Iceberg files in storage</span></li>
+                    <li><span class="option-name">CATALOG_SYNC</span><span class="option-desc">Sync with Open Catalog</span></li>
+                </ul>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <div class="icon orange">&#9881;</div>
+                    <h2>Performance Options</h2>
+                </div>
+                <h4 class="section-title">Optimization Parameters</h4>
+                <ul class="option-list">
+                    <li><span class="option-name">CLUSTER BY</span><span class="option-desc">Clustering key expression</span></li>
+                    <li><span class="option-name">TARGET_FILE_SIZE</span><span class="option-desc">AUTO | 16MB | 32MB | 64MB | 128MB</span></li>
+                    <li><span class="option-name">PATH_LAYOUT</span><span class="option-desc">FLAT | HIERARCHICAL</span></li>
+                    <li><span class="option-name">STORAGE_SERIALIZATION_POLICY</span><span class="option-desc">COMPATIBLE | OPTIMIZED</span></li>
+                    <li><span class="option-name">ENABLE_DATA_COMPACTION</span><span class="option-desc">Auto compaction (TRUE/FALSE)</span></li>
+                </ul>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <div class="icon teal">&#128200;</div>
+                    <h2>Partitioning Options</h2>
+                </div>
+                <p>Iceberg partition transforms for query optimization</p>
+                <div class="features">
+                    <span class="tag">Identity</span>
+                    <span class="tag">BUCKET(n, col)</span>
+                    <span class="tag">TRUNCATE(w, col)</span>
+                    <span class="tag">YEAR(col)</span>
+                    <span class="tag">MONTH(col)</span>
+                    <span class="tag">DAY(col)</span>
+                    <span class="tag">HOUR(col)</span>
+                </div>
+                <h4 class="section-title">Partition Evolution</h4>
+                <p style="margin-top:10px">Use <code style="color:#4dd0e1">ALTER ICEBERG TABLE ADD/DROP PARTITION FIELD</code> to evolve partitions without rewriting data</p>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <div class="icon pink">&#128337;</div>
+                    <h2>Refresh & Sync Options</h2>
+                </div>
+                <h4 class="section-title">Auto-Refresh Parameters</h4>
+                <ul class="option-list">
+                    <li><span class="option-name">AUTO_REFRESH</span><span class="option-desc">Enable automatic refresh</span></li>
+                    <li><span class="option-name">REFRESH_INTERVAL_SECONDS</span><span class="option-desc">Polling interval</span></li>
+                    <li><span class="option-name">REPLACE_INVALID_CHARACTERS</span><span class="option-desc">Handle invalid UTF-8</span></li>
+                </ul>
+                <h4 class="section-title">Time Travel & Retention</h4>
+                <ul class="option-list">
+                    <li><span class="option-name">DATA_RETENTION_TIME_IN_DAYS</span><span class="option-desc">Time travel window</span></li>
+                    <li><span class="option-name">MAX_DATA_EXTENSION_TIME_IN_DAYS</span><span class="option-desc">Extended retention</span></li>
+                    <li><span class="option-name">CHANGE_TRACKING</span><span class="option-desc">Enable for streams</span></li>
+                </ul>
+            </div>
+
+            <div class="card full-width">
+                <div class="card-header">
+                    <div class="icon blue">&#128279;</div>
+                    <h2>Catalog-Linked Database (CLD)</h2>
+                </div>
+                <p>Auto-discover and sync tables from external catalogs without creating individual Iceberg tables</p>
+                <table class="comparison-table">
+                    <tr>
+                        <th>Parameter</th>
+                        <th>Description</th>
+                        <th>Example Values</th>
+                    </tr>
+                    <tr>
+                        <td class="option-name">LINKED_CATALOG</td>
+                        <td>Catalog integration reference</td>
+                        <td>my_glue_integration</td>
+                    </tr>
+                    <tr>
+                        <td class="option-name">ALLOWED_NAMESPACES</td>
+                        <td>Limit auto-discovery scope</td>
+                        <td>['db1', 'db2.schema1']</td>
+                    </tr>
+                    <tr>
+                        <td class="option-name">BLOCKED_NAMESPACES</td>
+                        <td>Exclude specific namespaces</td>
+                        <td>['temp', 'staging']</td>
+                    </tr>
+                    <tr>
+                        <td class="option-name">NAMESPACE_FLATTEN_DELIMITER</td>
+                        <td>Delimiter for nested namespaces</td>
+                        <td>'_' (default), '$'</td>
+                    </tr>
+                    <tr>
+                        <td class="option-name">ICEBERG_VERSION_DEFAULT</td>
+                        <td>Default Iceberg spec version</td>
+                        <td>2, 3 (preview)</td>
+                    </tr>
+                    <tr>
+                        <td class="option-name">ENABLE_ICEBERG_MERGE_ON_READ</td>
+                        <td>Enable MoR for DML operations</td>
+                        <td>TRUE | FALSE</td>
+                    </tr>
+                </table>
+            </div>
+
+            <div class="card full-width">
+                <div class="card-header">
+                    <div class="icon green">&#9989;</div>
+                    <h2>Feature Comparison: Snowflake-Managed vs External Catalog</h2>
+                </div>
+                <table class="comparison-table">
+                    <tr>
+                        <th>Feature</th>
+                        <th>Snowflake as Catalog</th>
+                        <th>External Catalog</th>
+                        <th>Catalog-Linked DB</th>
+                    </tr>
+                    <tr>
+                        <td>Read Access</td>
+                        <td class="check">&#10004;</td>
+                        <td class="check">&#10004;</td>
+                        <td class="check">&#10004;</td>
+                    </tr>
+                    <tr>
+                        <td>Write Access</td>
+                        <td class="check">&#10004;</td>
+                        <td class="check">&#10004; (REST catalogs)</td>
+                        <td class="check">&#10004;</td>
+                    </tr>
+                    <tr>
+                        <td>Auto Compaction</td>
+                        <td class="check">&#10004;</td>
+                        <td class="cross">&#10008;</td>
+                        <td class="cross">&#10008;</td>
+                    </tr>
+                    <tr>
+                        <td>Clustering</td>
+                        <td class="check">&#10004;</td>
+                        <td class="cross">&#10008;</td>
+                        <td class="cross">&#10008;</td>
+                    </tr>
+                    <tr>
+                        <td>Standard Streams</td>
+                        <td class="check">&#10004;</td>
+                        <td class="cross">&#10008; (insert-only)</td>
+                        <td class="cross">&#10008; (insert-only)</td>
+                    </tr>
+                    <tr>
+                        <td>Replication</td>
+                        <td class="check">&#10004;</td>
+                        <td class="cross">&#10008;</td>
+                        <td class="cross">&#10008;</td>
+                    </tr>
+                    <tr>
+                        <td>Cloning</td>
+                        <td class="check">&#10004;</td>
+                        <td class="cross">&#10008;</td>
+                        <td class="cross">&#10008;</td>
+                    </tr>
+                    <tr>
+                        <td>Catalog-Vended Credentials</td>
+                        <td class="cross">&#10008;</td>
+                        <td class="check">&#10004;</td>
+                        <td class="check">&#10004;</td>
+                    </tr>
+                    <tr>
+                        <td>Open Catalog Sync</td>
+                        <td class="check">&#10004;</td>
+                        <td class="check">&#10004;</td>
+                        <td class="check">&#10004;</td>
+                    </tr>
+                </table>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <div class="icon purple">&#128274;</div>
+                    <h2>Governance Options</h2>
+                </div>
+                <h4 class="section-title">Security & Policies</h4>
+                <ul class="option-list">
+                    <li><span class="option-name">MASKING POLICY</span><span class="option-desc">Column-level masking</span></li>
+                    <li><span class="option-name">ROW ACCESS POLICY</span><span class="option-desc">Row-level security</span></li>
+                    <li><span class="option-name">PROJECTION POLICY</span><span class="option-desc">Column projection control</span></li>
+                    <li><span class="option-name">AGGREGATION POLICY</span><span class="option-desc">Aggregation constraints</span></li>
+                    <li><span class="option-name">TAG</span><span class="option-desc">Object tagging</span></li>
+                </ul>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <div class="icon orange">&#127381;</div>
+                    <h2>New & Preview Features</h2>
+                </div>
+                <div class="features" style="margin-bottom: 15px;">
+                    <span class="tag preview">Iceberg V3 Support</span>
+                    <span class="tag preview">ADLS Gen2</span>
+                    <span class="tag new">External Engine Writes</span>
+                    <span class="tag new">Delta Direct</span>
+                </div>
+                <h4 class="section-title">Version Options</h4>
+                <ul class="option-list">
+                    <li><span class="option-name">ICEBERG_VERSION</span><span class="option-desc">1, 2, or 3 (preview)</span></li>
+                    <li><span class="option-name">ENABLE_ICEBERG_MERGE_ON_READ</span><span class="option-desc">Position deletes support</span></li>
+                    <li><span class="option-name">ERROR_LOGGING</span><span class="option-desc">DML error tracking</span></li>
+                </ul>
+            </div>
+
+            <div class="card full-width" style="border-color: #ab47bc; background: rgba(171, 71, 188, 0.08);">
+                <div class="card-header">
+                    <div class="icon purple">&#9878;</div>
+                    <h2>Responsibility Matrix: Customer vs Snowflake Managed</h2>
+                </div>
+                <p>Understanding who manages each component across different Iceberg configurations</p>
+                
+                <div style="display: flex; gap: 15px; margin: 20px 0 15px 0;">
+                    <div style="display: flex; align-items: center; gap: 6px;">
+                        <span style="display: inline-block; width: 18px; height: 18px; background: linear-gradient(135deg, #29b5f6, #0288d1); border-radius: 4px;"></span>
+                        <span style="font-size: 0.85rem; color: #ccd6f6;">Snowflake Managed</span>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 6px;">
+                        <span style="display: inline-block; width: 18px; height: 18px; background: linear-gradient(135deg, #66bb6a, #43a047); border-radius: 4px;"></span>
+                        <span style="font-size: 0.85rem; color: #ccd6f6;">Customer Managed</span>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 6px;">
+                        <span style="display: inline-block; width: 18px; height: 18px; background: linear-gradient(135deg, #ffa726, #f57c00); border-radius: 4px;"></span>
+                        <span style="font-size: 0.85rem; color: #ccd6f6;">Shared / Configurable</span>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 6px;">
+                        <span style="display: inline-block; width: 18px; height: 18px; background: rgba(255,255,255,0.1); border-radius: 4px; border: 1px dashed #8892b0;"></span>
+                        <span style="font-size: 0.85rem; color: #ccd6f6;">Not Available</span>
+                    </div>
+                </div>
+
+                <table class="comparison-table" style="margin-top: 10px;">
+                    <tr>
+                        <th style="width: 25%;">Component</th>
+                        <th style="width: 25%;">Snowflake as Catalog</th>
+                        <th style="width: 25%;">External Catalog</th>
+                        <th style="width: 25%;">Catalog-Linked DB</th>
+                    </tr>
+                    <tr>
+                        <td colspan="4" style="background: rgba(255,255,255,0.03); color: #29b5f6; font-weight: 600; padding: 12px 10px;">Storage & Infrastructure</td>
+                    </tr>
+                    <tr>
+                        <td>Cloud Storage (S3/Azure/GCS)</td>
+                        <td><span style="background: linear-gradient(135deg, #66bb6a, #43a047); padding: 3px 10px; border-radius: 12px; font-size: 0.75rem;">Customer</span></td>
+                        <td><span style="background: linear-gradient(135deg, #66bb6a, #43a047); padding: 3px 10px; border-radius: 12px; font-size: 0.75rem;">Customer</span></td>
+                        <td><span style="background: linear-gradient(135deg, #66bb6a, #43a047); padding: 3px 10px; border-radius: 12px; font-size: 0.75rem;">Customer</span></td>
+                    </tr>
+                    <tr>
+                        <td>External Volume Configuration</td>
+                        <td><span style="background: linear-gradient(135deg, #66bb6a, #43a047); padding: 3px 10px; border-radius: 12px; font-size: 0.75rem;">Customer</span></td>
+                        <td><span style="background: linear-gradient(135deg, #ffa726, #f57c00); padding: 3px 10px; border-radius: 12px; font-size: 0.75rem;">Optional</span></td>
+                        <td><span style="background: linear-gradient(135deg, #ffa726, #f57c00); padding: 3px 10px; border-radius: 12px; font-size: 0.75rem;">Optional</span></td>
+                    </tr>
+                    <tr>
+                        <td>IAM Roles & Trust Policies</td>
+                        <td><span style="background: linear-gradient(135deg, #66bb6a, #43a047); padding: 3px 10px; border-radius: 12px; font-size: 0.75rem;">Customer</span></td>
+                        <td><span style="background: linear-gradient(135deg, #66bb6a, #43a047); padding: 3px 10px; border-radius: 12px; font-size: 0.75rem;">Customer</span></td>
+                        <td><span style="background: linear-gradient(135deg, #66bb6a, #43a047); padding: 3px 10px; border-radius: 12px; font-size: 0.75rem;">Customer</span></td>
+                    </tr>
+                    <tr>
+                        <td>Data Protection & Recovery</td>
+                        <td><span style="background: linear-gradient(135deg, #66bb6a, #43a047); padding: 3px 10px; border-radius: 12px; font-size: 0.75rem;">Customer</span></td>
+                        <td><span style="background: linear-gradient(135deg, #66bb6a, #43a047); padding: 3px 10px; border-radius: 12px; font-size: 0.75rem;">Customer</span></td>
+                        <td><span style="background: linear-gradient(135deg, #66bb6a, #43a047); padding: 3px 10px; border-radius: 12px; font-size: 0.75rem;">Customer</span></td>
+                    </tr>
+                    <tr>
+                        <td colspan="4" style="background: rgba(255,255,255,0.03); color: #29b5f6; font-weight: 600; padding: 12px 10px;">Catalog & Metadata</td>
+                    </tr>
+                    <tr>
+                        <td>Catalog Management</td>
+                        <td><span style="background: linear-gradient(135deg, #29b5f6, #0288d1); padding: 3px 10px; border-radius: 12px; font-size: 0.75rem;">Snowflake</span></td>
+                        <td><span style="background: linear-gradient(135deg, #66bb6a, #43a047); padding: 3px 10px; border-radius: 12px; font-size: 0.75rem;">Customer</span></td>
+                        <td><span style="background: linear-gradient(135deg, #66bb6a, #43a047); padding: 3px 10px; border-radius: 12px; font-size: 0.75rem;">Customer</span></td>
+                    </tr>
+                    <tr>
+                        <td>Metadata Pointer Updates</td>
+                        <td><span style="background: linear-gradient(135deg, #29b5f6, #0288d1); padding: 3px 10px; border-radius: 12px; font-size: 0.75rem;">Snowflake</span></td>
+                        <td><span style="background: linear-gradient(135deg, #66bb6a, #43a047); padding: 3px 10px; border-radius: 12px; font-size: 0.75rem;">Customer</span></td>
+                        <td><span style="background: linear-gradient(135deg, #ffa726, #f57c00); padding: 3px 10px; border-radius: 12px; font-size: 0.75rem;">Shared</span></td>
+                    </tr>
+                    <tr>
+                        <td>Schema Evolution</td>
+                        <td><span style="background: linear-gradient(135deg, #29b5f6, #0288d1); padding: 3px 10px; border-radius: 12px; font-size: 0.75rem;">Snowflake</span></td>
+                        <td><span style="background: linear-gradient(135deg, #66bb6a, #43a047); padding: 3px 10px; border-radius: 12px; font-size: 0.75rem;">Customer</span></td>
+                        <td><span style="background: linear-gradient(135deg, #66bb6a, #43a047); padding: 3px 10px; border-radius: 12px; font-size: 0.75rem;">Customer</span></td>
+                    </tr>
+                    <tr>
+                        <td>Table Discovery & Sync</td>
+                        <td><span style="color: #8892b0; font-size: 0.75rem; border: 1px dashed #8892b0; padding: 3px 10px; border-radius: 12px;">N/A</span></td>
+                        <td><span style="background: linear-gradient(135deg, #66bb6a, #43a047); padding: 3px 10px; border-radius: 12px; font-size: 0.75rem;">Customer</span></td>
+                        <td><span style="background: linear-gradient(135deg, #29b5f6, #0288d1); padding: 3px 10px; border-radius: 12px; font-size: 0.75rem;">Snowflake</span></td>
+                    </tr>
+                    <tr>
+                        <td colspan="4" style="background: rgba(255,255,255,0.03); color: #29b5f6; font-weight: 600; padding: 12px 10px;">Table Optimization & Maintenance</td>
+                    </tr>
+                    <tr>
+                        <td>Data Compaction</td>
+                        <td><span style="background: linear-gradient(135deg, #29b5f6, #0288d1); padding: 3px 10px; border-radius: 12px; font-size: 0.75rem;">Snowflake</span></td>
+                        <td><span style="background: linear-gradient(135deg, #66bb6a, #43a047); padding: 3px 10px; border-radius: 12px; font-size: 0.75rem;">Customer</span></td>
+                        <td><span style="background: linear-gradient(135deg, #66bb6a, #43a047); padding: 3px 10px; border-radius: 12px; font-size: 0.75rem;">Customer</span></td>
+                    </tr>
+                    <tr>
+                        <td>Manifest Compaction</td>
+                        <td><span style="background: linear-gradient(135deg, #29b5f6, #0288d1); padding: 3px 10px; border-radius: 12px; font-size: 0.75rem;">Snowflake</span></td>
+                        <td><span style="background: linear-gradient(135deg, #66bb6a, #43a047); padding: 3px 10px; border-radius: 12px; font-size: 0.75rem;">Customer</span></td>
+                        <td><span style="background: linear-gradient(135deg, #66bb6a, #43a047); padding: 3px 10px; border-radius: 12px; font-size: 0.75rem;">Customer</span></td>
+                    </tr>
+                    <tr>
+                        <td>Snapshot Expiration</td>
+                        <td><span style="background: linear-gradient(135deg, #29b5f6, #0288d1); padding: 3px 10px; border-radius: 12px; font-size: 0.75rem;">Snowflake</span></td>
+                        <td><span style="background: linear-gradient(135deg, #66bb6a, #43a047); padding: 3px 10px; border-radius: 12px; font-size: 0.75rem;">Customer</span></td>
+                        <td><span style="background: linear-gradient(135deg, #66bb6a, #43a047); padding: 3px 10px; border-radius: 12px; font-size: 0.75rem;">Customer</span></td>
+                    </tr>
+                    <tr>
+                        <td>Orphan File Cleanup</td>
+                        <td><span style="background: linear-gradient(135deg, #ffa726, #f57c00); padding: 3px 10px; border-radius: 12px; font-size: 0.75rem;">Contact Support</span></td>
+                        <td><span style="background: linear-gradient(135deg, #66bb6a, #43a047); padding: 3px 10px; border-radius: 12px; font-size: 0.75rem;">Customer</span></td>
+                        <td><span style="background: linear-gradient(135deg, #66bb6a, #43a047); padding: 3px 10px; border-radius: 12px; font-size: 0.75rem;">Customer</span></td>
+                    </tr>
+                    <tr>
+                        <td>Automatic Clustering</td>
+                        <td><span style="background: linear-gradient(135deg, #29b5f6, #0288d1); padding: 3px 10px; border-radius: 12px; font-size: 0.75rem;">Snowflake</span></td>
+                        <td><span style="color: #8892b0; font-size: 0.75rem; border: 1px dashed #8892b0; padding: 3px 10px; border-radius: 12px;">N/A</span></td>
+                        <td><span style="color: #8892b0; font-size: 0.75rem; border: 1px dashed #8892b0; padding: 3px 10px; border-radius: 12px;">N/A</span></td>
+                    </tr>
+                    <tr>
+                        <td colspan="4" style="background: rgba(255,255,255,0.03); color: #29b5f6; font-weight: 600; padding: 12px 10px;">Data Refresh & Sync</td>
+                    </tr>
+                    <tr>
+                        <td>Auto-Refresh from External</td>
+                        <td><span style="color: #8892b0; font-size: 0.75rem; border: 1px dashed #8892b0; padding: 3px 10px; border-radius: 12px;">N/A</span></td>
+                        <td><span style="background: linear-gradient(135deg, #29b5f6, #0288d1); padding: 3px 10px; border-radius: 12px; font-size: 0.75rem;">Snowflake</span></td>
+                        <td><span style="background: linear-gradient(135deg, #29b5f6, #0288d1); padding: 3px 10px; border-radius: 12px; font-size: 0.75rem;">Snowflake</span></td>
+                    </tr>
+                    <tr>
+                        <td>Manual Refresh Trigger</td>
+                        <td><span style="color: #8892b0; font-size: 0.75rem; border: 1px dashed #8892b0; padding: 3px 10px; border-radius: 12px;">N/A</span></td>
+                        <td><span style="background: linear-gradient(135deg, #66bb6a, #43a047); padding: 3px 10px; border-radius: 12px; font-size: 0.75rem;">Customer</span></td>
+                        <td><span style="background: linear-gradient(135deg, #66bb6a, #43a047); padding: 3px 10px; border-radius: 12px; font-size: 0.75rem;">Customer</span></td>
+                    </tr>
+                    <tr>
+                        <td>Time Travel & Retention</td>
+                        <td><span style="background: linear-gradient(135deg, #ffa726, #f57c00); padding: 3px 10px; border-radius: 12px; font-size: 0.75rem;">Configurable</span></td>
+                        <td><span style="background: linear-gradient(135deg, #66bb6a, #43a047); padding: 3px 10px; border-radius: 12px; font-size: 0.75rem;">Customer</span></td>
+                        <td><span style="background: linear-gradient(135deg, #66bb6a, #43a047); padding: 3px 10px; border-radius: 12px; font-size: 0.75rem;">Customer</span></td>
+                    </tr>
+                    <tr>
+                        <td colspan="4" style="background: rgba(255,255,255,0.03); color: #29b5f6; font-weight: 600; padding: 12px 10px;">Access & Security</td>
+                    </tr>
+                    <tr>
+                        <td>Query Compute</td>
+                        <td><span style="background: linear-gradient(135deg, #29b5f6, #0288d1); padding: 3px 10px; border-radius: 12px; font-size: 0.75rem;">Snowflake</span></td>
+                        <td><span style="background: linear-gradient(135deg, #29b5f6, #0288d1); padding: 3px 10px; border-radius: 12px; font-size: 0.75rem;">Snowflake</span></td>
+                        <td><span style="background: linear-gradient(135deg, #29b5f6, #0288d1); padding: 3px 10px; border-radius: 12px; font-size: 0.75rem;">Snowflake</span></td>
+                    </tr>
+                    <tr>
+                        <td>Access Control (RBAC)</td>
+                        <td><span style="background: linear-gradient(135deg, #29b5f6, #0288d1); padding: 3px 10px; border-radius: 12px; font-size: 0.75rem;">Snowflake</span></td>
+                        <td><span style="background: linear-gradient(135deg, #29b5f6, #0288d1); padding: 3px 10px; border-radius: 12px; font-size: 0.75rem;">Snowflake</span></td>
+                        <td><span style="background: linear-gradient(135deg, #29b5f6, #0288d1); padding: 3px 10px; border-radius: 12px; font-size: 0.75rem;">Snowflake</span></td>
+                    </tr>
+                    <tr>
+                        <td>Data Masking & Row Policies</td>
+                        <td><span style="background: linear-gradient(135deg, #29b5f6, #0288d1); padding: 3px 10px; border-radius: 12px; font-size: 0.75rem;">Snowflake</span></td>
+                        <td><span style="background: linear-gradient(135deg, #29b5f6, #0288d1); padding: 3px 10px; border-radius: 12px; font-size: 0.75rem;">Snowflake</span></td>
+                        <td><span style="background: linear-gradient(135deg, #29b5f6, #0288d1); padding: 3px 10px; border-radius: 12px; font-size: 0.75rem;">Snowflake</span></td>
+                    </tr>
+                    <tr>
+                        <td>External Catalog Access Control</td>
+                        <td><span style="color: #8892b0; font-size: 0.75rem; border: 1px dashed #8892b0; padding: 3px 10px; border-radius: 12px;">N/A</span></td>
+                        <td><span style="background: linear-gradient(135deg, #66bb6a, #43a047); padding: 3px 10px; border-radius: 12px; font-size: 0.75rem;">Customer</span></td>
+                        <td><span style="background: linear-gradient(135deg, #66bb6a, #43a047); padding: 3px 10px; border-radius: 12px; font-size: 0.75rem;">Customer</span></td>
+                    </tr>
+                </table>
+            </div>
+
+            <div class="card full-width" style="border-color: #ffa726; background: rgba(255, 167, 38, 0.08);">
+                <div class="card-header">
+                    <div class="icon orange">&#128176;</div>
+                    <h2>Cost Implications</h2>
+                </div>
+                <p>Understanding billing differences between Snowflake-managed and externally managed Iceberg tables</p>
+                
+                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-top: 20px;">
+                    <div style="background: rgba(255,255,255,0.05); padding: 15px; border-radius: 10px;">
+                        <h4 style="color: #66bb6a; margin-bottom: 10px;">Storage Costs</h4>
+                        <ul style="list-style: none; padding: 0; font-size: 0.85rem; color: #a8b2d1;">
+                            <li style="padding: 5px 0;">&#10004; Snowflake does NOT bill for storage</li>
+                            <li style="padding: 5px 0;">&#10004; Cloud provider bills directly</li>
+                            <li style="padding: 5px 0;">&#9888; Cross-region = egress costs</li>
+                        </ul>
+                    </div>
+                    <div style="background: rgba(255,255,255,0.05); padding: 15px; border-radius: 10px;">
+                        <h4 style="color: #29b5f6; margin-bottom: 10px;">Compute Costs</h4>
+                        <ul style="list-style: none; padding: 0; font-size: 0.85rem; color: #a8b2d1;">
+                            <li style="padding: 5px 0;">&#10004; Standard warehouse credits</li>
+                            <li style="padding: 5px 0;">&#10004; Same for both table types</li>
+                            <li style="padding: 5px 0;">&#10004; Billed on warehouse usage</li>
+                        </ul>
+                    </div>
+                    <div style="background: rgba(255,255,255,0.05); padding: 15px; border-radius: 10px;">
+                        <h4 style="color: #ec407a; margin-bottom: 10px;">Additional Costs</h4>
+                        <ul style="list-style: none; padding: 0; font-size: 0.85rem; color: #a8b2d1;">
+                            <li style="padding: 5px 0;">Horizon API: 0.5 credit/M calls</li>
+                            <li style="padding: 5px 0;">Private connectivity charges</li>
+                            <li style="padding: 5px 0;">CLD: Cloud services compute</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <h4 class="section-title" style="margin-top: 25px;">Optimization & Maintenance Costs</h4>
+                <table class="comparison-table">
+                    <tr>
+                        <th>Feature</th>
+                        <th>Snowflake-Managed</th>
+                        <th>Externally Managed</th>
+                        <th>Billing Start</th>
+                    </tr>
+                    <tr>
+                        <td>Data Compaction</td>
+                        <td><span class="check">&#10004;</span> Billed (enabled by default)</td>
+                        <td><span class="cross">&#10008;</span> You manage externally</td>
+                        <td>Oct 20, 2025</td>
+                    </tr>
+                    <tr>
+                        <td>Automatic Clustering</td>
+                        <td><span class="check">&#10004;</span> Billed (disabled by default)</td>
+                        <td><span class="cross">&#10008;</span> Not available</td>
+                        <td>Standalone feature</td>
+                    </tr>
+                    <tr>
+                        <td>Manifest Compaction</td>
+                        <td><span style="color: #66bb6a;">FREE</span> (auto, cannot disable)</td>
+                        <td><span class="cross">&#10008;</span> Not available</td>
+                        <td>-</td>
+                    </tr>
+                    <tr>
+                        <td>Snapshot Expiry</td>
+                        <td><span style="color: #66bb6a;">FREE</span> (auto, cannot disable)</td>
+                        <td><span class="cross">&#10008;</span> You manage externally</td>
+                        <td>-</td>
+                    </tr>
+                    <tr>
+                        <td>CLD Auto-Discovery</td>
+                        <td>-</td>
+                        <td>Cloud Services compute</td>
+                        <td>Dec 15, 2025</td>
+                    </tr>
+                </table>
+
+                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; margin-top: 25px;">
+                    <div style="background: linear-gradient(135deg, rgba(41, 181, 246, 0.15), rgba(41, 181, 246, 0.05)); padding: 20px; border-radius: 12px; border: 1px solid rgba(41, 181, 246, 0.3);">
+                        <h4 style="color: #29b5f6; margin-bottom: 10px; display: flex; align-items: center; gap: 8px;">
+                            <span style="font-size: 1.2rem;">&#9881;</span> Snowflake-Managed
+                        </h4>
+                        <p style="font-size: 0.9rem; color: #ccd6f6; margin: 0;">
+                            <strong>Higher operational convenience</strong><br>
+                            <span style="color: #a8b2d1;">Automatic maintenance with optimization billing. Best for teams wanting managed infrastructure.</span>
+                        </p>
+                        <div style="margin-top: 10px; font-size: 0.8rem; color: #8892b0;">
+                            Track costs: <code style="color: #4dd0e1;">ICEBERG_STORAGE_OPTIMIZATION_HISTORY</code>
+                        </div>
+                    </div>
+                    <div style="background: linear-gradient(135deg, rgba(102, 187, 106, 0.15), rgba(102, 187, 106, 0.05)); padding: 20px; border-radius: 12px; border: 1px solid rgba(102, 187, 106, 0.3);">
+                        <h4 style="color: #66bb6a; margin-bottom: 10px; display: flex; align-items: center; gap: 8px;">
+                            <span style="font-size: 1.2rem;">&#128279;</span> Externally Managed
+                        </h4>
+                        <p style="font-size: 0.9rem; color: #ccd6f6; margin: 0;">
+                            <strong>Lower Snowflake costs, more control</strong><br>
+                            <span style="color: #a8b2d1;">No automatic optimization billing. Best if you have existing catalog infrastructure.</span>
+                        </p>
+                        <div style="margin-top: 10px; font-size: 0.8rem; color: #8892b0;">
+                            You manage: snapshots, metadata, compaction
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <p class="footer">
+            Snowflake Iceberg Tables | Supports Apache Iceberg V1, V2, and V3 (Preview) | Apache Parquet Format<br>
+            <a href="https://docs.snowflake.com/en/user-guide/tables-iceberg" style="color: #29b5f6;">docs.snowflake.com/en/user-guide/tables-iceberg</a>
+        </p>
+    </div>
+</body>
+</html>
