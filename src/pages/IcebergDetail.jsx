@@ -10,6 +10,56 @@ function LinkIcon({ size = 14 }) {
   );
 }
 
+function ImageTooltip({ src, alt, children }) {
+  const [visible, setVisible] = useState(false);
+  return (
+    <span
+      style={{ position: 'relative', display: 'inline' }}
+      onMouseEnter={() => setVisible(true)}
+      onMouseLeave={() => setVisible(false)}
+    >
+      {children}
+      {visible && (
+        <span style={{
+          position: 'absolute',
+          bottom: '130%',
+          left: '50%',
+          transform: 'translateX(-50%)',
+          zIndex: 100,
+          pointerEvents: 'none',
+          display: 'block',
+          width: 480,
+          borderRadius: 10,
+          overflow: 'hidden',
+          boxShadow: '0 8px 32px rgba(0,0,0,0.25)',
+          border: '1.5px solid #e2e8f0',
+          background: 'white',
+        }}>
+          <img src={src} alt={alt} style={{ width: '100%', display: 'block' }} />
+          <span style={{
+            position: 'absolute',
+            bottom: 0, left: 0, right: 0,
+            padding: '6px 10px',
+            fontSize: 11, color: '#94a3b8',
+            background: '#f8fafc',
+            borderTop: '1px solid #e2e8f0',
+            display: 'block',
+          }}>{alt}</span>
+          <span style={{
+            position: 'absolute',
+            top: '100%',
+            left: '50%',
+            transform: 'translateX(-50%)',
+            borderWidth: '6px',
+            borderStyle: 'solid',
+            borderColor: '#e2e8f0 transparent transparent transparent',
+          }} />
+        </span>
+      )}
+    </span>
+  );
+}
+
 function ParquetFileIcon() {
   return (
     <svg width="40" height="48" viewBox="0 0 36 44" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -40,57 +90,8 @@ function SnowflakeIcon({ size = 18 }) {
   );
 }
 
-function SpecModal({ onClose }) {
-  const screenshotUrl = 'https://image.thum.io/get/width/960/crop/900/https://iceberg.apache.org/spec/';
-  return (
-    <div
-      onClick={onClose}
-      style={{
-        position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.55)',
-        display: 'flex', alignItems: 'center', justifyContent: 'center',
-        zIndex: 200, padding: 24,
-      }}
-    >
-      <div
-        onClick={e => e.stopPropagation()}
-        style={{
-          background: 'white', borderRadius: 14, overflow: 'hidden',
-          width: '90vw', maxWidth: 980, maxHeight: '88vh',
-          display: 'flex', flexDirection: 'column',
-          boxShadow: '0 24px 60px rgba(0,0,0,0.3)',
-        }}
-      >
-        <div style={{
-          display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-          padding: '12px 16px', borderBottom: '1px solid #e2e8f0', background: '#f8fafc', flexShrink: 0,
-        }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-            <span style={{ fontSize: 14, fontWeight: 700, color: '#1e293b' }}>Iceberg Table Spec — Overview</span>
-            <a href="https://iceberg.apache.org/spec/#overview" target="_blank" rel="noreferrer" style={{ color: '#29B5E8', display: 'inline-flex', alignItems: 'center' }}>
-              <LinkIcon size={15} />
-            </a>
-          </div>
-          <button onClick={onClose} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: 22, color: '#64748b', lineHeight: 1 }}>×</button>
-        </div>
-        <div style={{ overflowY: 'auto', flex: 1 }}>
-          <img
-            src={screenshotUrl}
-            alt="Iceberg Table Spec Overview"
-            style={{ width: '100%', display: 'block' }}
-          />
-        </div>
-        <div style={{ padding: '10px 16px', borderTop: '1px solid #e2e8f0', background: '#f8fafc', flexShrink: 0 }}>
-          <a href="https://iceberg.apache.org/spec/#overview" target="_blank" rel="noreferrer" style={{ fontSize: 13, color: '#29B5E8', display: 'inline-flex', alignItems: 'center' }}>
-            Open full spec <LinkIcon size={13} />
-          </a>
-        </div>
-      </div>
-    </div>
-  );
-}
 
 export default function IcebergDetail() {
-  const [showSpec, setShowSpec] = useState(false);
 
   return (
     <div>
@@ -99,7 +100,7 @@ export default function IcebergDetail() {
         Apache Iceberg is an open table format for large analytic datasets. Snowflake supports Iceberg tables backed by cloud object storage.
       </p>
 
-      <div style={{ display: 'flex', gap: 16, alignItems: 'flex-start', maxWidth: 1200 }}>
+      <div style={{ display: 'flex', gap: 16, alignItems: 'flex-start', maxWidth: 780 }}>
 
         {/* LEFT: Catalog definition */}
         <div style={{
@@ -231,17 +232,18 @@ export default function IcebergDetail() {
               <span style={{ color: '#29B5E8', fontWeight: 700, flexShrink: 0 }}>•</span>
               <span>
                 Structured off the{' '}
-                <button
-                  onClick={() => setShowSpec(true)}
-                  style={{
-                    background: 'none', border: 'none', padding: 0, cursor: 'pointer',
-                    color: '#29B5E8', fontWeight: 600, fontSize: 13,
-                    display: 'inline-flex', alignItems: 'center',
-                    textDecoration: 'underline',
-                  }}
-                >
-                  Iceberg Table Spec <LinkIcon size={13} />
-                </button>
+                <ImageTooltip src="/snowflake-field-guide/iceberg-spec.png" alt="Iceberg Table Spec">
+                  <button
+                    style={{
+                      background: 'none', border: 'none', padding: 0, cursor: 'pointer',
+                      color: '#29B5E8', fontWeight: 600, fontSize: 13,
+                      display: 'inline-flex', alignItems: 'center',
+                      textDecoration: 'underline',
+                    }}
+                  >
+                    Iceberg Table Spec <LinkIcon size={13} />
+                  </button>
+                </ImageTooltip>
               </span>
             </div>
 
@@ -286,31 +288,8 @@ export default function IcebergDetail() {
           </div>
         </div>
 
-        {/* RIGHT: Iceberg Spec screenshot */}
-        <div style={{ width: 320, flexShrink: 0 }}>
-          <div style={{ fontSize: 13, fontWeight: 700, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 10 }}>
-            Iceberg Table Spec
-          </div>
-          <a
-            href="https://iceberg.apache.org/spec/#overview"
-            target="_blank"
-            rel="noreferrer"
-            style={{ display: 'block', borderRadius: 10, overflow: 'hidden', border: '1.5px solid #e2e8f0', boxShadow: '0 2px 12px rgba(0,0,0,0.08)' }}
-          >
-            <img
-              src="https://image.thum.io/get/width/640/crop/900/https://iceberg.apache.org/spec/"
-              alt="Iceberg Table Spec"
-              style={{ width: '100%', display: 'block' }}
-            />
-          </a>
-          <div style={{ fontSize: 12, color: '#94a3b8', marginTop: 8, textAlign: 'center' }}>
-            Click to open full spec
-          </div>
-        </div>
-
       </div>
 
-      {showSpec && <SpecModal onClose={() => setShowSpec(false)} />}
     </div>
   );
 }
