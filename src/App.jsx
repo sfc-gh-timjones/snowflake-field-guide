@@ -36,7 +36,7 @@ export default function App() {
         <span style={{ fontWeight: 700, fontSize: 15, color: '#1e293b' }}>Snowflake Field Guide</span>
       </header>
 
-      <main style={{ maxWidth: 800, margin: '0 auto', padding: '16px 32px 48px' }}>
+      <main style={{ padding: '16px 40px 48px' }}>
         <Breadcrumb items={BREADCRUMBS[page]} onNavigate={setPage} />
         <PageComponent onNavigate={setPage} />
       </main>
