@@ -146,11 +146,15 @@ export default function IcebergDetail() {
               <ul style={{ paddingLeft: 0, listStyle: 'none', display: 'flex', flexDirection: 'column', gap: 6 }}>
                 <li style={{ display: 'flex', gap: 7, fontSize: 13, color: '#475569', lineHeight: 1.5 }}>
                   <span style={{ color: '#29B5E8', fontWeight: 700, flexShrink: 0 }}>•</span>
-                  <span><span style={{ fontWeight: 600 }}>Snowflake</span> as the catalog</span>
+                  <span>
+                    <a href="https://docs.snowflake.com/en/user-guide/tables-iceberg#label-tables-iceberg-snowflake-as-catalog" target="_blank" rel="noreferrer" style={{ fontWeight: 600, color: '#29B5E8', textDecoration: 'none', display: 'inline-flex', alignItems: 'center' }} onMouseEnter={e => e.currentTarget.style.textDecoration = 'underline'} onMouseLeave={e => e.currentTarget.style.textDecoration = 'none'}>Snowflake<LinkIcon size={12} /></a> as the catalog
+                  </span>
                 </li>
                 <li style={{ display: 'flex', gap: 7, fontSize: 13, color: '#475569', lineHeight: 1.5 }}>
                   <span style={{ color: '#29B5E8', fontWeight: 700, flexShrink: 0 }}>•</span>
-                  <span><span style={{ fontWeight: 600 }}>External catalog</span> (e.g. AWS Glue, Polaris, Nessie)</span>
+                  <span>
+                    <a href="https://docs.snowflake.com/en/user-guide/tables-iceberg#use-an-external-catalog" target="_blank" rel="noreferrer" style={{ fontWeight: 600, color: '#29B5E8', textDecoration: 'none', display: 'inline-flex', alignItems: 'center' }} onMouseEnter={e => e.currentTarget.style.textDecoration = 'underline'} onMouseLeave={e => e.currentTarget.style.textDecoration = 'none'}>External catalog<LinkIcon size={12} /></a> (e.g. AWS Glue, Polaris, Nessie)
+                  </span>
                 </li>
               </ul>
             </div>
