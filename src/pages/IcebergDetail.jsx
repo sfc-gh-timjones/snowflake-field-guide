@@ -422,6 +422,9 @@ export default function IcebergDetail() {
                     Apache Parquet <LinkIcon size={15} />
                   </a>
                   <div style={{ fontSize: 13, color: '#64748b', marginTop: 3 }}>Data files — open-source columnar format</div>
+                  <div style={{ fontSize: 11, color: '#94a3b8', marginTop: 4, lineHeight: 1.5 }}>
+                    * Iceberg supports ORC and Avro, but Snowflake only supports Parquet. Snowflake will convert other formats to Parquet under the table's base location.
+                  </div>
                 </div>
               </div>
             </div>
