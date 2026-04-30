@@ -154,7 +154,7 @@ function FileChainModal({ onClose }) {
   );
 }
 
-
+export default function IcebergDetail() {
   const [showFileChain, setShowFileChain] = useState(false);
 
   return (
