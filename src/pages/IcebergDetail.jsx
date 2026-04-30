@@ -124,7 +124,7 @@ function FileChainModal({ onClose }) {
           <span style={{ fontSize: 14, fontWeight: 700, color: '#1e293b' }}>Iceberg File Reference Chain</span>
           <button onClick={onClose} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: 22, color: '#64748b', lineHeight: 1, padding: '0 4px' }}>×</button>
         </div>
-        <div style={{ padding: '20px 24px' }}>
+        <div style={{ padding: '20px 24px', overflowY: 'auto', maxHeight: '75vh' }}>
           {steps.map((step, i) => (
             <div key={i}>
               <div style={{ display: 'flex', alignItems: 'flex-start', gap: 12 }}>
@@ -148,6 +148,51 @@ function FileChainModal({ onClose }) {
               </div>
             </div>
           ))}
+
+          {/* Reuse section */}
+          <div style={{ borderTop: '1px solid #e2e8f0', marginTop: 20, paddingTop: 18 }}>
+            <div style={{ fontSize: 13, fontWeight: 700, color: '#1e293b', marginBottom: 14 }}>What gets reused vs. rewritten?</div>
+
+            <div style={{ marginBottom: 14 }}>
+              <div style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.07em', color: '#ef4444', marginBottom: 8 }}>Always new per snapshot</div>
+              {[
+                { file: 'metadata.json', desc: 'New file written for every snapshot; old ones kept until expired.' },
+                { file: 'manifest-list.avro', desc: 'Exactly one per snapshot — always a new file.' },
+                { file: 'Snapshot ID', desc: 'New record added to metadata.json with a new ID.', noCode: true },
+              ].map((item, i) => (
+                <div key={i} style={{ display: 'flex', gap: 8, fontSize: 12, color: '#475569', lineHeight: 1.5, marginBottom: 6 }}>
+                  <span style={{ color: '#ef4444', flexShrink: 0 }}>•</span>
+                  <span>
+                    {item.noCode
+                      ? <span style={{ fontWeight: 600 }}>{item.file}</span>
+                      : <code style={{ background: '#f1f5f9', padding: '1px 5px', borderRadius: 4, fontSize: 11 }}>{item.file}</code>
+                    }
+                    {' — '}{item.desc}
+                  </span>
+                </div>
+              ))}
+            </div>
+
+            <div>
+              <div style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.07em', color: '#16a34a', marginBottom: 8 }}>Can be reused across snapshots</div>
+              {[
+                { file: 'manifest.avro', desc: 'Reused if their data files are unchanged; only new partitions/changed files get new manifests.' },
+                { file: 'data.parquet', desc: 'Unchanged files are carried forward by reusing the same entries in manifests.' },
+              ].map((item, i) => (
+                <div key={i} style={{ display: 'flex', gap: 8, fontSize: 12, color: '#475569', lineHeight: 1.5, marginBottom: 6 }}>
+                  <span style={{ color: '#16a34a', flexShrink: 0 }}>•</span>
+                  <span>
+                    <code style={{ background: '#f1f5f9', padding: '1px 5px', borderRadius: 4, fontSize: 11 }}>{item.file}</code>
+                    {' — '}{item.desc}
+                  </span>
+                </div>
+              ))}
+            </div>
+
+            <div style={{ marginTop: 14, padding: '10px 14px', background: '#f8fafc', borderRadius: 8, border: '1px solid #e2e8f0', fontSize: 12, color: '#334155', lineHeight: 1.6 }}>
+              <span style={{ fontWeight: 700 }}>Every commit →</span> new <code style={{ background: '#e2e8f0', padding: '1px 4px', borderRadius: 3, fontSize: 11 }}>metadata.json</code> + new manifest list; manifests and data files are reused wherever possible.
+            </div>
+          </div>
         </div>
       </div>
     </div>
