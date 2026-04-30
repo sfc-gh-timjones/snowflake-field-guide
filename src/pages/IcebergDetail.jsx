@@ -310,7 +310,16 @@ export default function IcebergDetail() {
               border: '1.5px solid #29B5E860', borderRadius: 10,
               padding: '12px 16px', background: 'white',
             }}>
-              <div style={{ fontSize: 14, fontWeight: 700, color: '#0e7490', marginBottom: 8 }}>Catalog Options</div>
+              <div style={{ fontSize: 14, fontWeight: 700, color: '#0e7490', marginBottom: 8, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              Catalog Options
+              <button
+                onClick={() => onNavigate('iceberg-catalog')}
+                style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: 11, color: '#29B5E8', fontWeight: 600, display: 'flex', alignItems: 'center', gap: 3 }}
+              >
+                Explore
+                <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6h8M6 2l4 4-4 4" stroke="#29B5E8" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
+              </button>
+            </div>
               <ul style={{ paddingLeft: 0, listStyle: 'none', display: 'flex', flexDirection: 'column', gap: 6 }}>
                 <li style={{ display: 'flex', gap: 7, fontSize: 13, color: '#475569', lineHeight: 1.5 }}>
                   <span style={{ color: '#29B5E8', fontWeight: 700, flexShrink: 0 }}>•</span>

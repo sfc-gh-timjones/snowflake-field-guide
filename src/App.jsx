@@ -2,15 +2,18 @@ import { useState } from 'react';
 import Breadcrumb from './components/Breadcrumb';
 import Home from './pages/Home';
 import IcebergDetail from './pages/IcebergDetail';
+import CatalogOptions from './pages/CatalogOptions';
 
 const PAGES = {
   home: { label: 'Home', component: Home },
   iceberg: { label: 'Iceberg Tables', component: IcebergDetail },
+  'iceberg-catalog': { label: 'Catalog Options', component: CatalogOptions },
 };
 
 const BREADCRUMBS = {
   home: [{ label: 'Home', page: 'home' }],
   iceberg: [{ label: 'Home', page: 'home' }, { label: 'Iceberg Tables', page: 'iceberg' }],
+  'iceberg-catalog': [{ label: 'Home', page: 'home' }, { label: 'Iceberg Tables', page: 'iceberg' }, { label: 'Catalog Options', page: 'iceberg-catalog' }],
 };
 
 export default function App() {
