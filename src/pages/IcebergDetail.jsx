@@ -303,8 +303,8 @@ export default function IcebergDetail() {
                 n: '2',
                 actor: 'Catalog',
                 color: '#7C3AED',
-                text: 'Responds with the snapshot info:',
-                quote: 'Snapshot ID + path to the metadata file in storage',
+                text: 'Responds with the snapshot definition:',
+                quote: '(which includes the path to the metadata file in storage)',
               },
               {
                 n: '3',
