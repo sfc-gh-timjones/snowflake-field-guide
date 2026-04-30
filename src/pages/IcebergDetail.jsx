@@ -376,30 +376,9 @@ export default function IcebergDetail() {
 
             <div style={{ borderTop: '1px solid #e2e8f0', paddingTop: 16 }}>
               <div style={{ fontSize: 13, color: '#64748b', marginBottom: 12, fontWeight: 500 }}>Files stored:</div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
-                <div style={{ display: 'flex' }}>
-                  {[0, 1, 2].map(i => (
-                    <div key={i} style={{ marginLeft: i > 0 ? -10 : 0, opacity: 1 - i * 0.15 }}>
-                      <ParquetFileIcon />
-                    </div>
-                  ))}
-                </div>
-                <div>
-                  <a
-                    href="https://parquet.apache.org/"
-                    target="_blank" rel="noreferrer"
-                    style={{ fontSize: 16, fontWeight: 700, color: '#29B5E8', textDecoration: 'none', display: 'inline-flex', alignItems: 'center' }}
-                    onMouseEnter={e => e.currentTarget.style.textDecoration = 'underline'}
-                    onMouseLeave={e => e.currentTarget.style.textDecoration = 'none'}
-                  >
-                    Apache Parquet <LinkIcon size={15} />
-                  </a>
-                  <div style={{ fontSize: 13, color: '#64748b', marginTop: 3 }}>Data files — open-source columnar format</div>
-                </div>
-              </div>
               <div
                 onClick={() => setShowCombined(true)}
-                style={{ display: 'flex', alignItems: 'flex-start', gap: 10, marginTop: 14, cursor: 'pointer', borderRadius: 8, padding: '6px 8px', transition: 'background 0.15s' }}
+                style={{ display: 'flex', alignItems: 'flex-start', gap: 10, marginBottom: 14, cursor: 'pointer', borderRadius: 8, padding: '6px 8px', transition: 'background 0.15s' }}
                 onMouseEnter={e => e.currentTarget.style.background = '#f1f5f9'}
                 onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
               >
@@ -422,6 +401,27 @@ export default function IcebergDetail() {
                     <code style={{ background: '#f1f5f9', padding: '1px 5px', borderRadius: 4, fontSize: 11 }}>manifests</code>
                     {', etc.'}
                   </div>
+                </div>
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+                <div style={{ display: 'flex' }}>
+                  {[0, 1, 2].map(i => (
+                    <div key={i} style={{ marginLeft: i > 0 ? -10 : 0, opacity: 1 - i * 0.15 }}>
+                      <ParquetFileIcon />
+                    </div>
+                  ))}
+                </div>
+                <div>
+                  <a
+                    href="https://parquet.apache.org/"
+                    target="_blank" rel="noreferrer"
+                    style={{ fontSize: 16, fontWeight: 700, color: '#29B5E8', textDecoration: 'none', display: 'inline-flex', alignItems: 'center' }}
+                    onMouseEnter={e => e.currentTarget.style.textDecoration = 'underline'}
+                    onMouseLeave={e => e.currentTarget.style.textDecoration = 'none'}
+                  >
+                    Apache Parquet <LinkIcon size={15} />
+                  </a>
+                  <div style={{ fontSize: 13, color: '#64748b', marginTop: 3 }}>Data files — open-source columnar format</div>
                 </div>
               </div>
             </div>
