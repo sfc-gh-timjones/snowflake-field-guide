@@ -24,7 +24,7 @@ function ImageModal({ src, alt, onClose }) {
         onClick={e => e.stopPropagation()}
         style={{
           background: 'white', borderRadius: 14, overflow: 'hidden',
-          width: '90vw', maxWidth: 900, maxHeight: '88vh',
+          width: '90vw', maxWidth: 765, maxHeight: '88vh',
           display: 'flex', flexDirection: 'column',
           boxShadow: '0 24px 60px rgba(0,0,0,0.3)',
         }}
