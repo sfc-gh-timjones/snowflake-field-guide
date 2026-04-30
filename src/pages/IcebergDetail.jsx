@@ -150,8 +150,8 @@ function FileChainModal({ onClose }) {
                   </div>
                   <div style={{ fontSize: 12, color: '#64748b', lineHeight: 1.5, marginBottom: step.callout || step.relation ? 8 : 0 }}>{step.note}</div>
                   {step.callout && (
-                    <div style={{ fontSize: 12, color: '#92400e', background: '#fffbeb', border: '1px solid #fcd34d', borderRadius: 7, padding: '7px 10px', marginBottom: 8, lineHeight: 1.5 }}>
-                      ℹ️ {step.callout}
+                    <div style={{ fontSize: 12, color: '#64748b', lineHeight: 1.5, marginBottom: 8, fontStyle: 'italic' }}>
+                      {step.callout}
                     </div>
                   )}
                   {step.relation && (
