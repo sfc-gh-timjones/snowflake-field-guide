@@ -82,6 +82,7 @@ const SNAPSHOTS = [
     description: 'INSERT 2,000,000 rows — 4 Parquet files written',
     recordCount: 2000000, delta: '+2,000,000', deltaColor: '#16a34a',
     metadataFiles: [
+      { file: '00000-26833116', active: false },
       { file: '00001-53b570e8', active: true },
     ],
     manifestList: 'snap-4266675115824445705-abc519c1',
