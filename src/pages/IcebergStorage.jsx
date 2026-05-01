@@ -399,6 +399,7 @@ function SnapshotDiagram({ snap }) {
             newLines.push({ x1: startX, y1: mlPos.bottom, x2: mfPos.cx, y2: mfPos.top, direct: true });
           }
           const family = getFamily(m.files);
+          if (family) push(`mf-${m.file}`, `stack-${family}`, true);
         });
       }
       setLines(newLines);
@@ -472,40 +473,42 @@ function SnapshotDiagram({ snap }) {
                 </div>
 
                 {/* Manifest file columns + data stacks */}
-                <div style={{ fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', color: '#475569', marginBottom: 10 }}>— data layer —</div>
-                <div style={{ marginBottom: 10 }}>
-                  <div style={{ display: 'flex', justifyContent: 'center', gap: 16, flexWrap: 'wrap' }}>
-                    {[...reusedManifests, ...addedManifests].sort((a, b) => (MF_NUM[a.file] || 99) - (MF_NUM[b.file] || 99)).map((m, i) => {
-                      const family = getFamily(m.files);
-                      const isParquet = m.contentType === 0;
-                      const stackFiles = family ? (isParquet ? snap.activeParquet[family] : snap.activePuffin[family]) : null;
-                      return (
-                        <div key={i} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                          <div ref={setRef(`mf-${m.file}`)} style={{
-                            border: `2px solid #29B5E8`, background: '#f0fbff',
-                            borderRadius: 8, padding: '7px 10px', textAlign: 'center', minWidth: 110,
-                          }}>
-                            <div style={{ fontSize: 9, fontWeight: 700, color: '#64748b', textTransform: 'uppercase' }}>Manifest File {MF_NUM[m.file]}</div>
-                            <Tooltip text={m.file + '.avro'}><div style={{ fontSize: 11, fontFamily: "'Monaco','Consolas',monospace", color: '#1e293b', marginTop: 2 }}>{m.file}</div></Tooltip>
-                            <ManifestBadge type={m.type} contentType={m.contentType} />
-                            <div style={{ fontSize: 10, color: '#64748b', marginTop: 3 }}>{m.rows.toLocaleString()} rows</div>
-                            {m.note && <div style={{ fontSize: 9, color: '#64748b', marginTop: 2, fontStyle: 'italic' }}>{m.note}</div>}
-                          </div>
-                          {family && stackFiles && <>
-                            <div style={{ width: 2, height: 20, background: '#29B5E8' }} />
-                            <div ref={setRef(`stack-${family}`)} style={{
-                              border: `1.5px solid ${isParquet ? '#29B5E8' : '#7C3AED'}`,
-                              borderRadius: 10, padding: '10px 12px',
-                              background: isParquet ? '#f0fbff' : '#faf5ff',
-                              display: 'flex', flexDirection: 'column', alignItems: 'center',
-                            }}>
-                              <FileStack family={family} files={stackFiles} orphan={false} puffin={!isParquet} />
-                            </div>
-                          </>}
-                        </div>
-                      );
-                    })}
-                  </div>
+                {/* Manifest file boxes row */}
+                <div style={{ display: 'flex', justifyContent: 'center', gap: 16, flexWrap: 'wrap', marginBottom: 0 }}>
+                  {[...reusedManifests, ...addedManifests].sort((a, b) => (MF_NUM[a.file] || 99) - (MF_NUM[b.file] || 99)).map((m, i) => (
+                    <div key={i} ref={setRef(`mf-${m.file}`)} style={{
+                      border: `2px solid #29B5E8`, background: '#f0fbff',
+                      borderRadius: 8, padding: '7px 10px', textAlign: 'center', minWidth: 110,
+                    }}>
+                      <div style={{ fontSize: 9, fontWeight: 700, color: '#64748b', textTransform: 'uppercase' }}>Manifest File {MF_NUM[m.file]}</div>
+                      <Tooltip text={m.file + '.avro'}><div style={{ fontSize: 11, fontFamily: "'Monaco','Consolas',monospace", color: '#1e293b', marginTop: 2 }}>{m.file}</div></Tooltip>
+                      <ManifestBadge type={m.type} contentType={m.contentType} />
+                      <div style={{ fontSize: 10, color: '#64748b', marginTop: 3 }}>{m.rows.toLocaleString()} rows</div>
+                      {m.note && <div style={{ fontSize: 9, color: '#64748b', marginTop: 2, fontStyle: 'italic' }}>{m.note}</div>}
+                    </div>
+                  ))}
+                </div>
+
+                {/* Data layer separator */}
+                <div style={{ fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', color: '#475569', margin: '16px 0 10px' }}>— data layer —</div>
+
+                {/* Data stacks row */}
+                <div style={{ display: 'flex', justifyContent: 'center', gap: 16, flexWrap: 'wrap', marginBottom: 10 }}>
+                  {[...reusedManifests, ...addedManifests].sort((a, b) => (MF_NUM[a.file] || 99) - (MF_NUM[b.file] || 99)).map((m, i) => {
+                    const family = getFamily(m.files);
+                    const isParquet = m.contentType === 0;
+                    const stackFiles = family ? (isParquet ? snap.activeParquet[family] : snap.activePuffin[family]) : null;
+                    return family && stackFiles ? (
+                      <div key={i} ref={setRef(`stack-${family}`)} style={{
+                        border: `1.5px solid ${isParquet ? '#29B5E8' : '#7C3AED'}`,
+                        borderRadius: 10, padding: '10px 12px',
+                        background: isParquet ? '#f0fbff' : '#faf5ff',
+                        display: 'flex', flexDirection: 'column', alignItems: 'center',
+                      }}>
+                        <FileStack family={family} files={stackFiles} orphan={false} puffin={!isParquet} />
+                      </div>
+                    ) : <div key={i} />;
+                  })}
                 </div>
               </>
             ) : (
