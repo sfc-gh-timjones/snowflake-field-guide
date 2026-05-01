@@ -68,6 +68,7 @@ const SNAPSHOTS = [
     ],
     activeDataFiles: { gAaTscqC: ALL_PARQUET.gAaTscqC },
     orphanDataFiles: [],
+    orphanManifestLists: [],
   },
   {
     num: 2,
@@ -89,6 +90,7 @@ const SNAPSHOTS = [
     ],
     activeDataFiles: { IBaqKMuC: ALL_PARQUET.IBaqKMuC },
     orphanDataFiles: [{ family: 'gAaTscqC', files: ALL_PARQUET.gAaTscqC, reason: 'Replaced in Snap 2 overwrite' }],
+    orphanManifestLists: ['snap-683231059597613261-543776f0'],
   },
   {
     num: 3,
@@ -117,6 +119,7 @@ const SNAPSHOTS = [
       { family: 'gAaTscqC', files: ALL_PARQUET.gAaTscqC, reason: 'Replaced in Snap 2' },
       { family: 'IBaqKMuC (_002/_006/_008)', files: ['snow_ZID6-CpHlgY_IBaqKMuCqxg_0_1_002.parquet', 'snow_ZID6-CpHlgY_IBaqKMuCqxg_0_1_006.parquet', 'snow_ZID6-CpHlgY_IBaqKMuCqxg_0_1_008.parquet'], reason: 'Deleted rows rewritten in Snap 3' },
     ],
+    orphanManifestLists: ['snap-683231059597613261-543776f0', 'snap-3524853346065267316-cf092e73'],
   },
   {
     num: 4,
@@ -148,6 +151,7 @@ const SNAPSHOTS = [
       { family: 'gAaTscqC', files: ALL_PARQUET.gAaTscqC, reason: 'Replaced in Snap 2' },
       { family: 'IBaqKMuC (_002/_006/_008)', files: ['snow_ZID6-CpHlgY_IBaqKMuCqxg_0_1_002.parquet', 'snow_ZID6-CpHlgY_IBaqKMuCqxg_0_1_006.parquet', 'snow_ZID6-CpHlgY_IBaqKMuCqxg_0_1_008.parquet'], reason: 'Deleted in Snap 3' },
     ],
+    orphanManifestLists: ['snap-683231059597613261-543776f0', 'snap-3524853346065267316-cf092e73', 'snap-3153525453017687988-a062f65b'],
   },
   {
     num: 5,
@@ -179,6 +183,7 @@ const SNAPSHOTS = [
       { family: 'gETOXvSC', files: ALL_PARQUET.gETOXvSC, reason: 'Replaced in Snap 5' },
       { family: '3nh_u9eC', files: ALL_PARQUET['3nh_u9eC'], reason: 'Replaced in Snap 5' },
     ],
+    orphanManifestLists: ['snap-683231059597613261-543776f0', 'snap-3524853346065267316-cf092e73', 'snap-3153525453017687988-a062f65b', 'snap-6453267428948014672-4930b1b7'],
   },
   {
     num: 6,
@@ -210,6 +215,7 @@ const SNAPSHOTS = [
       { family: '3nh_u9eC', files: ALL_PARQUET['3nh_u9eC'], reason: 'Replaced in Snap 5' },
       { family: 'B7ompAGD', files: ALL_PARQUET.B7ompAGD, reason: 'Replaced in Snap 6 compaction' },
     ],
+    orphanManifestLists: ['snap-683231059597613261-543776f0', 'snap-3524853346065267316-cf092e73', 'snap-3153525453017687988-a062f65b', 'snap-6453267428948014672-4930b1b7', 'snap-8792066272258428054-91dc7cc2'],
   },
 ];
 
@@ -407,22 +413,46 @@ function SnapshotDiagram({ snap }) {
         ))}
       </div>
 
-      {/* Orphan files */}
-      {snap.orphanDataFiles.length > 0 && (
-        <div>
-          <div style={{ borderTop: '1.5px dashed #e2e8f0', paddingTop: 14, marginTop: 4 }}>
-            <div style={{ fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', color: '#cbd5e1', marginBottom: 10, textAlign: 'center' }}>
-              ⚠ orphan files in storage (not reachable from current snapshot)
-            </div>
-            <div style={{ display: 'flex', justifyContent: 'center', gap: 20, flexWrap: 'wrap' }}>
-              {snap.orphanDataFiles.map(o => (
-                <div key={o.family} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                  <DataFileStack family={o.family} files={o.files} orphan={true} />
-                  <div style={{ fontSize: 9, color: '#94a3b8', marginTop: 4, fontStyle: 'italic', textAlign: 'center', maxWidth: 120 }}>{o.reason}</div>
-                </div>
-              ))}
-            </div>
+      {/* Orphan section */}
+      {(snap.orphanManifestLists.length > 0 || snap.orphanDataFiles.length > 0) && (
+        <div style={{ borderTop: '1.5px dashed #e2e8f0', paddingTop: 14, marginTop: 4 }}>
+          <div style={{ fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', color: '#cbd5e1', marginBottom: 14, textAlign: 'center' }}>
+            ⚠ orphan files in storage (not reachable from current snapshot)
           </div>
+
+          {/* Orphan manifest lists */}
+          {snap.orphanManifestLists.length > 0 && (
+            <div style={{ marginBottom: 16 }}>
+              <div style={{ fontSize: 10, color: '#94a3b8', fontWeight: 600, textAlign: 'center', marginBottom: 8, textTransform: 'uppercase', letterSpacing: '0.07em' }}>Manifest Lists</div>
+              <div style={{ display: 'flex', justifyContent: 'center', gap: 10, flexWrap: 'wrap' }}>
+                {snap.orphanManifestLists.map(ml => (
+                  <Tooltip key={ml} text={ml + '.avro'}>
+                    <div style={{ border: '1.5px dashed #cbd5e1', background: '#f8fafc', borderRadius: 8, padding: '6px 12px', textAlign: 'center', opacity: 0.7 }}>
+                      <div style={{ fontSize: 9, fontWeight: 600, color: '#94a3b8', textTransform: 'uppercase', marginBottom: 2 }}>Manifest List</div>
+                      <div style={{ fontSize: 10, fontFamily: "'Monaco','Consolas',monospace", color: '#94a3b8' }}>
+                        {ml.replace('snap-', '').split('-').slice(0, 2).join('').slice(0, 10) + '…' + ml.slice(-8)}
+                      </div>
+                    </div>
+                  </Tooltip>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Orphan data files */}
+          {snap.orphanDataFiles.length > 0 && (
+            <div>
+              <div style={{ fontSize: 10, color: '#94a3b8', fontWeight: 600, textAlign: 'center', marginBottom: 8, textTransform: 'uppercase', letterSpacing: '0.07em' }}>Data Files</div>
+              <div style={{ display: 'flex', justifyContent: 'center', gap: 20, flexWrap: 'wrap' }}>
+                {snap.orphanDataFiles.map(o => (
+                  <div key={o.family} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                    <DataFileStack family={o.family} files={o.files} orphan={true} />
+                    <div style={{ fontSize: 9, color: '#94a3b8', marginTop: 4, fontStyle: 'italic', textAlign: 'center', maxWidth: 120 }}>{o.reason}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       )}
     </div>
