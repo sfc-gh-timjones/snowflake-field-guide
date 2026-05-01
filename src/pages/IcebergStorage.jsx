@@ -335,15 +335,15 @@ function RowLabel({ children }) {
   );
 }
 
-function bezier(x1, y1, x2, y2) {
+function bezier(x1, y1, x2, y2, direct = false) {
   const dy = y2 - y1;
   const dx = x2 - x1;
   const cp = Math.abs(dy) * 0.45;
-  if (dx < -100) {
+  if (!direct && dx < -100) {
     const swing = Math.abs(dx) * 0.55;
     return `M ${x1} ${y1} C ${x1 + swing} ${y1 + cp}, ${x2 + swing} ${y2 - cp}, ${x2} ${y2}`;
   }
-  if (dx > 100) {
+  if (!direct && dx > 100) {
     const swing = Math.abs(dx) * 0.55;
     return `M ${x1} ${y1} C ${x1 - swing} ${y1 + cp}, ${x2 - swing} ${y2 - cp}, ${x2} ${y2}`;
   }
@@ -396,7 +396,7 @@ function SnapshotDiagram({ snap }) {
           const mfPos = pos(`mf-${m.file}`);
           if (mlPos && mfPos) {
             const startX = Math.max(mlPos.cx - 70, Math.min(mlPos.cx + 70, mfPos.cx));
-            newLines.push({ x1: startX, y1: mlPos.bottom, x2: mfPos.cx, y2: mfPos.top });
+            newLines.push({ x1: startX, y1: mlPos.bottom, x2: mfPos.cx, y2: mfPos.top, direct: true });
           }
           const family = getFamily(m.files);
           if (family) push(`mf-${m.file}`, `stack-${family}`);
@@ -416,7 +416,7 @@ function SnapshotDiagram({ snap }) {
       {/* SVG overlay */}
       <svg style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: svgH || '100%', pointerEvents: 'none', overflow: 'visible', zIndex: 0 }}>
         {lines.map((l, i) => (
-          <path key={i} d={bezier(l.x1, l.y1, l.x2, l.y2)}
+          <path key={i} d={bezier(l.x1, l.y1, l.x2, l.y2, l.direct)}
             fill="none" stroke="#29B5E8" strokeWidth="1.5" strokeOpacity="0.5" />
         ))}
       </svg>
