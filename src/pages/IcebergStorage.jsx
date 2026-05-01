@@ -312,7 +312,7 @@ function JsonNode({ label, value, depth = 0 }) {
   return (
     <div style={{ paddingLeft: indent }}>
       <div onClick={() => setOpen(o => !o)} style={{ cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6, fontSize: 12, lineHeight: 1.7, fontFamily: 'Monaco,Consolas,monospace', userSelect: 'none' }}>
-        <span style={{ color: '#29B5E8', fontSize: 16, width: 16, display: 'inline-block', textAlign: 'center' }}>{open ? '▾' : '▸'}</span>
+        <span style={{ color: '#29B5E8', fontSize: 20, width: 20, display: 'inline-block', textAlign: 'center' }}>{open ? '▾' : '▸'}</span>
         {label && <span style={{ color: '#7c3aed', fontWeight: 600 }}>{label}: </span>}
         <span style={{ color: '#475569' }}>{open ? (isArr ? '[' : '{') : <span>{isArr ? '[' : '{'}<span style={{ color: '#94a3b8', fontSize: 11 }}> {preview} </span>{isArr ? ']' : '}'}</span>}</span>}
       </div>
