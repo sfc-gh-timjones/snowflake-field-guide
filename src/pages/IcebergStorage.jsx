@@ -289,7 +289,7 @@ function ManifestTypeBadge({ type }) {
     deleted: { background: '#ef5350', color: 'white' },
     existing: { background: '#f97316', color: 'white' },
   };
-  const labels = { added: 'ADDED', deleted: 'DELETED', existing: 'EXISTING' };
+  const labels = { added: 'ADDED', deleted: 'REMOVES ROWS', existing: 'EXISTING' };
   return (
     <span style={{ ...styles[type], fontSize: 9, padding: '1px 6px', borderRadius: 8, fontWeight: 700, display: 'block', marginTop: 3 }}>
       {labels[type]}
@@ -365,16 +365,35 @@ function SnapshotDiagram({ snap }) {
       </div>
       <Arrow />
 
-      {/* Manifest List */}
-      <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 4 }}>
-        <div style={{ border: '2px solid #29B5E8', background: '#f0fbff', borderRadius: 8, padding: '8px 16px', textAlign: 'center' }}>
-          <div style={{ fontSize: 10, fontWeight: 700, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 3 }}>Manifest List</div>
-          <Tooltip text={snap.manifestList + '.avro'}>
-            <div style={{ fontSize: 11, fontFamily: "'Monaco','Consolas',monospace", color: '#0e7490' }}>
-              {snap.manifestList.replace('snap-', 'snap-').split('-').slice(0, 3).join('-') + '…' + snap.manifestList.slice(-8)}
-            </div>
-          </Tooltip>
+      {/* Manifest List row — active + orphan manifest lists side by side */}
+      <div style={{ display: 'flex', gap: 0, alignItems: 'flex-start', marginBottom: 4 }}>
+        <div style={{ flex: 1, display: 'flex', justifyContent: 'center' }}>
+          <div style={{ border: '2px solid #29B5E8', background: '#f0fbff', borderRadius: 8, padding: '8px 16px', textAlign: 'center' }}>
+            <div style={{ fontSize: 10, fontWeight: 700, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 3 }}>Manifest List</div>
+            <Tooltip text={snap.manifestList + '.avro'}>
+              <div style={{ fontSize: 11, fontFamily: "'Monaco','Consolas',monospace", color: '#0e7490' }}>
+                {snap.manifestList.split('-').slice(0, 3).join('-') + '…' + snap.manifestList.slice(-8)}
+              </div>
+            </Tooltip>
+          </div>
         </div>
+        {snap.orphanManifestLists.length > 0 && (
+          <div style={{ borderLeft: '1.5px dashed #e2e8f0', paddingLeft: 16, display: 'flex', flexDirection: 'column', gap: 4, minWidth: 0 }}>
+            <div style={{ fontSize: 9, fontWeight: 700, color: '#cbd5e1', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 2 }}>Orphan Manifest Lists</div>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+              {snap.orphanManifestLists.map(ml => (
+                <Tooltip key={ml} text={ml + '.avro'}>
+                  <div style={{ border: '1.5px dashed #cbd5e1', background: '#f8fafc', borderRadius: 7, padding: '5px 10px', textAlign: 'center', opacity: 0.7 }}>
+                    <div style={{ fontSize: 9, fontWeight: 600, color: '#94a3b8', textTransform: 'uppercase', marginBottom: 1 }}>Manifest List</div>
+                    <div style={{ fontSize: 10, fontFamily: "'Monaco','Consolas',monospace", color: '#94a3b8' }}>
+                      snap-{ml.replace('snap-', '').slice(0, 6)}…{ml.slice(-8)}
+                    </div>
+                  </div>
+                </Tooltip>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
       <Arrow />
 
@@ -406,55 +425,27 @@ function SnapshotDiagram({ snap }) {
         — data layer —
       </div>
 
-      {/* Active data files */}
-      <div style={{ display: 'flex', justifyContent: 'center', gap: 20, flexWrap: 'wrap', marginBottom: 20 }}>
-        {Object.entries(snap.activeDataFiles).map(([family, files]) => (
-          <DataFileStack key={family} family={family} files={files} orphan={false} />
-        ))}
-      </div>
-
-      {/* Orphan section */}
-      {(snap.orphanManifestLists.length > 0 || snap.orphanDataFiles.length > 0) && (
-        <div style={{ borderTop: '1.5px dashed #e2e8f0', paddingTop: 14, marginTop: 4 }}>
-          <div style={{ fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', color: '#cbd5e1', marginBottom: 14, textAlign: 'center' }}>
-            ⚠ orphan files in storage (not reachable from current snapshot)
-          </div>
-
-          {/* Orphan manifest lists */}
-          {snap.orphanManifestLists.length > 0 && (
-            <div style={{ marginBottom: 16 }}>
-              <div style={{ fontSize: 10, color: '#94a3b8', fontWeight: 600, textAlign: 'center', marginBottom: 8, textTransform: 'uppercase', letterSpacing: '0.07em' }}>Manifest Lists</div>
-              <div style={{ display: 'flex', justifyContent: 'center', gap: 10, flexWrap: 'wrap' }}>
-                {snap.orphanManifestLists.map(ml => (
-                  <Tooltip key={ml} text={ml + '.avro'}>
-                    <div style={{ border: '1.5px dashed #cbd5e1', background: '#f8fafc', borderRadius: 8, padding: '6px 12px', textAlign: 'center', opacity: 0.7 }}>
-                      <div style={{ fontSize: 9, fontWeight: 600, color: '#94a3b8', textTransform: 'uppercase', marginBottom: 2 }}>Manifest List</div>
-                      <div style={{ fontSize: 10, fontFamily: "'Monaco','Consolas',monospace", color: '#94a3b8' }}>
-                        {ml.replace('snap-', '').split('-').slice(0, 2).join('').slice(0, 10) + '…' + ml.slice(-8)}
-                      </div>
-                    </div>
-                  </Tooltip>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* Orphan data files */}
-          {snap.orphanDataFiles.length > 0 && (
-            <div>
-              <div style={{ fontSize: 10, color: '#94a3b8', fontWeight: 600, textAlign: 'center', marginBottom: 8, textTransform: 'uppercase', letterSpacing: '0.07em' }}>Data Files</div>
-              <div style={{ display: 'flex', justifyContent: 'center', gap: 20, flexWrap: 'wrap' }}>
-                {snap.orphanDataFiles.map(o => (
-                  <div key={o.family} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                    <DataFileStack family={o.family} files={o.files} orphan={true} />
-                    <div style={{ fontSize: 9, color: '#94a3b8', marginTop: 4, fontStyle: 'italic', textAlign: 'center', maxWidth: 120 }}>{o.reason}</div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
+      {/* Data layer — active + orphan data files side by side */}
+      <div style={{ display: 'flex', gap: 0, alignItems: 'flex-start' }}>
+        <div style={{ flex: 1, display: 'flex', justifyContent: 'center', gap: 20, flexWrap: 'wrap' }}>
+          {Object.entries(snap.activeDataFiles).map(([family, files]) => (
+            <DataFileStack key={family} family={family} files={files} orphan={false} />
+          ))}
         </div>
-      )}
+        {snap.orphanDataFiles.length > 0 && (
+          <div style={{ borderLeft: '1.5px dashed #e2e8f0', paddingLeft: 16, minWidth: 0 }}>
+            <div style={{ fontSize: 9, fontWeight: 700, color: '#cbd5e1', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 8 }}>Orphan Data Files</div>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 16 }}>
+              {snap.orphanDataFiles.map(o => (
+                <div key={o.family} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                  <DataFileStack family={o.family} files={o.files} orphan={true} />
+                  <div style={{ fontSize: 9, color: '#94a3b8', marginTop: 4, fontStyle: 'italic', textAlign: 'center', maxWidth: 110 }}>{o.reason}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
     </div>
   );
 }
