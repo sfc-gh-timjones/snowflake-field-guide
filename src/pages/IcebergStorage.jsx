@@ -471,7 +471,6 @@ function SnapshotDiagram({ snap }) {
                 <div ref={setRef('manifestList')} style={{ border: '2px solid #29B5E8', background: '#f0fbff', borderRadius: 8, padding: '8px 16px', textAlign: 'center' }}>
                   <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 6, marginBottom: 3 }}>
                     <div style={{ fontSize: 10, fontWeight: 700, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Manifest List {ML_NUM[snap.manifestList]}</div>
-                    <span style={{ background: '#16a34a', color: 'white', fontSize: 9, padding: '1px 6px', borderRadius: 8, fontWeight: 700 }}>NEW</span>
                   </div>
                   <Tooltip text={snap.manifestList + '.avro'}>
                     <div style={{ fontSize: 11, fontFamily: "'Monaco','Consolas',monospace", color: '#0e7490' }}>
@@ -509,7 +508,7 @@ function SnapshotDiagram({ snap }) {
               {/* All active manifests together: reused (oldest) first, then added (newest) */}
               {activeManifests.length > 0 && (
                 <div style={{ flex: 1, display: 'flex', justifyContent: 'center', gap: 10, flexWrap: 'wrap' }}>
-                  {[...reusedManifests, ...addedManifests].map((m, i) => {
+                  {[...reusedManifests, ...addedManifests].sort((a, b) => (MF_NUM[a.file] || 99) - (MF_NUM[b.file] || 99)).map((m, i) => {
                     const isAdded = m.type === 'added';
                     return (
                       <div key={i} ref={setRef(`mf-${m.file}`)} style={{
