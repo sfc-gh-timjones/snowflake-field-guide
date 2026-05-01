@@ -284,26 +284,26 @@ function FileStack({ refProp, files, family, orphan, puffin }) {
   const activeBg = puffin ? '#faf5ff' : '#f0fbff';
   return (
     <div ref={refProp} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4 }}>
-      <div style={{ fontSize: 10, fontWeight: 700, color: orphan ? '#94a3b8' : (puffin ? '#7C3AED' : '#0e7490'), marginBottom: 2, fontFamily: 'monospace' }}>
+      <div style={{ fontSize: 10, fontWeight: 700, color: orphan ? '#475569' : (puffin ? '#7C3AED' : '#0e7490'), marginBottom: 2, fontFamily: 'monospace' }}>
         {family}
       </div>
       <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
         {files.map(f => (
           <Tooltip key={f} text={f}>
             <div style={{
-              border: orphan ? '1.5px dashed #cbd5e1' : `1.5px solid ${activeColor}`,
-              background: orphan ? '#f8fafc' : activeBg,
+              border: orphan ? '1.5px dashed #94a3b8' : `1.5px solid ${activeColor}`,
+              background: orphan ? '#f1f5f9' : activeBg,
               borderRadius: 5, padding: '3px 7px',
               fontSize: 10, fontFamily: "'Monaco','Consolas',monospace",
-              color: orphan ? '#94a3b8' : (puffin ? '#7C3AED' : '#0e7490'),
-              opacity: orphan ? 0.65 : 1,
+              color: orphan ? '#475569' : (puffin ? '#7C3AED' : '#0e7490'),
+              opacity: orphan ? 0.85 : 1,
             }}>
               {short(f)}
             </div>
           </Tooltip>
         ))}
       </div>
-      {orphan && <div style={{ fontSize: 9, color: '#94a3b8', marginTop: 2, fontStyle: 'italic' }}>orphan</div>}
+      {orphan && <div style={{ fontSize: 9, color: '#475569', marginTop: 2, fontStyle: 'italic' }}>orphan</div>}
     </div>
   );
 }
@@ -325,7 +325,7 @@ function RowLabel({ children }) {
   return (
     <div style={{
       fontSize: 9, fontWeight: 700, textTransform: 'uppercase',
-      letterSpacing: '0.1em', color: '#94a3b8',
+      letterSpacing: '0.1em', color: '#475569',
       background: '#f8fafc', border: '1px solid #e2e8f0',
       borderRadius: 6, padding: '4px 8px', whiteSpace: 'nowrap',
       alignSelf: 'center', flexShrink: 0, marginRight: 10,
@@ -425,7 +425,7 @@ function SnapshotDiagram({ snap }) {
           </div>
         </div>
 
-        <div style={{ fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', color: '#94a3b8', marginBottom: 10 }}>— metadata layer —</div>
+        <div style={{ fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', color: '#475569', marginBottom: 10 }}>— metadata layer —</div>
 
         {/* Metadata files */}
         <div style={{ display: 'flex', gap: 0, alignItems: 'center', marginBottom: 20 }}>
@@ -447,8 +447,8 @@ function SnapshotDiagram({ snap }) {
                 {snap.metadataFiles.filter(m => !m.active).map(m => (
                   <Tooltip key={m.file} text={m.file + '.metadata.json'}>
                     <div style={{ border: '1.5px dashed #cbd5e1', background: '#f8fafc', borderRadius: 7, padding: '5px 10px', textAlign: 'center', opacity: 0.7 }}>
-                      <div style={{ fontSize: 9, fontWeight: 600, color: '#94a3b8', textTransform: 'uppercase', marginBottom: 1 }}>Metadata File {META_NUM[m.file]}</div>
-                      <div style={{ fontSize: 10, fontFamily: "'Monaco','Consolas',monospace", color: '#94a3b8' }}>{m.file}.json</div>
+                      <div style={{ fontSize: 9, fontWeight: 600, color: '#475569', textTransform: 'uppercase', marginBottom: 1 }}>Metadata File {META_NUM[m.file]}</div>
+                      <div style={{ fontSize: 10, fontFamily: "'Monaco','Consolas',monospace", color: '#475569' }}>{m.file}.json</div>
                     </div>
                   </Tooltip>
                 ))}
@@ -488,8 +488,8 @@ function SnapshotDiagram({ snap }) {
                     {snap.orphanManifestLists.map(ml => (
                       <Tooltip key={ml} text={ml + '.avro'}>
                         <div style={{ border: '1.5px dashed #cbd5e1', background: '#f8fafc', borderRadius: 7, padding: '5px 10px', opacity: 0.7 }}>
-                          <div style={{ fontSize: 9, fontWeight: 600, color: '#94a3b8', textTransform: 'uppercase', marginBottom: 1 }}>Manifest List</div>
-                          <div style={{ fontSize: 10, fontFamily: "'Monaco','Consolas',monospace", color: '#94a3b8' }}>snap-{ml.replace('snap-', '').slice(0, 6)}…{ml.slice(-8)}</div>
+                          <div style={{ fontSize: 9, fontWeight: 600, color: '#475569', textTransform: 'uppercase', marginBottom: 1 }}>Manifest List</div>
+                          <div style={{ fontSize: 10, fontFamily: "'Monaco','Consolas',monospace", color: '#475569' }}>snap-{ml.replace('snap-', '').slice(0, 6)}…{ml.slice(-8)}</div>
                         </div>
                       </Tooltip>
                     ))}
@@ -528,11 +528,11 @@ function SnapshotDiagram({ snap }) {
                   <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
                     {removedManifests.map((m, i) => (
                       <div key={i} style={{ border: '1.5px dashed #fca5a5', background: '#fff5f5', borderRadius: 8, padding: '7px 10px', textAlign: 'center', minWidth: 110, opacity: 0.75 }}>
-                        <div style={{ fontSize: 9, fontWeight: 700, color: '#94a3b8', textTransform: 'uppercase' }}>Manifest File {MF_NUM[m.file]}</div>
-                        <Tooltip text={m.file + '.avro'}><div style={{ fontSize: 11, fontFamily: "'Monaco','Consolas',monospace", color: '#94a3b8', marginTop: 2 }}>{m.file}</div></Tooltip>
+                        <div style={{ fontSize: 9, fontWeight: 700, color: '#475569', textTransform: 'uppercase' }}>Manifest File {MF_NUM[m.file]}</div>
+                        <Tooltip text={m.file + '.avro'}><div style={{ fontSize: 11, fontFamily: "'Monaco','Consolas',monospace", color: '#475569', marginTop: 2 }}>{m.file}</div></Tooltip>
                         <ManifestBadge type={m.type} contentType={m.contentType} />
-                        <div style={{ fontSize: 10, color: '#94a3b8', marginTop: 3 }}>{m.rows.toLocaleString()} rows</div>
-                        {m.note && <div style={{ fontSize: 9, color: '#94a3b8', marginTop: 2, fontStyle: 'italic' }}>{m.note}</div>}
+                        <div style={{ fontSize: 10, color: '#475569', marginTop: 3 }}>{m.rows.toLocaleString()} rows</div>
+                        {m.note && <div style={{ fontSize: 9, color: '#475569', marginTop: 2, fontStyle: 'italic' }}>{m.note}</div>}
                       </div>
                     ))}
                   </div>
@@ -544,12 +544,12 @@ function SnapshotDiagram({ snap }) {
                   <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
                     {snap.orphanManifestFiles.map((m, i) => (
                       <div key={i} style={{ border: '1.5px dashed #cbd5e1', background: '#f8fafc', borderRadius: 8, padding: '7px 10px', textAlign: 'center', minWidth: 110, opacity: 0.7 }}>
-                        <div style={{ fontSize: 9, fontWeight: 700, color: '#94a3b8', textTransform: 'uppercase' }}>Manifest File {MF_NUM[m.file]}</div>
-                        <div style={{ fontSize: 11, fontFamily: "'Monaco','Consolas',monospace", color: '#94a3b8', marginTop: 2 }}>{m.file}</div>
+                        <div style={{ fontSize: 9, fontWeight: 700, color: '#475569', textTransform: 'uppercase' }}>Manifest File {MF_NUM[m.file]}</div>
+                        <div style={{ fontSize: 11, fontFamily: "'Monaco','Consolas',monospace", color: '#475569', marginTop: 2 }}>{m.file}</div>
                         <span style={{ background: m.contentType === 1 ? '#7C3AED' : '#0e7490', color: 'white', fontSize: 9, padding: '1px 6px', borderRadius: 8, fontWeight: 700, display: 'inline-block', marginTop: 3 }}>
                           {m.contentType === 1 ? '🔴 DELETE VEC' : '📦 DATA'}
                         </span>
-                        <div style={{ fontSize: 9, color: '#94a3b8', marginTop: 3, fontStyle: 'italic' }}>{m.reason}</div>
+                        <div style={{ fontSize: 9, color: '#475569', marginTop: 3, fontStyle: 'italic' }}>{m.reason}</div>
                       </div>
                     ))}
                   </div>
@@ -558,12 +558,12 @@ function SnapshotDiagram({ snap }) {
             </div>
           </>
         ) : (
-          <div style={{ textAlign: 'center', padding: '16px', color: '#94a3b8', fontSize: 13, fontStyle: 'italic', border: '1.5px dashed #e2e8f0', borderRadius: 8, marginBottom: 20 }}>
+          <div style={{ textAlign: 'center', padding: '16px', color: '#475569', fontSize: 13, fontStyle: 'italic', border: '1.5px dashed #e2e8f0', borderRadius: 8, marginBottom: 20 }}>
             No snapshots yet — table is empty
           </div>
         )}
 
-        <div style={{ fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', color: '#94a3b8', marginBottom: 10 }}>— data layer —</div>
+        <div style={{ fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', color: '#475569', marginBottom: 10 }}>— data layer —</div>
 
         {/* Active Parquet + orphan */}
         <div style={{ display: 'flex', gap: 0, alignItems: 'flex-start', marginBottom: 16 }}>
@@ -582,7 +582,7 @@ function SnapshotDiagram({ snap }) {
                 {snap.orphanParquet.map(o => (
                   <div key={o.family} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                     <FileStack family={o.family} files={o.files} orphan={true} puffin={false} />
-                    <div style={{ fontSize: 9, color: '#94a3b8', marginTop: 4, fontStyle: 'italic', maxWidth: 110, textAlign: 'center' }}>{o.reason}</div>
+                    <div style={{ fontSize: 9, color: '#475569', marginTop: 4, fontStyle: 'italic', maxWidth: 110, textAlign: 'center' }}>{o.reason}</div>
                   </div>
                 ))}
               </div>
@@ -600,7 +600,7 @@ function SnapshotDiagram({ snap }) {
                   ? Object.entries(snap.activePuffin).map(([family, files]) => (
                       <FileStack key={family} refProp={setRef(`stack-${family}`)} family={family} files={files} orphan={false} puffin={true} />
                     ))
-                  : <div style={{ fontSize: 12, color: '#94a3b8', fontStyle: 'italic' }}>none (clean snapshot)</div>
+                  : <div style={{ fontSize: 12, color: '#475569', fontStyle: 'italic' }}>none (clean snapshot)</div>
                 }
               </div>
             </div>
@@ -611,7 +611,7 @@ function SnapshotDiagram({ snap }) {
                   {snap.orphanPuffin.map(o => (
                     <div key={o.family} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                       <FileStack family={o.family} files={o.files} orphan={true} puffin={true} />
-                      <div style={{ fontSize: 9, color: '#94a3b8', marginTop: 4, fontStyle: 'italic', maxWidth: 110, textAlign: 'center' }}>{o.reason}</div>
+                      <div style={{ fontSize: 9, color: '#475569', marginTop: 4, fontStyle: 'italic', maxWidth: 110, textAlign: 'center' }}>{o.reason}</div>
                     </div>
                   ))}
                 </div>
@@ -661,7 +661,7 @@ export default function IcebergStorage() {
           <div style={{ fontSize: 13, color: '#475569', flex: 1 }}>{snap.description}</div>
           <div style={{ textAlign: 'right' }}>
             <div style={{ fontSize: 18, fontWeight: 800, color: snap.deltaColor }}>{snap.delta}</div>
-            <div style={{ fontSize: 11, color: '#94a3b8' }}>{snap.recordCount.toLocaleString()} total</div>
+            <div style={{ fontSize: 11, color: '#475569' }}>{snap.recordCount.toLocaleString()} total</div>
           </div>
         </div>
       </div>
