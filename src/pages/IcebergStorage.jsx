@@ -391,8 +391,13 @@ function SnapshotDiagram({ snap }) {
       push('catalog', 'activeMeta');
       if (snap.manifestList) {
         push('activeMeta', 'manifestList');
+        const mlPos = pos('manifestList');
         activeManifests.forEach(m => {
-          push('manifestList', `mf-${m.file}`);
+          const mfPos = pos(`mf-${m.file}`);
+          if (mlPos && mfPos) {
+            const startX = Math.max(mlPos.cx - 70, Math.min(mlPos.cx + 70, mfPos.cx));
+            newLines.push({ x1: startX, y1: mlPos.bottom, x2: mfPos.cx, y2: mfPos.top });
+          }
           const family = getFamily(m.files);
           if (family) push(`mf-${m.file}`, `stack-${family}`);
         });
@@ -569,8 +574,9 @@ function SnapshotDiagram({ snap }) {
 
         <div style={{ fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', color: '#475569', marginBottom: 10 }}>— data layer —</div>
 
-        {/* Active Parquet + orphan */}
-        <div style={{ display: 'flex', gap: 0, alignItems: 'flex-start', marginBottom: 16 }}>
+        {/* Data layer — Parquet + Puffin side by side */}
+        <div style={{ display: 'flex', gap: 0, alignItems: 'flex-start' }}>
+          {/* Active Parquet */}
           <div style={{ flex: 1 }}>
             <div style={{ fontSize: 10, color: '#0e7490', fontWeight: 700, textTransform: 'uppercase', marginBottom: 8, textAlign: 'center' }}>📦 Parquet Data Files</div>
             <div style={{ display: 'flex', justifyContent: 'center', gap: 12, flexWrap: 'wrap' }}>
@@ -581,52 +587,53 @@ function SnapshotDiagram({ snap }) {
               ))}
             </div>
           </div>
-          {snap.orphanParquet.length > 0 && (
-            <div style={{ borderLeft: '1.5px dashed #e2e8f0', paddingLeft: 16 }}>
-              <div style={{ fontSize: 9, fontWeight: 700, color: '#cbd5e1', textTransform: 'uppercase', marginBottom: 8 }}>Orphan Parquet</div>
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 14 }}>
-                {snap.orphanParquet.map(o => (
-                  <div key={o.family} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                    <FileStack family={o.family} files={o.files} orphan={true} puffin={false} />
-                    <div style={{ fontSize: 9, color: '#475569', marginTop: 4, fontStyle: 'italic', maxWidth: 110, textAlign: 'center' }}>{o.reason}</div>
+
+          {/* Active Puffin */}
+          {Object.keys(snap.activePuffin).length > 0 && (
+            <div style={{ borderLeft: '1.5px solid #e2e8f0', paddingLeft: 20 }}>
+              <div style={{ fontSize: 10, color: '#7C3AED', fontWeight: 700, textTransform: 'uppercase', marginBottom: 8, textAlign: 'center' }}>🔴 Puffin Delete Vectors (V3)</div>
+              <div style={{ display: 'flex', justifyContent: 'center', gap: 12, flexWrap: 'wrap' }}>
+                {Object.entries(snap.activePuffin).map(([family, files]) => (
+                  <div key={family} ref={setRef(`stack-${family}`)} style={{ border: '1.5px solid #7C3AED', borderRadius: 10, padding: '10px 12px', background: '#faf5ff', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                    <FileStack family={family} files={files} orphan={false} puffin={true} />
                   </div>
                 ))}
               </div>
             </div>
           )}
-        </div>
 
-        {/* Active Puffin + orphan */}
-        {(Object.keys(snap.activePuffin).length > 0 || snap.orphanPuffin.length > 0) && (
-          <div style={{ display: 'flex', gap: 0, alignItems: 'flex-start' }}>
-            <div style={{ flex: 1 }}>
-              <div style={{ fontSize: 10, color: '#7C3AED', fontWeight: 700, textTransform: 'uppercase', marginBottom: 8, textAlign: 'center' }}>🔴 Puffin Delete Vectors (V3)</div>
-              <div style={{ display: 'flex', justifyContent: 'center', gap: 16, flexWrap: 'wrap' }}>
-                {Object.keys(snap.activePuffin).length > 0
-                  ? Object.entries(snap.activePuffin).map(([family, files]) => (
-                      <div key={family} ref={setRef(`stack-${family}`)} style={{ border: '1.5px solid #7C3AED', borderRadius: 10, padding: '10px 12px', background: '#faf5ff', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                        <FileStack family={family} files={files} orphan={false} puffin={true} />
+          {/* Orphan Parquet + Puffin */}
+          {(snap.orphanParquet.length > 0 || snap.orphanPuffin.length > 0) && (
+            <div style={{ borderLeft: '1.5px dashed #e2e8f0', paddingLeft: 16 }}>
+              {snap.orphanParquet.length > 0 && (
+                <>
+                  <div style={{ fontSize: 9, fontWeight: 700, color: '#cbd5e1', textTransform: 'uppercase', marginBottom: 8 }}>Orphan Parquet</div>
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: 14, marginBottom: snap.orphanPuffin.length > 0 ? 12 : 0 }}>
+                    {snap.orphanParquet.map(o => (
+                      <div key={o.family} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                        <FileStack family={o.family} files={o.files} orphan={true} puffin={false} />
+                        <div style={{ fontSize: 9, color: '#475569', marginTop: 4, fontStyle: 'italic', maxWidth: 110, textAlign: 'center' }}>{o.reason}</div>
                       </div>
-                    ))
-                  : <div style={{ fontSize: 12, color: '#475569', fontStyle: 'italic' }}>none (clean snapshot)</div>
-                }
-              </div>
+                    ))}
+                  </div>
+                </>
+              )}
+              {snap.orphanPuffin.length > 0 && (
+                <>
+                  <div style={{ fontSize: 9, fontWeight: 700, color: '#cbd5e1', textTransform: 'uppercase', marginBottom: 8 }}>Orphan Puffin</div>
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: 14 }}>
+                    {snap.orphanPuffin.map(o => (
+                      <div key={o.family} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                        <FileStack family={o.family} files={o.files} orphan={true} puffin={true} />
+                        <div style={{ fontSize: 9, color: '#475569', marginTop: 4, fontStyle: 'italic', maxWidth: 110, textAlign: 'center' }}>{o.reason}</div>
+                      </div>
+                    ))}
+                  </div>
+                </>
+              )}
             </div>
-            {snap.orphanPuffin.length > 0 && (
-              <div style={{ borderLeft: '1.5px dashed #e2e8f0', paddingLeft: 16 }}>
-                <div style={{ fontSize: 9, fontWeight: 700, color: '#cbd5e1', textTransform: 'uppercase', marginBottom: 8 }}>Orphan Puffin</div>
-                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 14 }}>
-                  {snap.orphanPuffin.map(o => (
-                    <div key={o.family} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                      <FileStack family={o.family} files={o.files} orphan={true} puffin={true} />
-                      <div style={{ fontSize: 9, color: '#475569', marginTop: 4, fontStyle: 'italic', maxWidth: 110, textAlign: 'center' }}>{o.reason}</div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-          </div>
-        )}
+          )}
+        </div>
       </div>
     </div>
   );
