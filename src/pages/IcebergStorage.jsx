@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
+import { FILE_CONTENTS } from '../data/fileContents.js';
 
 const short = full => {
   const m = full.match(/_([\w\-]{8,10})(?:qxg|Fqxg)_0_\d_(\d+)\.(parquet|puffin)/);
@@ -258,6 +259,68 @@ const MF_NUM = {
 const OP_COLOR = { create: '#64748b', append: '#16a34a', overwrite: '#7C3AED', delete: '#ef5350' };
 const OP_LABEL = { create: 'CREATE TABLE', append: 'INSERT', overwrite: 'UPDATE', delete: 'DELETE' };
 
+function JsonNode({ label, value, depth = 0 }) {
+  const [open, setOpen] = useState(depth < 2);
+  const isObj = value !== null && typeof value === 'object' && !Array.isArray(value);
+  const isArr = Array.isArray(value);
+  const isComplex = isObj || isArr;
+  const indent = depth * 16;
+
+  if (!isComplex) {
+    const display = typeof value === 'string'
+      ? <span style={{ color: '#16a34a' }}>"{value}"</span>
+      : <span style={{ color: typeof value === 'number' ? '#2563eb' : '#dc2626' }}>{String(value)}</span>;
+    return (
+      <div style={{ paddingLeft: indent, fontSize: 12, lineHeight: 1.7, fontFamily: 'Monaco,Consolas,monospace' }}>
+        {label && <span style={{ color: '#7c3aed', fontWeight: 600 }}>{label}: </span>}{display}
+      </div>
+    );
+  }
+
+  const keys = isArr ? value.map((_, i) => i) : Object.keys(value);
+  const preview = isArr ? `[${value.length}]` : `{${keys.length}}`;
+
+  return (
+    <div style={{ paddingLeft: indent }}>
+      <div onClick={() => setOpen(o => !o)} style={{ cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 4, fontSize: 12, lineHeight: 1.7, fontFamily: 'Monaco,Consolas,monospace', userSelect: 'none' }}>
+        <span style={{ color: '#64748b', fontSize: 10, width: 10 }}>{open ? '▾' : '▸'}</span>
+        {label && <span style={{ color: '#7c3aed', fontWeight: 600 }}>{label}: </span>}
+        <span style={{ color: '#475569' }}>{open ? (isArr ? '[' : '{') : <span>{isArr ? '[' : '{'}<span style={{ color: '#94a3b8', fontSize: 11 }}> {preview} </span>{isArr ? ']' : '}'}</span>}</span>}
+      </div>
+      {open && (
+        <>
+          {keys.map(k => (
+            <JsonNode key={k} label={isArr ? `[${k}]` : k} value={value[k]} depth={depth + 1} />
+          ))}
+          <div style={{ paddingLeft: 0, fontSize: 12, fontFamily: 'Monaco,Consolas,monospace', color: '#475569' }}>{isArr ? ']' : '}'}</div>
+        </>
+      )}
+    </div>
+  );
+}
+
+function JsonModal({ fileKey, label, onClose }) {
+  const data = FILE_CONTENTS[fileKey];
+  return (
+    <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.45)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+      onClick={onClose}>
+      <div style={{ background: 'white', borderRadius: 14, width: '80vw', maxWidth: 900, maxHeight: '85vh', display: 'flex', flexDirection: 'column', boxShadow: '0 20px 60px rgba(0,0,0,0.3)' }}
+        onClick={e => e.stopPropagation()}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '14px 20px', borderBottom: '1.5px solid #e2e8f0' }}>
+          <div>
+            <div style={{ fontSize: 13, fontWeight: 700, color: '#1e293b' }}>{label}</div>
+            <div style={{ fontSize: 11, color: '#64748b', fontFamily: 'monospace', marginTop: 2 }}>{fileKey}</div>
+          </div>
+          <button onClick={onClose} style={{ background: 'none', border: 'none', fontSize: 20, cursor: 'pointer', color: '#64748b', lineHeight: 1, padding: '4px 8px' }}>✕</button>
+        </div>
+        <div style={{ overflow: 'auto', padding: '16px 20px', flex: 1 }}>
+          {data ? <JsonNode value={data} depth={0} /> : <div style={{ color: '#94a3b8', fontStyle: 'italic' }}>No data available for this file yet.</div>}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function Tooltip({ text, children }) {
   const [show, setShow] = useState(false);
   return (
@@ -350,11 +413,14 @@ function bezier(x1, y1, x2, y2, direct = false) {
   return `M ${x1} ${y1} C ${x1} ${y1 + cp}, ${x2} ${y2 - cp}, ${x2} ${y2}`;
 }
 
-function SnapshotDiagram({ snap }) {
+function SnapshotDiagram({ snap, onFileClick }) {
   const containerRef = useRef(null);
   const refs = useRef({});
   const [lines, setLines] = useState([]);
   const [svgH, setSvgH] = useState(0);
+
+  const openFile = (key, label) => onFileClick && FILE_CONTENTS[key] && onFileClick({ key, label });
+  const clickStyle = (key) => FILE_CONTENTS[key] ? { cursor: 'pointer', transition: 'box-shadow 0.15s' } : {};
 
   const addedManifests = snap.manifests.filter(m => m.type === 'added');
   const reusedManifests = snap.manifests.filter(m => m.type === 'existing');
@@ -444,7 +510,7 @@ function SnapshotDiagram({ snap }) {
             <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 20 }}>
               {snap.metadataFiles.filter(m => m.active).map(m => (
                 <Tooltip key={m.file} text={m.file + '.metadata.json'}>
-                  <div ref={setRef('activeMeta')} style={{ border: '2px solid #29B5E8', background: '#f0fbff', borderRadius: 8, padding: '7px 10px', textAlign: 'center', fontSize: 11, fontFamily: "'Monaco','Consolas',monospace", color: '#0e7490' }}>
+                  <div ref={setRef('activeMeta')} onClick={() => openFile(m.file, `Metadata File ${META_NUM[m.file]}`)} style={{ border: '2px solid #29B5E8', background: '#f0fbff', borderRadius: 8, padding: '7px 10px', textAlign: 'center', fontSize: 11, fontFamily: "'Monaco','Consolas',monospace", color: '#0e7490', ...clickStyle(m.file) }}>
                     <div style={{ fontSize: 9, fontWeight: 700, color: '#29B5E8', textTransform: 'uppercase', marginBottom: 3 }}>Metadata File {META_NUM[m.file]}</div>
                     {m.file}.json
                   </div>
@@ -456,7 +522,7 @@ function SnapshotDiagram({ snap }) {
               <>
                 {/* Manifest list */}
                 <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 20 }}>
-                  <div ref={setRef('manifestList')} style={{ border: '2px solid #29B5E8', background: '#f0fbff', borderRadius: 8, padding: '8px 16px', textAlign: 'center' }}>
+                  <div ref={setRef('manifestList')} onClick={() => openFile(snap.manifestList, `Manifest List ${ML_NUM[snap.manifestList]}`)} style={{ border: '2px solid #29B5E8', background: '#f0fbff', borderRadius: 8, padding: '8px 16px', textAlign: 'center', ...clickStyle(snap.manifestList) }}>
                     <div style={{ fontSize: 10, fontWeight: 700, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 3 }}>Manifest List {ML_NUM[snap.manifestList]}</div>
                     <Tooltip text={snap.manifestList + '.avro'}>
                       <div style={{ fontSize: 11, fontFamily: "'Monaco','Consolas',monospace", color: '#0e7490' }}>
@@ -476,9 +542,9 @@ function SnapshotDiagram({ snap }) {
                 {/* Manifest file boxes row */}
                 <div style={{ display: 'flex', justifyContent: 'center', gap: 16, flexWrap: 'wrap', marginBottom: 0 }}>
                   {[...reusedManifests, ...addedManifests].sort((a, b) => (MF_NUM[a.file] || 99) - (MF_NUM[b.file] || 99)).map((m, i) => (
-                    <div key={i} ref={setRef(`mf-${m.file}`)} style={{
+                    <div key={i} ref={setRef(`mf-${m.file}`)} onClick={() => openFile(m.file, `Manifest File ${MF_NUM[m.file]}`)} style={{
                       border: `2px solid #29B5E8`, background: '#f0fbff',
-                      borderRadius: 8, padding: '7px 10px', textAlign: 'center', minWidth: 110,
+                      borderRadius: 8, padding: '7px 10px', textAlign: 'center', minWidth: 110, ...clickStyle(m.file),
                     }}>
                       <div style={{ fontSize: 9, fontWeight: 700, color: '#64748b', textTransform: 'uppercase' }}>Manifest File {MF_NUM[m.file]}</div>
                       <Tooltip text={m.file + '.avro'}><div style={{ fontSize: 11, fontFamily: "'Monaco','Consolas',monospace", color: '#1e293b', marginTop: 2 }}>{m.file}</div></Tooltip>
@@ -620,6 +686,7 @@ function SnapshotDiagram({ snap }) {
 
 export default function IcebergStorage() {
   const [snapIdx, setSnapIdx] = useState(0);
+  const [modal, setModal] = useState(null);
   const [playing, setPlaying] = useState(false);
   const intervalRef = useRef(null);
   const snap = SNAPSHOTS[snapIdx];
@@ -700,7 +767,9 @@ export default function IcebergStorage() {
         </div>
       </div>
 
-      <SnapshotDiagram snap={snap} />
+      <SnapshotDiagram snap={snap} onFileClick={setModal} />
+
+      {modal && <JsonModal fileKey={modal.key} label={modal.label} onClose={() => setModal(null)} />}
 
       <div style={{ marginTop: 16, display: 'flex', gap: 14, flexWrap: 'wrap', fontSize: 11, color: '#64748b' }}>
         {[
