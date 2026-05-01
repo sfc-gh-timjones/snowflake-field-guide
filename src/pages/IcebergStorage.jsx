@@ -363,13 +363,13 @@ const SNAPSHOT_SQL = {
     CATALOG = 'SNOWFLAKE'
     EXTERNAL_VOLUME = 'S3SNOWFLAKEICEBERG'
     BASE_LOCATION = 'iceberg_demo/iceberg_testing/'
-    ICEBERG_VERSION = 3;`, procedure: null, logicalRows: 0, queryId: '01c4151f-0208-bdf5-0067-4e870aa1eb22' },
-  1: { sql: 'CALL ETL_TESTING.ICEBERG_DEMO.INSERT_ORDERS_ICEBERG(2000000);', procedure: 'INSERT', logicalRows: 2000000, queryId: '01c41520-0208-bece-0067-4e870aa2c542' },
-  2: { sql: 'CALL ETL_TESTING.ICEBERG_DEMO.UPDATE_ORDERS_ICEBERG(60);', procedure: 'UPDATE', logicalRows: 2000000, queryId: '01c41520-0208-bee9-0067-4e870aa360ca' },
-  3: { sql: 'CALL ETL_TESTING.ICEBERG_DEMO.DELETE_ORDERS_ICEBERG(80);', procedure: 'DELETE', logicalRows: 1999920, queryId: '01c41521-0208-becf-0067-4e870aa3216e' },
-  4: { sql: 'CALL ETL_TESTING.ICEBERG_DEMO.INSERT_ORDERS_ICEBERG(1200000);', procedure: 'INSERT', logicalRows: 3199920, queryId: '01c41521-0208-bdf5-0067-4e870aa1eb66' },
-  5: { sql: 'CALL ETL_TESTING.ICEBERG_DEMO.DELETE_ORDERS_ICEBERG(300);', procedure: 'DELETE', logicalRows: 3199620, queryId: '01c41522-0208-bdf6-0067-4e870aa1fbb6' },
-  6: { sql: 'CALL ETL_TESTING.ICEBERG_DEMO.UPDATE_ORDERS_ICEBERG(150000);', procedure: 'UPDATE', logicalRows: 3199620, queryId: '01c41522-0208-bdf6-0067-4e870aa1fbce' },
+    ICEBERG_VERSION = 3;`, procedure: null, logicalRows: 0, queryId: '01c4151f-0208-bdf5-0067-4e870aa1eb22', queryId2: null },
+  1: { sql: 'CALL ETL_TESTING.ICEBERG_DEMO.INSERT_ORDERS_ICEBERG(2000000);', procedure: 'INSERT', logicalRows: 2000000, queryId: '01c41520-0208-bece-0067-4e870aa2c542', queryId2: '01c41520-0208-bece-0067-4e870aa2c546' },
+  2: { sql: 'CALL ETL_TESTING.ICEBERG_DEMO.UPDATE_ORDERS_ICEBERG(60);', procedure: 'UPDATE', logicalRows: 2000000, queryId: '01c41520-0208-bee9-0067-4e870aa360ca', queryId2: '01c41520-0208-bee9-0067-4e870aa360d2' },
+  3: { sql: 'CALL ETL_TESTING.ICEBERG_DEMO.DELETE_ORDERS_ICEBERG(80);', procedure: 'DELETE', logicalRows: 1999920, queryId: '01c41521-0208-becf-0067-4e870aa3216e', queryId2: '01c41521-0208-becf-0067-4e870aa32172' },
+  4: { sql: 'CALL ETL_TESTING.ICEBERG_DEMO.INSERT_ORDERS_ICEBERG(1200000);', procedure: 'INSERT', logicalRows: 3199920, queryId: '01c41521-0208-bdf5-0067-4e870aa1eb66', queryId2: '01c41521-0208-bdf5-0067-4e870aa1eb6a' },
+  5: { sql: 'CALL ETL_TESTING.ICEBERG_DEMO.DELETE_ORDERS_ICEBERG(300);', procedure: 'DELETE', logicalRows: 3199620, queryId: '01c41522-0208-bdf6-0067-4e870aa1fbb6', queryId2: '01c41522-0208-bdf6-0067-4e870aa1fbba' },
+  6: { sql: 'CALL ETL_TESTING.ICEBERG_DEMO.UPDATE_ORDERS_ICEBERG(150000);', procedure: 'UPDATE', logicalRows: 3199620, queryId: '01c41522-0208-bdf6-0067-4e870aa1fbce', queryId2: '01c41522-0208-bdf6-0067-4e870aa1fbd2' },
 };
 
 
@@ -426,7 +426,10 @@ function SqlModal({ snap, onClose }) {
           <div>
             <div style={{ fontSize: 13, fontWeight: 700, color: '#1e293b' }}>S{snap.num} — {snap.description.split('—')[0].trim()}</div>
             {info?.queryId
-              ? <div style={{ fontSize: 11, color: '#64748b', fontFamily: 'monospace', marginTop: 2 }}>Query ID: {info.queryId}</div>
+              ? <>
+                  <div style={{ fontSize: 11, color: '#64748b', fontFamily: 'monospace', marginTop: 2 }}>CALL Query ID: {info.queryId}</div>
+                  {info.queryId2 && <div style={{ fontSize: 11, color: '#64748b', fontFamily: 'monospace', marginTop: 1 }}>DML Query ID: {info.queryId2}</div>}
+                </>
               : <div style={{ fontSize: 11, color: '#94a3b8', marginTop: 2, fontStyle: 'italic' }}>Query ID: TBD</div>}
           </div>
           <button onClick={onClose} style={{ background: 'none', border: 'none', fontSize: 20, cursor: 'pointer', color: '#64748b', lineHeight: 1, padding: '4px 8px' }}>✕</button>
