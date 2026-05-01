@@ -345,7 +345,7 @@ export default function IcebergDetail({ onNavigate }) {
                 <path d="M12 14 L20 4 L28 14" fill="none" stroke="#29B5E8" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                 <path d="M12 116 L20 126 L28 116" fill="none" stroke="#29B5E8" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
               </svg>
-              <div style={{ fontSize: 11, color: '#94a3b8', whiteSpace: 'nowrap', marginTop: -4 }}>read / write</div>
+              <div style={{ fontSize: 11, color: '#94a3b8', whiteSpace: 'nowrap', marginTop: -4 }}>query</div>
             </div>
             <div style={{
               flex: 1, alignSelf: 'center',
@@ -374,8 +374,18 @@ export default function IcebergDetail({ onNavigate }) {
             border: '2px solid #94a3b8', borderRadius: 12,
             padding: 24, background: '#f8fafc',
           }}>
-            <div style={{ fontSize: 13, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#94a3b8', marginBottom: 16 }}>
-              Cloud Storage
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
+              <div style={{ fontSize: 13, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#94a3b8' }}>
+                Cloud Storage
+              </div>
+              <button
+                onClick={() => onNavigate('iceberg-storage')}
+                style={{ background: 'none', border: '1.5px solid #94a3b8', borderRadius: 8, padding: '4px 12px', cursor: 'pointer', fontSize: 13, color: '#64748b', fontWeight: 600, display: 'inline-flex', alignItems: 'center', gap: 4 }}
+                onMouseEnter={e => { e.currentTarget.style.background = '#f1f5f9'; e.currentTarget.style.borderColor = '#475569'; e.currentTarget.style.color = '#1e293b'; }}
+                onMouseLeave={e => { e.currentTarget.style.background = 'none'; e.currentTarget.style.borderColor = '#94a3b8'; e.currentTarget.style.color = '#64748b'; }}
+              >
+                Explore <span>→</span>
+              </button>
             </div>
 
             <div style={{ display: 'flex', gap: 10, marginBottom: 20 }}>
@@ -409,17 +419,6 @@ export default function IcebergDetail({ onNavigate }) {
                   Iceberg Table Spec <PopupIcon size={13} />
                 </button>
               </span>
-            </div>
-
-            <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: 12 }}>
-              <button
-                onClick={() => onNavigate('iceberg-storage')}
-                style={{ background: 'none', border: '1.5px solid #94a3b8', borderRadius: 8, padding: '4px 12px', cursor: 'pointer', fontSize: 13, color: '#64748b', fontWeight: 600, display: 'inline-flex', alignItems: 'center', gap: 4 }}
-                onMouseEnter={e => { e.currentTarget.style.background = '#f1f5f9'; e.currentTarget.style.borderColor = '#475569'; e.currentTarget.style.color = '#1e293b'; }}
-                onMouseLeave={e => { e.currentTarget.style.background = 'none'; e.currentTarget.style.borderColor = '#94a3b8'; e.currentTarget.style.color = '#64748b'; }}
-              >
-                Explore <span>→</span>
-              </button>
             </div>
 
             <div style={{ borderTop: '1px solid #e2e8f0', paddingTop: 16 }}>
