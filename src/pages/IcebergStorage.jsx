@@ -309,7 +309,7 @@ function FileStack({ refProp, files, family, orphan, puffin }) {
 }
 
 function ManifestBadge({ type, contentType }) {
-  const colors = { added: '#16a34a', deleted: '#ef5350', existing: '#f97316' };
+  const colors = { added: '#16a34a', deleted: '#ef5350', existing: '#1e3a5f' };
   const labels = { added: 'ADDED', deleted: 'REMOVES', existing: 'REUSED' };
   return (
     <div style={{ display: 'flex', gap: 4, justifyContent: 'center', marginTop: 3, flexWrap: 'wrap' }}>
@@ -508,8 +508,8 @@ function SnapshotDiagram({ snap }) {
                     const isAdded = m.type === 'added';
                     return (
                       <div key={i} ref={setRef(`mf-${m.file}`)} style={{
-                        border: `2px solid ${isAdded ? '#16a34a' : '#f97316'}`,
-                        background: isAdded ? '#f0fdf4' : '#fff7ed',
+                      border: `2px solid #29B5E8`,
+                        background: '#f0fbff',
                         borderRadius: 8, padding: '7px 10px', textAlign: 'center', minWidth: 110,
                       }}>
                         <div style={{ fontSize: 9, fontWeight: 700, color: '#64748b', textTransform: 'uppercase' }}>Manifest File {MF_NUM[m.file]}</div>
