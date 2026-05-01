@@ -279,11 +279,11 @@ function Tooltip({ text, children }) {
   );
 }
 
-function FileStack({ refProp, files, family, orphan, puffin }) {
+function FileStack({ files, family, orphan, puffin }) {
   const activeColor = puffin ? '#7C3AED' : '#29B5E8';
   const activeBg = puffin ? '#faf5ff' : '#f0fbff';
   return (
-    <div ref={refProp} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4 }}>
+    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4 }}>
       <div style={{ fontSize: 10, fontWeight: 700, color: orphan ? '#475569' : (puffin ? '#7C3AED' : '#0e7490'), marginBottom: 2, fontFamily: 'monospace' }}>
         {family}
       </div>
@@ -373,23 +373,19 @@ function SnapshotDiagram({ snap }) {
       };
 
       const newLines = [];
-      const push = (k1, k2, color) => {
+      const push = (k1, k2) => {
         const p1 = pos(k1), p2 = pos(k2);
         if (!p1 || !p2) return;
-        newLines.push({ x1: p1.cx, y1: p1.bottom, x2: p2.cx, y2: p2.top, color });
+        newLines.push({ x1: p1.cx, y1: p1.bottom, x2: p2.cx, y2: p2.top });
       };
 
-      push('catalog', 'activeMeta', '#29B5E8');
+      push('catalog', 'activeMeta');
       if (snap.manifestList) {
-        push('activeMeta', 'manifestList', '#29B5E8');
+        push('activeMeta', 'manifestList');
         activeManifests.forEach(m => {
-          const lineColor = m.type === 'added' ? '#16a34a' : '#f97316';
-          push('manifestList', `mf-${m.file}`, lineColor);
+          push('manifestList', `mf-${m.file}`);
           const family = getFamily(m.files);
-          if (family) {
-            const stackColor = m.contentType === 1 ? '#7C3AED' : lineColor;
-            push(`mf-${m.file}`, `stack-${family}`, stackColor);
-          }
+          if (family) push(`mf-${m.file}`, `stack-${family}`);
         });
       }
       setLines(newLines);
@@ -407,7 +403,7 @@ function SnapshotDiagram({ snap }) {
       <svg style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: svgH || '100%', pointerEvents: 'none', overflow: 'visible', zIndex: 0 }}>
         {lines.map((l, i) => (
           <path key={i} d={bezier(l.x1, l.y1, l.x2, l.y2)}
-            fill="none" stroke={l.color} strokeWidth="1.5" strokeOpacity="0.45" strokeDasharray="none" />
+            fill="none" stroke="#29B5E8" strokeWidth="1.5" strokeOpacity="0.5" />
         ))}
       </svg>
 
@@ -569,9 +565,11 @@ function SnapshotDiagram({ snap }) {
         <div style={{ display: 'flex', gap: 0, alignItems: 'flex-start', marginBottom: 16 }}>
           <div style={{ flex: 1 }}>
             <div style={{ fontSize: 10, color: '#0e7490', fontWeight: 700, textTransform: 'uppercase', marginBottom: 8, textAlign: 'center' }}>📦 Parquet Data Files</div>
-            <div style={{ display: 'flex', justifyContent: 'center', gap: 16, flexWrap: 'wrap' }}>
+            <div style={{ display: 'flex', justifyContent: 'center', gap: 12, flexWrap: 'wrap' }}>
               {Object.entries(snap.activeParquet).map(([family, files]) => (
-                <FileStack key={family} refProp={setRef(`stack-${family}`)} family={family} files={files} orphan={false} puffin={false} />
+                <div key={family} ref={setRef(`stack-${family}`)} style={{ border: '1.5px solid #29B5E8', borderRadius: 10, padding: '10px 12px', background: '#f0fbff', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                  <FileStack family={family} files={files} orphan={false} puffin={false} />
+                </div>
               ))}
             </div>
           </div>
@@ -598,7 +596,9 @@ function SnapshotDiagram({ snap }) {
               <div style={{ display: 'flex', justifyContent: 'center', gap: 16, flexWrap: 'wrap' }}>
                 {Object.keys(snap.activePuffin).length > 0
                   ? Object.entries(snap.activePuffin).map(([family, files]) => (
-                      <FileStack key={family} refProp={setRef(`stack-${family}`)} family={family} files={files} orphan={false} puffin={true} />
+                      <div key={family} ref={setRef(`stack-${family}`)} style={{ border: '1.5px solid #7C3AED', borderRadius: 10, padding: '10px 12px', background: '#faf5ff', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                        <FileStack family={family} files={files} orphan={false} puffin={true} />
+                      </div>
                     ))
                   : <div style={{ fontSize: 12, color: '#475569', fontStyle: 'italic' }}>none (clean snapshot)</div>
                 }
