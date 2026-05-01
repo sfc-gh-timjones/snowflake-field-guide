@@ -480,33 +480,25 @@ function SnapshotDiagram({ snap }) {
             {/* Manifest files */}
             <div style={{ display: 'flex', gap: 0, alignItems: 'flex-start', marginBottom: 20 }}>
               <RowLabel>📁 Manifest Files</RowLabel>
-              {addedManifests.length > 0 && (
+              {/* All active manifests together: reused (oldest) first, then added (newest) */}
+              {activeManifests.length > 0 && (
                 <div style={{ flex: 1, display: 'flex', justifyContent: 'center', gap: 10, flexWrap: 'wrap' }}>
-                  {addedManifests.map((m, i) => (
-                    <div key={i} ref={setRef(`mf-${m.file}`)} style={{ border: '2px solid #16a34a', background: '#f0fdf4', borderRadius: 8, padding: '7px 10px', textAlign: 'center', minWidth: 110 }}>
-                      <div style={{ fontSize: 9, fontWeight: 700, color: '#64748b', textTransform: 'uppercase' }}>Manifest File</div>
-                      <Tooltip text={m.file + '.avro'}><div style={{ fontSize: 11, fontFamily: "'Monaco','Consolas',monospace", color: '#1e293b', marginTop: 2 }}>{m.file}</div></Tooltip>
-                      <ManifestBadge type={m.type} contentType={m.contentType} />
-                      <div style={{ fontSize: 10, color: '#64748b', marginTop: 3 }}>{m.rows.toLocaleString()} rows</div>
-                      {m.note && <div style={{ fontSize: 9, color: '#64748b', marginTop: 2, fontStyle: 'italic' }}>{m.note}</div>}
-                    </div>
-                  ))}
-                </div>
-              )}
-              {reusedManifests.length > 0 && (
-                <div style={{ borderLeft: addedManifests.length > 0 ? '1.5px dashed #e2e8f0' : 'none', paddingLeft: addedManifests.length > 0 ? 16 : 0 }}>
-                  <div style={{ fontSize: 9, fontWeight: 700, color: '#f97316', textTransform: 'uppercase', marginBottom: 4 }}>Reused</div>
-                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
-                    {reusedManifests.map((m, i) => (
-                      <div key={i} ref={setRef(`mf-${m.file}`)} style={{ border: '2px solid #f97316', background: '#fff7ed', borderRadius: 8, padding: '7px 10px', textAlign: 'center', minWidth: 110 }}>
+                  {[...reusedManifests, ...addedManifests].map((m, i) => {
+                    const isAdded = m.type === 'added';
+                    return (
+                      <div key={i} ref={setRef(`mf-${m.file}`)} style={{
+                        border: `2px solid ${isAdded ? '#16a34a' : '#f97316'}`,
+                        background: isAdded ? '#f0fdf4' : '#fff7ed',
+                        borderRadius: 8, padding: '7px 10px', textAlign: 'center', minWidth: 110,
+                      }}>
                         <div style={{ fontSize: 9, fontWeight: 700, color: '#64748b', textTransform: 'uppercase' }}>Manifest File</div>
                         <Tooltip text={m.file + '.avro'}><div style={{ fontSize: 11, fontFamily: "'Monaco','Consolas',monospace", color: '#1e293b', marginTop: 2 }}>{m.file}</div></Tooltip>
                         <ManifestBadge type={m.type} contentType={m.contentType} />
                         <div style={{ fontSize: 10, color: '#64748b', marginTop: 3 }}>{m.rows.toLocaleString()} rows</div>
                         {m.note && <div style={{ fontSize: 9, color: '#64748b', marginTop: 2, fontStyle: 'italic' }}>{m.note}</div>}
                       </div>
-                    ))}
-                  </div>
+                    );
+                  })}
                 </div>
               )}
               {removedManifests.length > 0 && (
