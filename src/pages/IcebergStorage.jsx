@@ -234,6 +234,27 @@ const SNAPSHOTS = [
   },
 ];
 
+const META_NUM = {
+  '00000-26833116': 1, '00001-53b570e8': 2, '00002-7023a79a': 3,
+  '00003-ae4702eb': 4, '00004-aee50960': 5, '00005-0015cd9d': 6, '00006-edf55cf2': 7,
+};
+const ML_NUM = {
+  'snap-4266675115824445705-abc519c1': 1,
+  'snap-7307837349431736038-c1267686': 2,
+  'snap-2262732046837108839-a6133c18': 3,
+  'snap-2111496596829886963-1e8a5be1': 4,
+  'snap-8999721586070847566-1855a186': 5,
+  'snap-187341245160280515-060cb698': 6,
+};
+const MF_NUM = {
+  'abc519c1-m0': 1,
+  'c1267686-m0': 2, 'c1267686-m1': 3,
+  'a6133c18-m1': 4, 'a6133c18-m0': 5,
+  '1e8a5be1-m0': 6,
+  '1855a186-m1': 7, '1855a186-m0': 8,
+  '060cb698-m2': 9, '060cb698-m0': 10, '060cb698-m3': 11, '060cb698-m1': 12,
+};
+
 const OP_COLOR = { create: '#64748b', append: '#16a34a', overwrite: '#7C3AED', delete: '#ef5350' };
 const OP_LABEL = { create: 'CREATE TABLE', append: 'INSERT', overwrite: 'UPDATE', delete: 'DELETE' };
 
@@ -413,7 +434,7 @@ function SnapshotDiagram({ snap }) {
             {snap.metadataFiles.filter(m => m.active).map(m => (
               <Tooltip key={m.file} text={m.file + '.metadata.json'}>
                 <div ref={setRef('activeMeta')} style={{ border: '2px solid #29B5E8', background: '#f0fbff', borderRadius: 8, padding: '7px 10px', textAlign: 'center', fontSize: 11, fontFamily: "'Monaco','Consolas',monospace", color: '#0e7490' }}>
-                  <div style={{ fontSize: 9, fontWeight: 700, color: '#29B5E8', textTransform: 'uppercase', marginBottom: 3 }}>Metadata File</div>
+                  <div style={{ fontSize: 9, fontWeight: 700, color: '#29B5E8', textTransform: 'uppercase', marginBottom: 3 }}>Metadata File {META_NUM[m.file]}</div>
                   {m.file}.json
                 </div>
               </Tooltip>
@@ -426,7 +447,7 @@ function SnapshotDiagram({ snap }) {
                 {snap.metadataFiles.filter(m => !m.active).map(m => (
                   <Tooltip key={m.file} text={m.file + '.metadata.json'}>
                     <div style={{ border: '1.5px dashed #cbd5e1', background: '#f8fafc', borderRadius: 7, padding: '5px 10px', textAlign: 'center', opacity: 0.7 }}>
-                      <div style={{ fontSize: 9, fontWeight: 600, color: '#94a3b8', textTransform: 'uppercase', marginBottom: 1 }}>Metadata File</div>
+                      <div style={{ fontSize: 9, fontWeight: 600, color: '#94a3b8', textTransform: 'uppercase', marginBottom: 1 }}>Metadata File {META_NUM[m.file]}</div>
                       <div style={{ fontSize: 10, fontFamily: "'Monaco','Consolas',monospace", color: '#94a3b8' }}>{m.file}.json</div>
                     </div>
                   </Tooltip>
@@ -444,7 +465,7 @@ function SnapshotDiagram({ snap }) {
               <div style={{ flex: 1, display: 'flex', justifyContent: 'center' }}>
                 <div ref={setRef('manifestList')} style={{ border: '2px solid #29B5E8', background: '#f0fbff', borderRadius: 8, padding: '8px 16px', textAlign: 'center' }}>
                   <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 6, marginBottom: 3 }}>
-                    <div style={{ fontSize: 10, fontWeight: 700, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Manifest List</div>
+                    <div style={{ fontSize: 10, fontWeight: 700, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Manifest List {ML_NUM[snap.manifestList]}</div>
                     <span style={{ background: '#16a34a', color: 'white', fontSize: 9, padding: '1px 6px', borderRadius: 8, fontWeight: 700 }}>NEW</span>
                   </div>
                   <Tooltip text={snap.manifestList + '.avro'}>
@@ -491,7 +512,7 @@ function SnapshotDiagram({ snap }) {
                         background: isAdded ? '#f0fdf4' : '#fff7ed',
                         borderRadius: 8, padding: '7px 10px', textAlign: 'center', minWidth: 110,
                       }}>
-                        <div style={{ fontSize: 9, fontWeight: 700, color: '#64748b', textTransform: 'uppercase' }}>Manifest File</div>
+                        <div style={{ fontSize: 9, fontWeight: 700, color: '#64748b', textTransform: 'uppercase' }}>Manifest File {MF_NUM[m.file]}</div>
                         <Tooltip text={m.file + '.avro'}><div style={{ fontSize: 11, fontFamily: "'Monaco','Consolas',monospace", color: '#1e293b', marginTop: 2 }}>{m.file}</div></Tooltip>
                         <ManifestBadge type={m.type} contentType={m.contentType} />
                         <div style={{ fontSize: 10, color: '#64748b', marginTop: 3 }}>{m.rows.toLocaleString()} rows</div>
@@ -507,7 +528,7 @@ function SnapshotDiagram({ snap }) {
                   <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
                     {removedManifests.map((m, i) => (
                       <div key={i} style={{ border: '1.5px dashed #fca5a5', background: '#fff5f5', borderRadius: 8, padding: '7px 10px', textAlign: 'center', minWidth: 110, opacity: 0.75 }}>
-                        <div style={{ fontSize: 9, fontWeight: 700, color: '#94a3b8', textTransform: 'uppercase' }}>Manifest File</div>
+                        <div style={{ fontSize: 9, fontWeight: 700, color: '#94a3b8', textTransform: 'uppercase' }}>Manifest File {MF_NUM[m.file]}</div>
                         <Tooltip text={m.file + '.avro'}><div style={{ fontSize: 11, fontFamily: "'Monaco','Consolas',monospace", color: '#94a3b8', marginTop: 2 }}>{m.file}</div></Tooltip>
                         <ManifestBadge type={m.type} contentType={m.contentType} />
                         <div style={{ fontSize: 10, color: '#94a3b8', marginTop: 3 }}>{m.rows.toLocaleString()} rows</div>
@@ -523,7 +544,7 @@ function SnapshotDiagram({ snap }) {
                   <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
                     {snap.orphanManifestFiles.map((m, i) => (
                       <div key={i} style={{ border: '1.5px dashed #cbd5e1', background: '#f8fafc', borderRadius: 8, padding: '7px 10px', textAlign: 'center', minWidth: 110, opacity: 0.7 }}>
-                        <div style={{ fontSize: 9, fontWeight: 700, color: '#94a3b8', textTransform: 'uppercase' }}>Manifest File</div>
+                        <div style={{ fontSize: 9, fontWeight: 700, color: '#94a3b8', textTransform: 'uppercase' }}>Manifest File {MF_NUM[m.file]}</div>
                         <div style={{ fontSize: 11, fontFamily: "'Monaco','Consolas',monospace", color: '#94a3b8', marginTop: 2 }}>{m.file}</div>
                         <span style={{ background: m.contentType === 1 ? '#7C3AED' : '#0e7490', color: 'white', fontSize: 9, padding: '1px 6px', borderRadius: 8, fontWeight: 700, display: 'inline-block', marginTop: 3 }}>
                           {m.contentType === 1 ? '🔴 DELETE VEC' : '📦 DATA'}
