@@ -663,9 +663,9 @@ function SnapshotDiagram({ snap, onFileClick }) {
                   <div style={{ fontSize: 9, fontWeight: 700, color: '#cbd5e1', textTransform: 'uppercase', marginBottom: 6 }}>Manifest Files</div>
                   <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
                     {removedManifests.map((m, i) => (
-                      <div key={i} style={{ border: '1.5px dashed #fca5a5', background: '#fff5f5', borderRadius: 7, padding: '5px 10px', textAlign: 'center', opacity: 0.75 }}>
+                      <div key={i} onClick={() => openFile(m.file, `Manifest File ${MF_NUM[m.file]}`)} style={{ border: '1.5px dashed #fca5a5', background: '#fff5f5', borderRadius: 7, padding: '5px 10px', textAlign: 'center', opacity: 0.75, ...clickStyle(m.file) }}>
                         <div style={{ fontSize: 9, fontWeight: 700, color: '#475569', textTransform: 'uppercase' }}>Manifest File {MF_NUM[m.file]}</div>
-                        <Tooltip text={m.file + '.avro'}><div style={{ fontSize: 11, fontFamily: "'Monaco','Consolas',monospace", color: '#475569', marginTop: 1 }}>{m.file}</div></Tooltip>
+                        <Tooltip text={fullName(m.file)}><div style={{ fontSize: 11, fontFamily: "'Monaco','Consolas',monospace", color: '#475569', marginTop: 1 }}>{m.file}</div></Tooltip>
                         <ManifestBadge type={m.type} contentType={m.contentType} />
                         {m.note && <div style={{ fontSize: 9, color: '#94a3b8', marginTop: 2, fontStyle: 'italic' }}>{m.note}</div>}
                       </div>
