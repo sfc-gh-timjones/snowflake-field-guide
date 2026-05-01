@@ -63,6 +63,21 @@ const ALL = {
 
 const SNAPSHOTS = [
   {
+    num: 0, id: null, operation: 'create', timestamp: 'CREATE TABLE',
+    description: 'Empty table created — metadata file written, no snapshots yet, no data files.',
+    recordCount: 0, delta: '0 rows', deltaColor: '#64748b',
+    metadataFiles: [
+      { file: '00000-26833116', active: true },
+    ],
+    manifestList: null,
+    manifests: [],
+    activeParquet: {},
+    activePuffin: {},
+    orphanManifestLists: [],
+    orphanParquet: [],
+    orphanPuffin: [],
+  },
+  {
     num: 1, id: '4266675115824445705', operation: 'append', timestamp: '12:40:11',
     description: 'INSERT 2,000,000 rows — 4 Parquet files written',
     recordCount: 2000000, delta: '+2,000,000', deltaColor: '#16a34a',
@@ -205,8 +220,8 @@ const SNAPSHOTS = [
   },
 ];
 
-const OP_COLOR = { append: '#16a34a', overwrite: '#7C3AED', delete: '#ef5350' };
-const OP_LABEL = { append: 'INSERT', overwrite: 'UPDATE', delete: 'DELETE' };
+const OP_COLOR = { create: '#64748b', append: '#16a34a', overwrite: '#7C3AED', delete: '#ef5350' };
+const OP_LABEL = { create: 'CREATE TABLE', append: 'INSERT', overwrite: 'UPDATE', delete: 'DELETE' };
 
 function Tooltip({ text, children }) {
   const [show, setShow] = useState(false);
@@ -323,7 +338,9 @@ function SnapshotDiagram({ snap }) {
       <Arrow />
 
       {/* Manifest list row + orphan manifest lists */}
-      <div style={{ display: 'flex', gap: 0, alignItems: 'flex-start', marginBottom: 4 }}>
+      {snap.manifestList ? (
+        <>
+        <div style={{ display: 'flex', gap: 0, alignItems: 'flex-start', marginBottom: 4 }}>
         <div style={{ flex: 1, display: 'flex', justifyContent: 'center' }}>
           <div style={{ border: '2px solid #29B5E8', background: '#f0fbff', borderRadius: 8, padding: '8px 16px', textAlign: 'center' }}>
             <div style={{ fontSize: 10, fontWeight: 700, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 3 }}>Manifest List</div>
@@ -351,7 +368,6 @@ function SnapshotDiagram({ snap }) {
         )}
       </div>
       <Arrow />
-
       {/* Manifests */}
       <div style={{ display: 'flex', justifyContent: 'center', gap: 10, marginBottom: 4, flexWrap: 'wrap' }}>
         {snap.manifests.map((m, i) => (
@@ -371,6 +387,12 @@ function SnapshotDiagram({ snap }) {
         ))}
       </div>
       <Arrow />
+      </>
+      ) : (
+        <div style={{ textAlign: 'center', padding: '16px', color: '#94a3b8', fontSize: 13, fontStyle: 'italic', border: '1.5px dashed #e2e8f0', borderRadius: 8, marginBottom: 16 }}>
+          No snapshots yet — table is empty
+        </div>
+      )}
 
       <div style={{ fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', color: '#94a3b8', marginBottom: 10 }}>— data layer —</div>
 
@@ -449,8 +471,8 @@ export default function IcebergStorage() {
       <div style={{ background: 'white', border: '1.5px solid #e2e8f0', borderRadius: 12, padding: '20px 24px', marginBottom: 20 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginBottom: 14 }}>
           <div style={{ fontSize: 13, fontWeight: 700, color: '#64748b', whiteSpace: 'nowrap' }}>Snapshot</div>
-          <input type="range" min={0} max={5} value={snapIdx} onChange={e => setSnapIdx(Number(e.target.value))} style={{ flex: 1, accentColor: '#29B5E8', cursor: 'pointer' }} />
-          <div style={{ fontSize: 13, fontWeight: 700, color: '#64748b', whiteSpace: 'nowrap' }}>{snapIdx + 1} / 6</div>
+          <input type="range" min={0} max={6} value={snapIdx} onChange={e => setSnapIdx(Number(e.target.value))} style={{ flex: 1, accentColor: '#29B5E8', cursor: 'pointer' }} />
+          <div style={{ fontSize: 13, fontWeight: 700, color: '#64748b', whiteSpace: 'nowrap' }}>{snapIdx + 1} / 7</div>
         </div>
         <div style={{ display: 'flex', gap: 6, marginBottom: 14 }}>
           {SNAPSHOTS.map((s, i) => (
