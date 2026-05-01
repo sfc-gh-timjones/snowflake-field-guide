@@ -359,6 +359,9 @@ function RowLabel({ children, color }) {
 }
 
 function SnapshotDiagram({ snap }) {
+  const addedManifests = snap.manifests.filter(m => m.type === 'added');
+  const reusedManifests = snap.manifests.filter(m => m.type === 'existing');
+  const removedManifests = snap.manifests.filter(m => m.type === 'deleted');
   return (
     <div style={{ background: 'white', border: '1.5px solid #e2e8f0', borderRadius: 14, padding: '28px 24px', overflowX: 'auto' }}>
 
@@ -424,12 +427,12 @@ function SnapshotDiagram({ snap }) {
               </div>
             </Tooltip>
             <div style={{ fontSize: 9, color: '#64748b', marginTop: 5, lineHeight: 1.5 }}>
-              {snap.manifests.filter(m => m.type === 'added').length > 0 && (
-                <span style={{ color: '#16a34a', fontWeight: 600 }}>{snap.manifests.filter(m => m.type === 'added').length} new</span>
+              {addedManifests.length > 0 && (
+                <span style={{ color: '#16a34a', fontWeight: 600 }}>{addedManifests.length} new</span>
               )}
-              {snap.manifests.filter(m => m.type === 'added').length > 0 && snap.manifests.filter(m => m.type === 'existing').length > 0 && ' + '}
-              {snap.manifests.filter(m => m.type === 'existing').length > 0 && (
-                <span style={{ color: '#f97316', fontWeight: 600 }}>{snap.manifests.filter(m => m.type === 'existing').length} reused</span>
+              {addedManifests.length > 0 && reusedManifests.length > 0 && ' + '}
+              {reusedManifests.length > 0 && (
+                <span style={{ color: '#f97316', fontWeight: 600 }}>{reusedManifests.length} reused</span>
               )}
               {' manifest files'}
             </div>
@@ -455,9 +458,9 @@ function SnapshotDiagram({ snap }) {
       <div style={{ display: 'flex', gap: 0, alignItems: 'flex-start', marginBottom: 4 }}>
         <RowLabel>📁 Manifest Files</RowLabel>
         {/* Added */}
-        {snap.manifests.filter(m => m.type === 'added').length > 0 && (
+        {addedManifests.length > 0 && (
           <div style={{ flex: 1, display: 'flex', justifyContent: 'center', gap: 10, flexWrap: 'wrap' }}>
-            {snap.manifests.filter(m => m.type === 'added').map((m, i) => (
+            {addedManifests.map((m, i) => (
               <div key={i} style={{ border: '2px solid #16a34a', background: '#f0fdf4', borderRadius: 8, padding: '7px 10px', textAlign: 'center', minWidth: 110 }}>
                 <div style={{ fontSize: 9, fontWeight: 700, color: '#64748b', textTransform: 'uppercase' }}>Manifest File</div>
                 <Tooltip text={m.file + '.avro'}><div style={{ fontSize: 11, fontFamily: "'Monaco','Consolas',monospace", color: '#1e293b', marginTop: 2 }}>{m.file}</div></Tooltip>
@@ -469,11 +472,11 @@ function SnapshotDiagram({ snap }) {
           </div>
         )}
         {/* Reused/existing */}
-        {snap.manifests.filter(m => m.type === 'existing').length > 0 && (
-          <div style={{ borderLeft: snap.manifests.filter(m => m.type === 'added').length > 0 ? '1.5px dashed #e2e8f0' : 'none', paddingLeft: snap.manifests.filter(m => m.type === 'added').length > 0 ? 16 : 0 }}>
+        {reusedManifests.length > 0 && (
+          <div style={{ borderLeft: addedManifests.length > 0 ? '1.5px dashed #e2e8f0' : 'none', paddingLeft: addedManifests.length > 0 ? 16 : 0 }}>
             <div style={{ fontSize: 9, fontWeight: 700, color: '#f97316', textTransform: 'uppercase', marginBottom: 4 }}>Reused</div>
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
-              {snap.manifests.filter(m => m.type === 'existing').map((m, i) => (
+              {reusedManifests.map((m, i) => (
                 <div key={i} style={{ border: '2px solid #f97316', background: '#fff7ed', borderRadius: 8, padding: '7px 10px', textAlign: 'center', minWidth: 110 }}>
                   <div style={{ fontSize: 9, fontWeight: 700, color: '#64748b', textTransform: 'uppercase' }}>Manifest File</div>
                   <Tooltip text={m.file + '.avro'}><div style={{ fontSize: 11, fontFamily: "'Monaco','Consolas',monospace", color: '#1e293b', marginTop: 2 }}>{m.file}</div></Tooltip>
@@ -486,11 +489,11 @@ function SnapshotDiagram({ snap }) {
           </div>
         )}
         {/* Orphan/removes */}
-        {snap.manifests.filter(m => m.type === 'deleted').length > 0 && (
+        {removedManifests.length > 0 && (
           <div style={{ borderLeft: '1.5px dashed #e2e8f0', paddingLeft: 16 }}>
             <div style={{ fontSize: 9, fontWeight: 700, color: '#cbd5e1', textTransform: 'uppercase', marginBottom: 4 }}>Orphan Manifests</div>
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
-              {snap.manifests.filter(m => m.type === 'deleted').map((m, i) => (
+              {removedManifests.map((m, i) => (
                 <div key={i} style={{ border: '1.5px dashed #fca5a5', background: '#fff5f5', borderRadius: 8, padding: '7px 10px', textAlign: 'center', minWidth: 110, opacity: 0.75 }}>
                   <div style={{ fontSize: 9, fontWeight: 700, color: '#94a3b8', textTransform: 'uppercase' }}>Manifest File</div>
                   <Tooltip text={m.file + '.avro'}><div style={{ fontSize: 11, fontFamily: "'Monaco','Consolas',monospace", color: '#94a3b8', marginTop: 2 }}>{m.file}</div></Tooltip>
