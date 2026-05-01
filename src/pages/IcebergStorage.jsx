@@ -368,8 +368,8 @@ const SNAPSHOT_SQL = {
   2: { sql: 'CALL ETL_TESTING.ICEBERG_DEMO.UPDATE_ORDERS_ICEBERG(60);', procedure: 'UPDATE', logicalRows: 2000000, queryId: '01c41520-0208-bee9-0067-4e870aa360ca' },
   3: { sql: 'CALL ETL_TESTING.ICEBERG_DEMO.DELETE_ORDERS_ICEBERG(80);', procedure: 'DELETE', logicalRows: 1999920, queryId: '01c41521-0208-becf-0067-4e870aa3216e' },
   4: { sql: 'CALL ETL_TESTING.ICEBERG_DEMO.INSERT_ORDERS_ICEBERG(1200000);', procedure: 'INSERT', logicalRows: 3199920, queryId: '01c41521-0208-bdf5-0067-4e870aa1eb66' },
-  5: { sql: 'CALL ETL_TESTING.ICEBERG_DEMO.DELETE_ORDERS_ICEBERG(300);', procedure: 'DELETE', logicalRows: 3199620, queryId: null },
-  6: { sql: 'CALL ETL_TESTING.ICEBERG_DEMO.UPDATE_ORDERS_ICEBERG(150000);', procedure: 'UPDATE', logicalRows: 3199620, queryId: null },
+  5: { sql: 'CALL ETL_TESTING.ICEBERG_DEMO.DELETE_ORDERS_ICEBERG(300);', procedure: 'DELETE', logicalRows: 3199620, queryId: '01c41522-0208-bdf6-0067-4e870aa1fbb6' },
+  6: { sql: 'CALL ETL_TESTING.ICEBERG_DEMO.UPDATE_ORDERS_ICEBERG(150000);', procedure: 'UPDATE', logicalRows: 3199620, queryId: '01c41522-0208-bdf6-0067-4e870aa1fbce' },
 };
 
 
