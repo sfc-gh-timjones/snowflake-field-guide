@@ -414,12 +414,25 @@ function SnapshotDiagram({ snap }) {
         <RowLabel>📋 Manifest List</RowLabel>
         <div style={{ flex: 1, display: 'flex', justifyContent: 'center' }}>
           <div style={{ border: '2px solid #29B5E8', background: '#f0fbff', borderRadius: 8, padding: '8px 16px', textAlign: 'center' }}>
-            <div style={{ fontSize: 10, fontWeight: 700, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 3 }}>Manifest List</div>
+            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 6, marginBottom: 3 }}>
+              <div style={{ fontSize: 10, fontWeight: 700, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Manifest List</div>
+              <span style={{ background: '#16a34a', color: 'white', fontSize: 9, padding: '1px 6px', borderRadius: 8, fontWeight: 700 }}>NEW</span>
+            </div>
             <Tooltip text={snap.manifestList + '.avro'}>
               <div style={{ fontSize: 11, fontFamily: "'Monaco','Consolas',monospace", color: '#0e7490' }}>
                 snap-{snap.id.slice(0, 6)}…{snap.manifestList.slice(-8)}
               </div>
             </Tooltip>
+            <div style={{ fontSize: 9, color: '#64748b', marginTop: 5, lineHeight: 1.5 }}>
+              {snap.manifests.filter(m => m.type === 'added').length > 0 && (
+                <span style={{ color: '#16a34a', fontWeight: 600 }}>{snap.manifests.filter(m => m.type === 'added').length} new</span>
+              )}
+              {snap.manifests.filter(m => m.type === 'added').length > 0 && snap.manifests.filter(m => m.type === 'existing').length > 0 && ' + '}
+              {snap.manifests.filter(m => m.type === 'existing').length > 0 && (
+                <span style={{ color: '#f97316', fontWeight: 600 }}>{snap.manifests.filter(m => m.type === 'existing').length} reused</span>
+              )}
+              {' manifest files'}
+            </div>
           </div>
         </div>
         {snap.orphanManifestLists.length > 0 && (
