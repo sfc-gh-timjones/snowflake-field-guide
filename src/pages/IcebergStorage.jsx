@@ -341,6 +341,7 @@ function SnapshotDiagram({ snap }) {
           {snap.metadataFiles.filter(m => m.active).map(m => (
             <Tooltip key={m.file} text={m.file + '.metadata.json'}>
               <div style={{ border: '2px solid #29B5E8', background: '#f0fbff', borderRadius: 8, padding: '7px 10px', textAlign: 'center', fontSize: 11, fontFamily: "'Monaco','Consolas',monospace", color: '#0e7490' }}>
+                <div style={{ fontSize: 9, fontWeight: 700, color: '#29B5E8', textTransform: 'uppercase', marginBottom: 3 }}>Metadata File</div>
                 {m.file}.json
               </div>
             </Tooltip>
@@ -403,7 +404,7 @@ function SnapshotDiagram({ snap }) {
           <div style={{ flex: 1, display: 'flex', justifyContent: 'center', gap: 10, flexWrap: 'wrap' }}>
             {snap.manifests.filter(m => m.type === 'added').map((m, i) => (
               <div key={i} style={{ border: '2px solid #16a34a', background: '#f0fdf4', borderRadius: 8, padding: '7px 10px', textAlign: 'center', minWidth: 110 }}>
-                <div style={{ fontSize: 9, fontWeight: 700, color: '#64748b', textTransform: 'uppercase' }}>Manifest</div>
+                <div style={{ fontSize: 9, fontWeight: 700, color: '#64748b', textTransform: 'uppercase' }}>Manifest File</div>
                 <Tooltip text={m.file + '.avro'}><div style={{ fontSize: 11, fontFamily: "'Monaco','Consolas',monospace", color: '#1e293b', marginTop: 2 }}>{m.file}</div></Tooltip>
                 <ManifestBadge type={m.type} contentType={m.contentType} />
                 <div style={{ fontSize: 10, color: '#64748b', marginTop: 3 }}>{m.rows.toLocaleString()} rows</div>
@@ -419,7 +420,7 @@ function SnapshotDiagram({ snap }) {
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
               {snap.manifests.filter(m => m.type === 'existing').map((m, i) => (
                 <div key={i} style={{ border: '2px solid #f97316', background: '#fff7ed', borderRadius: 8, padding: '7px 10px', textAlign: 'center', minWidth: 110 }}>
-                  <div style={{ fontSize: 9, fontWeight: 700, color: '#64748b', textTransform: 'uppercase' }}>Manifest</div>
+                  <div style={{ fontSize: 9, fontWeight: 700, color: '#64748b', textTransform: 'uppercase' }}>Manifest File</div>
                   <Tooltip text={m.file + '.avro'}><div style={{ fontSize: 11, fontFamily: "'Monaco','Consolas',monospace", color: '#1e293b', marginTop: 2 }}>{m.file}</div></Tooltip>
                   <ManifestBadge type={m.type} contentType={m.contentType} />
                   <div style={{ fontSize: 10, color: '#64748b', marginTop: 3 }}>{m.rows.toLocaleString()} rows</div>
@@ -436,7 +437,7 @@ function SnapshotDiagram({ snap }) {
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
               {snap.manifests.filter(m => m.type === 'deleted').map((m, i) => (
                 <div key={i} style={{ border: '1.5px dashed #fca5a5', background: '#fff5f5', borderRadius: 8, padding: '7px 10px', textAlign: 'center', minWidth: 110, opacity: 0.75 }}>
-                  <div style={{ fontSize: 9, fontWeight: 700, color: '#94a3b8', textTransform: 'uppercase' }}>Manifest</div>
+                  <div style={{ fontSize: 9, fontWeight: 700, color: '#94a3b8', textTransform: 'uppercase' }}>Manifest File</div>
                   <Tooltip text={m.file + '.avro'}><div style={{ fontSize: 11, fontFamily: "'Monaco','Consolas',monospace", color: '#94a3b8', marginTop: 2 }}>{m.file}</div></Tooltip>
                   <ManifestBadge type={m.type} contentType={m.contentType} />
                   <div style={{ fontSize: 10, color: '#94a3b8', marginTop: 3 }}>{m.rows.toLocaleString()} rows</div>
