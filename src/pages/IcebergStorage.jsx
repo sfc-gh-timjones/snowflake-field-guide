@@ -337,7 +337,16 @@ function RowLabel({ children }) {
 
 function bezier(x1, y1, x2, y2) {
   const dy = y2 - y1;
+  const dx = x2 - x1;
   const cp = Math.abs(dy) * 0.45;
+  if (dx < -100) {
+    const swing = Math.abs(dx) * 0.55;
+    return `M ${x1} ${y1} C ${x1 + swing} ${y1 + cp}, ${x2 + swing} ${y2 - cp}, ${x2} ${y2}`;
+  }
+  if (dx > 100) {
+    const swing = Math.abs(dx) * 0.55;
+    return `M ${x1} ${y1} C ${x1 - swing} ${y1 + cp}, ${x2 - swing} ${y2 - cp}, ${x2} ${y2}`;
+  }
   return `M ${x1} ${y1} C ${x1} ${y1 + cp}, ${x2} ${y2 - cp}, ${x2} ${y2}`;
 }
 
