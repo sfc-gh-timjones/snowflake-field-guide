@@ -472,6 +472,7 @@ function SnapshotDiagram({ snap }) {
                 </div>
 
                 {/* Manifest file columns + data stacks */}
+                <div style={{ fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', color: '#475569', marginBottom: 10 }}>— data layer —</div>
                 <div style={{ marginBottom: 10 }}>
                   <div style={{ display: 'flex', justifyContent: 'center', gap: 16, flexWrap: 'wrap' }}>
                     {[...reusedManifests, ...addedManifests].sort((a, b) => (MF_NUM[a.file] || 99) - (MF_NUM[b.file] || 99)).map((m, i) => {
@@ -533,7 +534,7 @@ function SnapshotDiagram({ snap }) {
                       <Tooltip key={m.file} text={m.file + '.metadata.json'}>
                         <div style={{ border: '1.5px dashed #cbd5e1', background: '#f8fafc', borderRadius: 7, padding: '5px 10px', textAlign: 'center', opacity: 0.7 }}>
                           <div style={{ fontSize: 9, fontWeight: 600, color: '#475569', textTransform: 'uppercase', marginBottom: 1 }}>Metadata File {META_NUM[m.file]}</div>
-                          <div style={{ fontSize: 10, fontFamily: "'Monaco','Consolas',monospace", color: '#475569' }}>{m.file}.json</div>
+                          <div style={{ fontSize: 11, fontFamily: "'Monaco','Consolas',monospace", color: '#475569' }}>{m.file}.json</div>
                         </div>
                       </Tooltip>
                     ))}
@@ -550,7 +551,7 @@ function SnapshotDiagram({ snap }) {
                       <Tooltip key={ml} text={ml + '.avro'}>
                         <div style={{ border: '1.5px dashed #cbd5e1', background: '#f8fafc', borderRadius: 7, padding: '5px 10px', opacity: 0.7 }}>
                           <div style={{ fontSize: 9, fontWeight: 600, color: '#475569', textTransform: 'uppercase', marginBottom: 1 }}>Manifest List {ML_NUM[ml]}</div>
-                          <div style={{ fontSize: 10, fontFamily: "'Monaco','Consolas',monospace", color: '#475569' }}>snap-{ml.replace('snap-', '').slice(0, 6)}…{ml.slice(-8)}</div>
+                          <div style={{ fontSize: 11, fontFamily: "'Monaco','Consolas',monospace", color: '#475569' }}>snap-{ml.replace('snap-', '').slice(0, 6)}…{ml.slice(-8)}</div>
                         </div>
                       </Tooltip>
                     ))}
@@ -566,7 +567,7 @@ function SnapshotDiagram({ snap }) {
                     {removedManifests.map((m, i) => (
                       <div key={i} style={{ border: '1.5px dashed #fca5a5', background: '#fff5f5', borderRadius: 7, padding: '5px 10px', textAlign: 'center', opacity: 0.75 }}>
                         <div style={{ fontSize: 9, fontWeight: 700, color: '#475569', textTransform: 'uppercase' }}>Manifest File {MF_NUM[m.file]}</div>
-                        <Tooltip text={m.file + '.avro'}><div style={{ fontSize: 10, fontFamily: "'Monaco','Consolas',monospace", color: '#475569', marginTop: 1 }}>{m.file}</div></Tooltip>
+                        <Tooltip text={m.file + '.avro'}><div style={{ fontSize: 11, fontFamily: "'Monaco','Consolas',monospace", color: '#475569', marginTop: 1 }}>{m.file}</div></Tooltip>
                         <ManifestBadge type={m.type} contentType={m.contentType} />
                         {m.note && <div style={{ fontSize: 9, color: '#94a3b8', marginTop: 2, fontStyle: 'italic' }}>{m.note}</div>}
                       </div>
@@ -574,7 +575,7 @@ function SnapshotDiagram({ snap }) {
                     {snap.orphanManifestFiles && snap.orphanManifestFiles.map((m, i) => (
                       <div key={"omf"+i} style={{ border: '1.5px dashed #cbd5e1', background: '#f8fafc', borderRadius: 7, padding: '5px 10px', textAlign: 'center', opacity: 0.7 }}>
                         <div style={{ fontSize: 9, fontWeight: 700, color: '#475569', textTransform: 'uppercase' }}>Manifest File {MF_NUM[m.file]}</div>
-                        <div style={{ fontSize: 10, fontFamily: "'Monaco','Consolas',monospace", color: '#475569', marginTop: 1 }}>{m.file}</div>
+                        <div style={{ fontSize: 11, fontFamily: "'Monaco','Consolas',monospace", color: '#475569', marginTop: 1 }}>{m.file}</div>
                         <span style={{ background: m.contentType === 1 ? '#7C3AED' : '#0e7490', color: 'white', fontSize: 9, padding: '1px 6px', borderRadius: 8, fontWeight: 700, display: 'inline-block', marginTop: 3 }}>
                           {m.contentType === 1 ? '🔴 DELETE VEC' : 'DATA'}
                         </span>
