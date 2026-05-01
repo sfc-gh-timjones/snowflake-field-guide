@@ -369,7 +369,25 @@ const SNAPSHOT_SQL = {
   3: { sql: 'CALL ETL_TESTING.ICEBERG_DEMO.DELETE_ORDERS_ICEBERG(80);', procedure: 'DELETE', logicalRows: 1999920, queryId: '01c41521-0208-becf-0067-4e870aa3216e', queryId2: '01c41521-0208-becf-0067-4e870aa32172' },
   4: { sql: 'CALL ETL_TESTING.ICEBERG_DEMO.INSERT_ORDERS_ICEBERG(1200000);', procedure: 'INSERT', logicalRows: 3199920, queryId: '01c41521-0208-bdf5-0067-4e870aa1eb66', queryId2: '01c41521-0208-bdf5-0067-4e870aa1eb6a' },
   5: { sql: 'CALL ETL_TESTING.ICEBERG_DEMO.DELETE_ORDERS_ICEBERG(300);', procedure: 'DELETE', logicalRows: 3199620, queryId: '01c41522-0208-bdf6-0067-4e870aa1fbb6', queryId2: '01c41522-0208-bdf6-0067-4e870aa1fbba' },
-  6: { sql: 'CALL ETL_TESTING.ICEBERG_DEMO.UPDATE_ORDERS_ICEBERG(150000);', procedure: 'UPDATE', logicalRows: 3199620, queryId: '01c41522-0208-bdf6-0067-4e870aa1fbce', queryId2: '01c41522-0208-bdf6-0067-4e870aa1fbd2' },
+  6: { sql: 'CALL ETL_TESTING.ICEBERG_DEMO.UPDATE_ORDERS_ICEBERG(150000);', procedure: 'UPDATE', logicalRows: 3199620, queryId: '01c41522-0208-bdf6-0067-4e870aa1fbce', queryId2: '01c41522-0208-bdf6-0067-4e870aa1fbd2',
+    explainer: {
+      title: 'Why 54 delta?',
+      queryId: '01c41522-0208-bdf6-0067-4e870aa1fbd2',
+      body: `Snowflake reports 150,000 rows updated — but Iceberg metadata shows 150,054 physical rows written to the new wxCeZSOF Parquet files. Where do the extra 54 come from?
+
+Look at the Join [2] node in the query profile:
+  • Left side:  150k  (ORDER_IDs from SortWithLimit — the LIMIT 150000 subquery)
+  • Right side: 152.2k  (physical rows returned by TableScan [7] scanning all 18 partitions)
+
+Snowflake counts LOGICAL rows updated — 150,000 unique ORDER_IDs that were changed. Iceberg counts PHYSICAL rows written to new Parquet files. The 54-row gap comes from how Snowflake batches those 150,000 rows into 5 new Parquet files:
+
+  30,714 + 47,985 + 30,706 + 25,544 + 15,105 = 150,054
+
+The file-writer doesn't split on exact row boundaries — it splits on data size thresholds. Rows near a partition boundary get included with the batch, producing slightly uneven counts across files. The 60 rows from S2's merge-on-read (AgAjQxSF) that were absorbed into this batch also contribute to the boundary slop.
+
+Bottom line: Snowflake reports what it promised to update. Iceberg records what was physically written to disk.`
+    }
+  },
 };
 
 
@@ -843,6 +861,7 @@ export default function IcebergStorage() {
   const [snapIdx, setSnapIdx] = useState(0);
   const [modal, setModal] = useState(null);
   const [sqlModal, setSqlModal] = useState(false);
+  const [explainerModal, setExplainerModal] = useState(false);
   const [playing, setPlaying] = useState(false);
   const intervalRef = useRef(null);
   const snap = SNAPSHOTS[snapIdx];
@@ -922,7 +941,14 @@ export default function IcebergStorage() {
           <div style={{ textAlign: 'right' }}>
             <div style={{ fontSize: 18, fontWeight: 800, color: snap.deltaColor }}>{snap.delta}</div>
             <div style={{ fontSize: 11, color: '#475569' }}>{snap.recordCount.toLocaleString()} rows in files</div>
-            <div style={{ fontSize: 11, color: '#64748b', marginTop: 2 }}>table rows after: <strong>{(SNAPSHOT_SQL[snap.num]?.logicalRows ?? 0).toLocaleString()}</strong></div>
+            <div style={{ fontSize: 11, color: '#64748b', marginTop: 2, display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 6 }}>
+              table rows after: <strong>{(SNAPSHOT_SQL[snap.num]?.logicalRows ?? 0).toLocaleString()}</strong>
+              {SNAPSHOT_SQL[snap.num]?.explainer && (
+                <button onClick={() => setExplainerModal(true)} title={SNAPSHOT_SQL[snap.num].explainer.title} style={{ background: '#fef9c3', border: '1px solid #fbbf24', borderRadius: 6, padding: '1px 6px', fontSize: 10, fontWeight: 700, color: '#92400e', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: 3 }}>
+                  ⚠ {SNAPSHOT_SQL[snap.num].explainer.title}
+                </button>
+              )}
+            </div>
           </div>
         </div>
       </div>
@@ -931,6 +957,30 @@ export default function IcebergStorage() {
 
       {modal && <JsonModal fileKey={modal.key} label={modal.label} onClose={() => setModal(null)} />}
       {sqlModal && <SqlModal snap={snap} onClose={() => setSqlModal(false)} />}
+      {explainerModal && SNAPSHOT_SQL[snap.num]?.explainer && (() => {
+        const ex = SNAPSHOT_SQL[snap.num].explainer;
+        return (
+          <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.45)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+            onClick={() => setExplainerModal(false)}>
+            <div style={{ background: 'white', borderRadius: 14, width: '80vw', maxWidth: 720, maxHeight: '85vh', display: 'flex', flexDirection: 'column', boxShadow: '0 20px 60px rgba(0,0,0,0.3)' }}
+              onClick={e => e.stopPropagation()}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '14px 20px', borderBottom: '1.5px solid #fef08a', background: '#fefce8', borderRadius: '14px 14px 0 0' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                  <span style={{ fontSize: 18 }}>⚠</span>
+                  <div>
+                    <div style={{ fontSize: 14, fontWeight: 700, color: '#92400e' }}>{ex.title}</div>
+                    <div style={{ fontSize: 11, color: '#b45309', fontFamily: 'monospace', marginTop: 1 }}>Query ID: {ex.queryId}</div>
+                  </div>
+                </div>
+                <button onClick={() => setExplainerModal(false)} style={{ background: 'none', border: 'none', fontSize: 20, cursor: 'pointer', color: '#92400e', lineHeight: 1, padding: '4px 8px' }}>✕</button>
+              </div>
+              <div style={{ overflow: 'auto', padding: '20px', flex: 1 }}>
+                <pre style={{ fontFamily: 'inherit', fontSize: 13, color: '#1e293b', lineHeight: 1.75, margin: 0, whiteSpace: 'pre-wrap' }}>{ex.body}</pre>
+              </div>
+            </div>
+          </div>
+        );
+      })()}
 
       <div style={{ marginTop: 16, display: 'flex', gap: 14, flexWrap: 'wrap', fontSize: 11, color: '#64748b' }}>
         {[
