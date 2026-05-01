@@ -301,6 +301,21 @@ function ManifestBadge({ type, contentType }) {
   );
 }
 
+function RowLabel({ children, color }) {
+  return (
+    <div style={{
+      writingMode: 'horizontal-tb',
+      fontSize: 9, fontWeight: 700, textTransform: 'uppercase',
+      letterSpacing: '0.1em', color: color || '#94a3b8',
+      background: '#f8fafc', border: '1px solid #e2e8f0',
+      borderRadius: 6, padding: '4px 8px', whiteSpace: 'nowrap',
+      alignSelf: 'center', flexShrink: 0, marginRight: 10,
+    }}>
+      {children}
+    </div>
+  );
+}
+
 function SnapshotDiagram({ snap }) {
   return (
     <div style={{ background: 'white', border: '1.5px solid #e2e8f0', borderRadius: 14, padding: '28px 24px', overflowX: 'auto' }}>
@@ -319,28 +334,41 @@ function SnapshotDiagram({ snap }) {
 
       <div style={{ fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', color: '#94a3b8', marginBottom: 8 }}>— metadata layer —</div>
 
-      {/* Metadata files */}
-      <div style={{ display: 'flex', justifyContent: 'center', gap: 10, marginBottom: 4, flexWrap: 'wrap' }}>
-        {snap.metadataFiles.map(m => (
-          <Tooltip key={m.file} text={m.file + '.metadata.json'}>
-            <div style={{
-              border: m.active ? '2px solid #29B5E8' : '1.5px solid #e2e8f0',
-              background: m.active ? '#f0fbff' : '#f8fafc',
-              borderRadius: 8, padding: '7px 10px', textAlign: 'center',
-              fontSize: 11, fontFamily: "'Monaco','Consolas',monospace",
-              color: m.active ? '#0e7490' : '#94a3b8',
-            }}>
-              {m.file}.json
+      {/* Metadata files — active left, orphans right */}
+      <div style={{ display: 'flex', gap: 0, alignItems: 'center', marginBottom: 4 }}>
+        <RowLabel>📄 Metadata File</RowLabel>
+        <div style={{ flex: 1, display: 'flex', justifyContent: 'center' }}>
+          {snap.metadataFiles.filter(m => m.active).map(m => (
+            <Tooltip key={m.file} text={m.file + '.metadata.json'}>
+              <div style={{ border: '2px solid #29B5E8', background: '#f0fbff', borderRadius: 8, padding: '7px 10px', textAlign: 'center', fontSize: 11, fontFamily: "'Monaco','Consolas',monospace", color: '#0e7490' }}>
+                {m.file}.json
+              </div>
+            </Tooltip>
+          ))}
+        </div>
+        {snap.metadataFiles.filter(m => !m.active).length > 0 && (
+          <div style={{ borderLeft: '1.5px dashed #e2e8f0', paddingLeft: 16 }}>
+            <div style={{ fontSize: 9, fontWeight: 700, color: '#cbd5e1', textTransform: 'uppercase', marginBottom: 4 }}>Orphan Metadata Files</div>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+              {snap.metadataFiles.filter(m => !m.active).map(m => (
+                <Tooltip key={m.file} text={m.file + '.metadata.json'}>
+                  <div style={{ border: '1.5px dashed #cbd5e1', background: '#f8fafc', borderRadius: 7, padding: '5px 10px', textAlign: 'center', opacity: 0.7 }}>
+                    <div style={{ fontSize: 9, fontWeight: 600, color: '#94a3b8', textTransform: 'uppercase', marginBottom: 1 }}>Metadata File</div>
+                    <div style={{ fontSize: 10, fontFamily: "'Monaco','Consolas',monospace", color: '#94a3b8' }}>{m.file}.json</div>
+                  </div>
+                </Tooltip>
+              ))}
             </div>
-          </Tooltip>
-        ))}
+          </div>
+        )}
       </div>
       <Arrow />
 
       {/* Manifest list row + orphan manifest lists */}
       {snap.manifestList ? (
         <>
-        <div style={{ display: 'flex', gap: 0, alignItems: 'flex-start', marginBottom: 4 }}>
+        <div style={{ display: 'flex', gap: 0, alignItems: 'center', marginBottom: 4 }}>
+        <RowLabel>📋 Manifest List</RowLabel>
         <div style={{ flex: 1, display: 'flex', justifyContent: 'center' }}>
           <div style={{ border: '2px solid #29B5E8', background: '#f0fbff', borderRadius: 8, padding: '8px 16px', textAlign: 'center' }}>
             <div style={{ fontSize: 10, fontWeight: 700, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 3 }}>Manifest List</div>
@@ -368,9 +396,10 @@ function SnapshotDiagram({ snap }) {
         )}
       </div>
       <Arrow />
-      {/* Manifests */}
-      <div style={{ display: 'flex', justifyContent: 'center', gap: 10, marginBottom: 4, flexWrap: 'wrap' }}>
-        {snap.manifests.map((m, i) => (
+      <div style={{ display: 'flex', gap: 0, alignItems: 'flex-start', marginBottom: 4 }}>
+        <RowLabel>📁 Manifest Files</RowLabel>
+        <div style={{ flex: 1, display: 'flex', justifyContent: 'center', gap: 10, flexWrap: 'wrap' }}>
+          {snap.manifests.map((m, i) => (
           <div key={i} style={{
             border: m.type === 'added' ? '2px solid #16a34a' : m.type === 'deleted' ? '2px solid #ef5350' : '2px solid #f97316',
             background: m.type === 'added' ? '#f0fdf4' : m.type === 'deleted' ? '#fff5f5' : '#fff7ed',
@@ -385,6 +414,7 @@ function SnapshotDiagram({ snap }) {
             {m.note && <div style={{ fontSize: 9, color: '#64748b', marginTop: 2, fontStyle: 'italic' }}>{m.note}</div>}
           </div>
         ))}
+        </div>
       </div>
       <Arrow />
       </>
