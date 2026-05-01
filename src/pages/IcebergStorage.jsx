@@ -288,6 +288,81 @@ const FULL_FILENAME = {
 };
 const fullName = key => FULL_FILENAME[key] || key;
 
+const PROCEDURES = {
+  INSERT: `CREATE OR REPLACE PROCEDURE ETL_TESTING.ICEBERG_DEMO.INSERT_ORDERS_ICEBERG(NUM_RECORDS INT)
+RETURNS VARCHAR LANGUAGE SQL AS
+BEGIN
+    INSERT INTO ETL_TESTING.ICEBERG_DEMO.ORDERS_ICEBERG
+    SELECT
+        (SELECT COALESCE(MAX(ORDER_ID), 0) FROM ETL_TESTING.ICEBERG_DEMO.ORDERS_ICEBERG)
+            + ROW_NUMBER() OVER (ORDER BY SEQ8()) AS ORDER_ID,
+        UNIFORM(1001, 9999, RANDOM()) AS CUSTOMER_ID,
+        RANDSTR(10, RANDOM()) AS CUSTOMER_NAME,
+        RANDSTR(8, RANDOM()) || '@test.com' AS CUSTOMER_EMAIL,
+        UNIFORM(101, 500, RANDOM()) AS PRODUCT_ID,
+        ARRAY_CONSTRUCT('Laptop','Monitor','Keyboard','Mouse','Headset',
+            'Webcam','Desk Chair','Standing Desk','USB Hub','External SSD')
+            [UNIFORM(0,9,RANDOM())]::VARCHAR AS PRODUCT_NAME,
+        UNIFORM(1, 20, RANDOM()) AS QUANTITY,
+        ROUND(UNIFORM(10, 2500, RANDOM())::FLOAT, 2) AS UNIT_PRICE,
+        ROUND(UNIFORM(1,20,RANDOM()) * UNIFORM(10,2500,RANDOM())::FLOAT, 2) AS ORDER_TOTAL,
+        ARRAY_CONSTRUCT('PENDING','SHIPPED','DELIVERED','PROCESSING','CANCELLED')
+            [UNIFORM(0,4,RANDOM())]::VARCHAR AS ORDER_STATUS,
+        DATEADD('minute', -UNIFORM(0,43200,RANDOM()), CURRENT_TIMESTAMP()) AS ORDER_DATE,
+        NULL::TIMESTAMP_NTZ AS SHIP_DATE,
+        ARRAY_CONSTRUCT('NORTHEAST','SOUTHEAST','MIDWEST','WEST','SOUTHWEST')
+            [UNIFORM(0,4,RANDOM())]::VARCHAR AS REGION
+    FROM TABLE(GENERATOR(ROWCOUNT => :NUM_RECORDS));
+    RETURN 'Successfully inserted ' || :NUM_RECORDS || ' records.';
+END;`,
+  UPDATE: `CREATE OR REPLACE PROCEDURE ETL_TESTING.ICEBERG_DEMO.UPDATE_ORDERS_ICEBERG(NUM_RECORDS INT)
+RETURNS VARCHAR LANGUAGE SQL AS
+BEGIN
+    UPDATE ETL_TESTING.ICEBERG_DEMO.ORDERS_ICEBERG
+    SET QUANTITY = UNIFORM(1, 20, RANDOM()),
+        UNIT_PRICE = ROUND(UNIFORM(10, 2500, RANDOM())::FLOAT, 2),
+        ORDER_TOTAL = ROUND(UNIFORM(1,20,RANDOM()) * UNIFORM(10,2500,RANDOM())::FLOAT, 2),
+        ORDER_STATUS = ARRAY_CONSTRUCT('SHIPPED','DELIVERED','RETURNED','CANCELLED')
+            [UNIFORM(0,3,RANDOM())]::VARCHAR,
+        SHIP_DATE = DATEADD('day', UNIFORM(1,14,RANDOM()), ORDER_DATE)
+    WHERE ORDER_ID IN (
+        SELECT ORDER_ID FROM ETL_TESTING.ICEBERG_DEMO.ORDERS_ICEBERG
+        ORDER BY RANDOM() LIMIT :NUM_RECORDS);
+    RETURN 'Successfully updated ' || :NUM_RECORDS || ' records.';
+END;`,
+  DELETE: `CREATE OR REPLACE PROCEDURE ETL_TESTING.ICEBERG_DEMO.DELETE_ORDERS_ICEBERG(NUM_RECORDS INT)
+RETURNS VARCHAR LANGUAGE SQL AS
+BEGIN
+    DELETE FROM ETL_TESTING.ICEBERG_DEMO.ORDERS_ICEBERG
+    WHERE ORDER_ID IN (
+        SELECT ORDER_ID FROM ETL_TESTING.ICEBERG_DEMO.ORDERS_ICEBERG
+        ORDER BY RANDOM() LIMIT :NUM_RECORDS);
+    RETURN 'Successfully deleted ' || :NUM_RECORDS || ' records.';
+END;`,
+};
+
+const SNAPSHOT_SQL = {
+  0: { sql: `CREATE OR REPLACE ICEBERG TABLE ETL_TESTING.ICEBERG_DEMO.ORDERS_ICEBERG (
+    ORDER_ID NUMBER(38,0) NOT NULL,  CUSTOMER_ID NUMBER(38,0),
+    CUSTOMER_NAME VARCHAR,  CUSTOMER_EMAIL VARCHAR,
+    PRODUCT_ID NUMBER(38,0),  PRODUCT_NAME VARCHAR,
+    QUANTITY NUMBER(38,0),  UNIT_PRICE FLOAT,
+    ORDER_TOTAL FLOAT,  ORDER_STATUS VARCHAR,
+    ORDER_DATE TIMESTAMP_NTZ,  SHIP_DATE TIMESTAMP_NTZ,  REGION VARCHAR
+)
+    CATALOG = 'SNOWFLAKE'
+    EXTERNAL_VOLUME = 'S3SNOWFLAKEICEBERG'
+    BASE_LOCATION = 'iceberg_demo/iceberg_testing/'
+    ICEBERG_VERSION = 3;`, procedure: null, logicalRows: 0 },
+  1: { sql: 'CALL ETL_TESTING.ICEBERG_DEMO.INSERT_ORDERS_ICEBERG(2000000);', procedure: 'INSERT', logicalRows: 2000000 },
+  2: { sql: 'CALL ETL_TESTING.ICEBERG_DEMO.UPDATE_ORDERS_ICEBERG(60);', procedure: 'UPDATE', logicalRows: 2000000 },
+  3: { sql: 'CALL ETL_TESTING.ICEBERG_DEMO.DELETE_ORDERS_ICEBERG(80);', procedure: 'DELETE', logicalRows: 1999920 },
+  4: { sql: 'CALL ETL_TESTING.ICEBERG_DEMO.INSERT_ORDERS_ICEBERG(1200000);', procedure: 'INSERT', logicalRows: 3199920 },
+  5: { sql: 'CALL ETL_TESTING.ICEBERG_DEMO.DELETE_ORDERS_ICEBERG(300);', procedure: 'DELETE', logicalRows: 3199620 },
+  6: { sql: 'CALL ETL_TESTING.ICEBERG_DEMO.UPDATE_ORDERS_ICEBERG(150000);', procedure: 'UPDATE', logicalRows: 3199620 },
+};
+
+
 function JsonNode({ label, value, depth = 0 }) {
   const [open, setOpen] = useState(depth < 2);
   const isObj = value !== null && typeof value === 'object' && !Array.isArray(value);
@@ -324,6 +399,42 @@ function JsonNode({ label, value, depth = 0 }) {
           <div style={{ paddingLeft: 0, fontSize: 12, fontFamily: 'Monaco,Consolas,monospace', color: '#475569' }}>{isArr ? ']' : '}'}</div>
         </>
       )}
+    </div>
+  );
+}
+
+function SqlModal({ snap, onClose }) {
+  const [showProc, setShowProc] = useState(false);
+  const info = SNAPSHOT_SQL[snap.num];
+  const procText = info?.procedure ? PROCEDURES[info.procedure] : null;
+  return (
+    <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.45)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+      onClick={onClose}>
+      <div style={{ background: 'white', borderRadius: 14, width: '80vw', maxWidth: 860, maxHeight: '85vh', display: 'flex', flexDirection: 'column', boxShadow: '0 20px 60px rgba(0,0,0,0.3)' }}
+        onClick={e => e.stopPropagation()}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '14px 20px', borderBottom: '1.5px solid #e2e8f0' }}>
+          <div>
+            <div style={{ fontSize: 13, fontWeight: 700, color: '#1e293b' }}>S{snap.num} — {snap.description.split('—')[0].trim()}</div>
+            <div style={{ fontSize: 11, color: '#94a3b8', marginTop: 2, fontStyle: 'italic' }}>Query ID: TBD</div>
+          </div>
+          <button onClick={onClose} style={{ background: 'none', border: 'none', fontSize: 20, cursor: 'pointer', color: '#64748b', lineHeight: 1, padding: '4px 8px' }}>✕</button>
+        </div>
+        <div style={{ overflow: 'auto', padding: '20px', flex: 1 }}>
+          <div style={{ fontSize: 11, fontWeight: 700, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 8 }}>SQL Executed</div>
+          <pre style={{ background: '#0f172a', color: '#e2e8f0', borderRadius: 10, padding: '14px 18px', fontSize: 12, fontFamily: 'Monaco,Consolas,monospace', overflowX: 'auto', margin: 0, lineHeight: 1.6 }}>{info?.sql}</pre>
+          {procText && (
+            <div style={{ marginTop: 20 }}>
+              <button onClick={() => setShowProc(p => !p)} style={{ display: 'flex', alignItems: 'center', gap: 8, background: 'none', border: '1.5px solid #e2e8f0', borderRadius: 8, padding: '7px 14px', cursor: 'pointer', fontSize: 12, fontWeight: 600, color: '#475569' }}>
+                <span style={{ color: '#29B5E8', fontSize: 14 }}>{showProc ? '▾' : '▸'}</span>
+                Stored Procedure Definition
+              </button>
+              {showProc && (
+                <pre style={{ background: '#0f172a', color: '#e2e8f0', borderRadius: 10, padding: '14px 18px', fontSize: 12, fontFamily: 'Monaco,Consolas,monospace', overflowX: 'auto', margin: '10px 0 0', lineHeight: 1.6 }}>{procText}</pre>
+              )}
+            </div>
+          )}
+        </div>
+      </div>
     </div>
   );
 }
@@ -716,6 +827,7 @@ function SnapshotDiagram({ snap, onFileClick }) {
 export default function IcebergStorage() {
   const [snapIdx, setSnapIdx] = useState(0);
   const [modal, setModal] = useState(null);
+  const [sqlModal, setSqlModal] = useState(false);
   const [playing, setPlaying] = useState(false);
   const intervalRef = useRef(null);
   const snap = SNAPSHOTS[snapIdx];
@@ -787,11 +899,13 @@ export default function IcebergStorage() {
           <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
             <span style={{ background: OP_COLOR[snap.operation], color: 'white', padding: '3px 10px', borderRadius: 20, fontSize: 11, fontWeight: 700 }}>{OP_LABEL[snap.operation]}</span>
             <span style={{ fontSize: 12, color: '#64748b' }}>{snap.timestamp}</span>
+            <button onClick={() => setSqlModal(true)} style={{ background: '#f8fafc', border: '1.5px solid #e2e8f0', borderRadius: 8, padding: '3px 10px', fontSize: 11, fontWeight: 600, color: '#475569', cursor: 'pointer' }}>SQL ↗</button>
           </div>
           <div style={{ fontSize: 13, color: '#475569', flex: 1 }}>{snap.description}</div>
           <div style={{ textAlign: 'right' }}>
             <div style={{ fontSize: 18, fontWeight: 800, color: snap.deltaColor }}>{snap.delta}</div>
             <div style={{ fontSize: 11, color: '#475569' }}>{snap.recordCount.toLocaleString()} rows in files</div>
+            <div style={{ fontSize: 11, color: '#64748b', marginTop: 2 }}>table rows after: <strong>{(SNAPSHOT_SQL[snap.num]?.logicalRows ?? 0).toLocaleString()}</strong></div>
           </div>
         </div>
       </div>
@@ -799,6 +913,7 @@ export default function IcebergStorage() {
       <SnapshotDiagram snap={snap} onFileClick={setModal} />
 
       {modal && <JsonModal fileKey={modal.key} label={modal.label} onClose={() => setModal(null)} />}
+      {sqlModal && <SqlModal snap={snap} onClose={() => setSqlModal(false)} />}
 
       <div style={{ marginTop: 16, display: 'flex', gap: 14, flexWrap: 'wrap', fontSize: 11, color: '#64748b' }}>
         {[
