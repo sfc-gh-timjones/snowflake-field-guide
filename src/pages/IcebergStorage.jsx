@@ -1,226 +1,212 @@
 import { useState } from 'react';
 
 const short = full => {
-  const m = full.match(/_([\w\-]{8,10})qxg_0_1_(\d+)\.parquet/);
-  if (m) return `${m[1]}_${m[2]}.parquet`;
-  return full.replace('snap-', 'snap-').split('/').pop();
+  const m = full.match(/_([\w\-]{8,10})(?:qxg|Fqxg)_0_\d_(\d+)\.(parquet|puffin)/);
+  if (m) return `${m[1]}_${m[2]}.${m[3]}`;
+  return full.split('/').pop();
 };
 
-const ALL_PARQUET = {
-  gAaTscqC: [
-    'snow_ZID6-CpHlgY_gAaTscqCqxg_0_1_002.parquet',
-    'snow_ZID6-CpHlgY_gAaTscqCqxg_0_1_004.parquet',
-    'snow_ZID6-CpHlgY_gAaTscqCqxg_0_1_006.parquet',
-    'snow_ZID6-CpHlgY_gAaTscqCqxg_0_1_008.parquet',
+const ALL = {
+  // Parquet (data files)
+  'X-rqSgaF': [
+    'snow_ZID6-CpHlgY_X-rqSgaFqxg_0_1_002.parquet',
+    'snow_ZID6-CpHlgY_X-rqSgaFqxg_0_1_004.parquet',
+    'snow_ZID6-CpHlgY_X-rqSgaFqxg_0_1_006.parquet',
+    'snow_ZID6-CpHlgY_X-rqSgaFqxg_0_1_008.parquet',
   ],
-  IBaqKMuC: [
-    'snow_ZID6-CpHlgY_IBaqKMuCqxg_0_1_002.parquet',
-    'snow_ZID6-CpHlgY_IBaqKMuCqxg_0_1_004.parquet',
-    'snow_ZID6-CpHlgY_IBaqKMuCqxg_0_1_006.parquet',
-    'snow_ZID6-CpHlgY_IBaqKMuCqxg_0_1_008.parquet',
+  AgAjQxSF: [
+    'snow_ZID6-CpHlgY_AgAjQxSFqxg_0_1_004.parquet',
+    'snow_ZID6-CpHlgY_AgAjQxSFqxg_0_1_005.parquet',
+    'snow_ZID6-CpHlgY_AgAjQxSFqxg_0_1_006.parquet',
   ],
-  '3nh_u9eC': [
-    'snow_ZID6-CpHlgY_3nh-u9eCqxg_0_1_002.parquet',
-    'snow_ZID6-CpHlgY_3nh-u9eCqxg_0_1_004.parquet',
-    'snow_ZID6-CpHlgY_3nh-u9eCqxg_0_1_006.parquet',
+  gNyIOyKF: [
+    'snow_ZID6-CpHlgY_gNyIOyKFqxg_0_2_002.parquet',
+    'snow_ZID6-CpHlgY_gNyIOyKFqxg_0_2_004.parquet',
   ],
-  gETOXvSC: [
-    'snow_ZID6-CpHlgY_gETOXvSCqxg_0_1_002.parquet',
-    'snow_ZID6-CpHlgY_gETOXvSCqxg_0_1_004.parquet',
-    'snow_ZID6-CpHlgY_gETOXvSCqxg_0_1_006.parquet',
+  wxCeZSOF: [
+    'snow_ZID6-CpHlgY_wxCeZSOFqxg_0_1_002.parquet',
+    'snow_ZID6-CpHlgY_wxCeZSOFqxg_0_1_004.parquet',
+    'snow_ZID6-CpHlgY_wxCeZSOFqxg_0_1_007.parquet',
+    'snow_ZID6-CpHlgY_wxCeZSOFqxg_0_1_008.parquet',
+    'snow_ZID6-CpHlgY_wxCeZSOFqxg_0_1_010.parquet',
   ],
-  B7ompAGD: [
-    'snow_ZID6-CpHlgY_B7ompAGDqxg_0_1_002.parquet',
-    'snow_ZID6-CpHlgY_B7ompAGDqxg_0_1_004.parquet',
-    'snow_ZID6-CpHlgY_B7ompAGDqxg_0_1_006.parquet',
-    'snow_ZID6-CpHlgY_B7ompAGDqxg_0_1_008.parquet',
-    'snow_ZID6-CpHlgY_B7ompAGDqxg_0_1_010.parquet',
-    'snow_ZID6-CpHlgY_B7ompAGDqxg_0_1_012.parquet',
-    'snow_ZID6-CpHlgY_B7ompAGDqxg_0_1_014.parquet',
+  // Puffin (delete vectors)
+  BAAjQxSF: [
+    'snow_ZID6-CpHlgY_BAAjQxSFqxg_0_1_009.puffin',
+    'snow_ZID6-CpHlgY_BAAjQxSFqxg_0_1_012.puffin',
+    'snow_ZID6-CpHlgY_BAAjQxSFqxg_0_1_015.puffin',
+    'snow_ZID6-CpHlgY_BAAjQxSFqxg_0_1_018.puffin',
   ],
-  AAR0xhCD: [
-    'snow_ZID6-CpHlgY_AAR0xhCDqxg_0_1_002.parquet',
-    'snow_ZID6-CpHlgY_AAR0xhCDqxg_0_1_004.parquet',
-    'snow_ZID6-CpHlgY_AAR0xhCDqxg_0_1_006.parquet',
-    'snow_ZID6-CpHlgY_AAR0xhCDqxg_0_1_008.parquet',
-    'snow_ZID6-CpHlgY_AAR0xhCDqxg_0_1_010.parquet',
-    'snow_ZID6-CpHlgY_AAR0xhCDqxg_0_1_012.parquet',
-    'snow_ZID6-CpHlgY_AAR0xhCDqxg_0_1_014.parquet',
+  QmqdMRWF: [
+    'snow_ZID6-CpHlgY_QmqdMRWFqxg_0_1_003.puffin',
+    'snow_ZID6-CpHlgY_QmqdMRWFqxg_0_1_006.puffin',
+    'snow_ZID6-CpHlgY_QmqdMRWFqxg_0_1_009.puffin',
+    'snow_ZID6-CpHlgY_QmqdMRWFqxg_0_1_012.puffin',
+  ],
+  whCeZSOF: [
+    'snow_ZID6-CpHlgY_whCeZSOFqxg_0_1_003.puffin',
+    'snow_ZID6-CpHlgY_whCeZSOFqxg_0_1_006.puffin',
+    'snow_ZID6-CpHlgY_whCeZSOFqxg_0_1_009.puffin',
+    'snow_ZID6-CpHlgY_whCeZSOFqxg_0_1_012.puffin',
+    'snow_ZID6-CpHlgY_whCeZSOFqxg_0_1_015.puffin',
+    'snow_ZID6-CpHlgY_whCeZSOFqxg_0_1_018.puffin',
+  ],
+  xRCeZSOF: [
+    'snow_ZID6-CpHlgY_xRCeZSOFqxg_0_1_013.puffin',
+    'snow_ZID6-CpHlgY_xRCeZSOFqxg_0_1_016.puffin',
+    'snow_ZID6-CpHlgY_xRCeZSOFqxg_0_1_019.puffin',
+    'snow_ZID6-CpHlgY_xRCeZSOFqxg_0_1_022.puffin',
+    'snow_ZID6-CpHlgY_xRCeZSOFqxg_0_1_025.puffin',
+    'snow_ZID6-CpHlgY_xRCeZSOFqxg_0_1_028.puffin',
   ],
 };
 
 const SNAPSHOTS = [
   {
-    num: 1,
-    id: '683231059597613261',
-    operation: 'append',
-    timestamp: '11:59:46',
-    description: 'Initial load — 2,000,000 rows inserted across 4 Parquet files',
-    recordCount: 2000000,
-    delta: '+2,000,000',
-    deltaColor: '#16a34a',
+    num: 1, id: '4266675115824445705', operation: 'append', timestamp: '12:40:11',
+    description: 'INSERT 2,000,000 rows — 4 Parquet files written',
+    recordCount: 2000000, delta: '+2,000,000', deltaColor: '#16a34a',
     metadataFiles: [
-      { file: '00001-2dc9637a', active: true, snapshotIds: ['683231059597613261'] },
+      { file: '00001-53b570e8', active: true },
     ],
-    manifestList: 'snap-683231059597613261-543776f0',
+    manifestList: 'snap-4266675115824445705-abc519c1',
     manifests: [
-      { file: '543776f0-m0', type: 'added', records: 2000000, dataFiles: ALL_PARQUET.gAaTscqC, reused: false },
+      { file: 'abc519c1-m0', contentType: 0, type: 'added', rows: 2000000, files: ALL['X-rqSgaF'], reused: false },
     ],
-    activeDataFiles: { gAaTscqC: ALL_PARQUET.gAaTscqC },
-    orphanDataFiles: [],
+    activeParquet: { 'X-rqSgaF': ALL['X-rqSgaF'] },
+    activePuffin: {},
     orphanManifestLists: [],
+    orphanParquet: [],
+    orphanPuffin: [],
   },
   {
-    num: 2,
-    id: '3524853346065267316',
-    operation: 'overwrite',
-    timestamp: '12:00:10',
-    description: 'UPDATE 55 records — Iceberg copy-on-write rewrote all 4 Parquet files',
-    recordCount: 2000000,
-    delta: 'UPDATE 55',
-    deltaColor: '#7C3AED',
+    num: 2, id: '7307837349431736038', operation: 'overwrite', timestamp: '12:40:45',
+    description: 'UPDATE 55 rows — V3 merge-on-read: tiny new files + puffin delete vectors. No full rewrite!',
+    recordCount: 2000060, delta: 'UPDATE 55', deltaColor: '#7C3AED',
     metadataFiles: [
-      { file: '00001-2dc9637a', active: false, snapshotIds: ['683231059597613261'] },
-      { file: '00002-14ee9634', active: true, snapshotIds: ['683231059597613261', '3524853346065267316'] },
+      { file: '00001-53b570e8', active: false },
+      { file: '00002-7023a79a', active: true },
     ],
-    manifestList: 'snap-3524853346065267316-cf092e73',
+    manifestList: 'snap-7307837349431736038-c1267686',
     manifests: [
-      { file: 'cf092e73-m1', type: 'added', records: 2000000, dataFiles: ALL_PARQUET.IBaqKMuC, reused: false },
-      { file: 'cf092e73-m0', type: 'deleted', records: 2000000, dataFiles: ALL_PARQUET.gAaTscqC, reused: false },
+      { file: 'c1267686-m0', contentType: 0, type: 'added', rows: 60, files: ALL.AgAjQxSF, reused: false, note: '3 new row files (updated versions)' },
+      { file: 'abc519c1-m0', contentType: 0, type: 'existing', rows: 2000000, files: ALL['X-rqSgaF'], reused: true },
+      { file: 'c1267686-m1', contentType: 1, type: 'added', rows: 60, files: ALL.BAAjQxSF, reused: false, note: '4 puffin files (marks old positions deleted)' },
     ],
-    activeDataFiles: { IBaqKMuC: ALL_PARQUET.IBaqKMuC },
-    orphanDataFiles: [{ family: 'gAaTscqC', files: ALL_PARQUET.gAaTscqC, reason: 'Replaced in Snap 2 overwrite' }],
-    orphanManifestLists: ['snap-683231059597613261-543776f0'],
+    activeParquet: { 'X-rqSgaF': ALL['X-rqSgaF'], AgAjQxSF: ALL.AgAjQxSF },
+    activePuffin: { BAAjQxSF: ALL.BAAjQxSF },
+    orphanManifestLists: ['snap-4266675115824445705-abc519c1'],
+    orphanParquet: [],
+    orphanPuffin: [],
   },
   {
-    num: 3,
-    id: '3153525453017687988',
-    operation: 'overwrite',
-    timestamp: '12:01:09',
-    description: 'DELETE ~30 rows — 3 files rewritten, 1 file survived unchanged',
-    recordCount: 1999970,
-    delta: '−30',
-    deltaColor: '#ef5350',
+    num: 3, id: '2262732046837108839', operation: 'delete', timestamp: '12:41:15',
+    description: 'DELETE 30 rows — V3: zero data file rewrites. New puffin file marks row positions as deleted.',
+    recordCount: 2000060, delta: '−30', deltaColor: '#ef5350',
     metadataFiles: [
-      { file: '00001-2dc9637a', active: false, snapshotIds: ['683231059597613261'] },
-      { file: '00002-14ee9634', active: false, snapshotIds: ['683231059597613261', '3524853346065267316'] },
-      { file: '00003-d71a587c', active: true, snapshotIds: ['683231059597613261', '3524853346065267316', '3153525453017687988'] },
+      { file: '00001-53b570e8', active: false },
+      { file: '00002-7023a79a', active: false },
+      { file: '00003-ae4702eb', active: true },
     ],
-    manifestList: 'snap-3153525453017687988-a062f65b',
+    manifestList: 'snap-2262732046837108839-a6133c18',
     manifests: [
-      { file: 'a062f65b-m1', type: 'added', records: 1966050, dataFiles: ALL_PARQUET['3nh_u9eC'], reused: false },
-      { file: 'a062f65b-m0', type: 'existing', records: 33920, dataFiles: ['snow_ZID6-CpHlgY_IBaqKMuCqxg_0_1_004.parquet'], reused: false, note: '3 deleted + 1 surviving' },
+      { file: 'c1267686-m0', contentType: 0, type: 'existing', rows: 60, files: ALL.AgAjQxSF, reused: true },
+      { file: 'abc519c1-m0', contentType: 0, type: 'existing', rows: 2000000, files: ALL['X-rqSgaF'], reused: true },
+      { file: 'a6133c18-m1', contentType: 1, type: 'added', rows: 140, files: ALL.QmqdMRWF, reused: false, note: '4 puffin files (DELETE 30 rows)' },
+      { file: 'a6133c18-m0', contentType: 1, type: 'deleted', rows: 60, files: ALL.BAAjQxSF, reused: false, note: 'Snap 2 puffins superseded' },
     ],
-    activeDataFiles: {
-      '3nh_u9eC': ALL_PARQUET['3nh_u9eC'],
-      'IBaqKMuC (surviving)': ['snow_ZID6-CpHlgY_IBaqKMuCqxg_0_1_004.parquet'],
-    },
-    orphanDataFiles: [
-      { family: 'gAaTscqC', files: ALL_PARQUET.gAaTscqC, reason: 'Replaced in Snap 2' },
-      { family: 'IBaqKMuC (_002/_006/_008)', files: ['snow_ZID6-CpHlgY_IBaqKMuCqxg_0_1_002.parquet', 'snow_ZID6-CpHlgY_IBaqKMuCqxg_0_1_006.parquet', 'snow_ZID6-CpHlgY_IBaqKMuCqxg_0_1_008.parquet'], reason: 'Deleted rows rewritten in Snap 3' },
-    ],
-    orphanManifestLists: ['snap-683231059597613261-543776f0', 'snap-3524853346065267316-cf092e73'],
+    activeParquet: { 'X-rqSgaF': ALL['X-rqSgaF'], AgAjQxSF: ALL.AgAjQxSF },
+    activePuffin: { QmqdMRWF: ALL.QmqdMRWF },
+    orphanManifestLists: ['snap-4266675115824445705-abc519c1', 'snap-7307837349431736038-c1267686'],
+    orphanParquet: [],
+    orphanPuffin: [{ family: 'BAAjQxSF', files: ALL.BAAjQxSF, reason: 'Snap 2 puffins superseded by QmqdMRWF' }],
   },
   {
-    num: 4,
-    id: '6453267428948014672',
-    operation: 'append',
-    timestamp: '12:02:32',
-    description: 'INSERT 1,500,000 rows — 3 new files added; prior manifests reused',
-    recordCount: 3499970,
-    delta: '+1,500,000',
-    deltaColor: '#16a34a',
+    num: 4, id: '2111496596829886963', operation: 'append', timestamp: '12:41:45',
+    description: 'INSERT 1,200,000 rows — 2 new Parquet files. All prior manifests reused.',
+    recordCount: 3200060, delta: '+1,200,000', deltaColor: '#16a34a',
     metadataFiles: [
-      { file: '00001-2dc9637a', active: false, snapshotIds: ['683231059597613261'] },
-      { file: '00002-14ee9634', active: false, snapshotIds: ['683231059597613261', '3524853346065267316'] },
-      { file: '00003-d71a587c', active: false, snapshotIds: ['683231059597613261', '3524853346065267316', '3153525453017687988'] },
-      { file: '00004-825a4846', active: true, snapshotIds: ['683231059597613261', '3524853346065267316', '3153525453017687988', '6453267428948014672'] },
+      { file: '00001-53b570e8', active: false },
+      { file: '00002-7023a79a', active: false },
+      { file: '00003-ae4702eb', active: false },
+      { file: '00004-aee50960', active: true },
     ],
-    manifestList: 'snap-6453267428948014672-4930b1b7',
+    manifestList: 'snap-2111496596829886963-1e8a5be1',
     manifests: [
-      { file: '4930b1b7-m0', type: 'added', records: 1500000, dataFiles: ALL_PARQUET.gETOXvSC, reused: false },
-      { file: 'a062f65b-m1', type: 'existing', records: 1966050, dataFiles: ALL_PARQUET['3nh_u9eC'], reused: true },
-      { file: 'a062f65b-m0', type: 'existing', records: 33920, dataFiles: ['snow_ZID6-CpHlgY_IBaqKMuCqxg_0_1_004.parquet'], reused: true },
+      { file: '1e8a5be1-m0', contentType: 0, type: 'added', rows: 1200000, files: ALL.gNyIOyKF, reused: false },
+      { file: 'c1267686-m0', contentType: 0, type: 'existing', rows: 60, files: ALL.AgAjQxSF, reused: true },
+      { file: 'abc519c1-m0', contentType: 0, type: 'existing', rows: 2000000, files: ALL['X-rqSgaF'], reused: true },
+      { file: 'a6133c18-m1', contentType: 1, type: 'existing', rows: 140, files: ALL.QmqdMRWF, reused: true },
     ],
-    activeDataFiles: {
-      gETOXvSC: ALL_PARQUET.gETOXvSC,
-      '3nh_u9eC': ALL_PARQUET['3nh_u9eC'],
-      'IBaqKMuC_004': ['snow_ZID6-CpHlgY_IBaqKMuCqxg_0_1_004.parquet'],
-    },
-    orphanDataFiles: [
-      { family: 'gAaTscqC', files: ALL_PARQUET.gAaTscqC, reason: 'Replaced in Snap 2' },
-      { family: 'IBaqKMuC (_002/_006/_008)', files: ['snow_ZID6-CpHlgY_IBaqKMuCqxg_0_1_002.parquet', 'snow_ZID6-CpHlgY_IBaqKMuCqxg_0_1_006.parquet', 'snow_ZID6-CpHlgY_IBaqKMuCqxg_0_1_008.parquet'], reason: 'Deleted in Snap 3' },
-    ],
-    orphanManifestLists: ['snap-683231059597613261-543776f0', 'snap-3524853346065267316-cf092e73', 'snap-3153525453017687988-a062f65b'],
+    activeParquet: { 'X-rqSgaF': ALL['X-rqSgaF'], AgAjQxSF: ALL.AgAjQxSF, gNyIOyKF: ALL.gNyIOyKF },
+    activePuffin: { QmqdMRWF: ALL.QmqdMRWF },
+    orphanManifestLists: ['snap-4266675115824445705-abc519c1', 'snap-7307837349431736038-c1267686', 'snap-2262732046837108839-a6133c18'],
+    orphanParquet: [],
+    orphanPuffin: [{ family: 'BAAjQxSF', files: ALL.BAAjQxSF, reason: 'Superseded in Snap 3' }],
   },
   {
-    num: 5,
-    id: '8792066272258428054',
-    operation: 'overwrite',
-    timestamp: '12:03:24',
-    description: 'DELETE ~200 rows — all 7 active files replaced with 7 new files',
-    recordCount: 3499770,
-    delta: '−200',
-    deltaColor: '#ef5350',
+    num: 5, id: '8999721586070847566', operation: 'delete', timestamp: '12:42:09',
+    description: 'DELETE 200 rows — V3: again zero data rewrites. New puffin replaces old puffin.',
+    recordCount: 3200060, delta: '−200', deltaColor: '#ef5350',
     metadataFiles: [
-      { file: '00001-2dc9637a', active: false, snapshotIds: ['683231059597613261'] },
-      { file: '00002-14ee9634', active: false, snapshotIds: ['683231059597613261', '3524853346065267316'] },
-      { file: '00003-d71a587c', active: false, snapshotIds: ['683231059597613261', '3524853346065267316', '3153525453017687988'] },
-      { file: '00004-825a4846', active: false, snapshotIds: ['...', '6453267428948014672'] },
-      { file: '00005-b4b5befa', active: true, snapshotIds: ['...', '8792066272258428054'] },
+      { file: '00001-53b570e8', active: false },
+      { file: '00002-7023a79a', active: false },
+      { file: '00003-ae4702eb', active: false },
+      { file: '00004-aee50960', active: false },
+      { file: '00005-0015cd9d', active: true },
     ],
-    manifestList: 'snap-8792066272258428054-91dc7cc2',
+    manifestList: 'snap-8999721586070847566-1855a186',
     manifests: [
-      { file: '91dc7cc2-m3', type: 'added', records: 3499770, dataFiles: ALL_PARQUET.B7ompAGD, reused: false },
-      { file: '91dc7cc2-m1', type: 'deleted', records: 1500000, dataFiles: ALL_PARQUET.gETOXvSC, reused: false },
-      { file: '91dc7cc2-m0', type: 'deleted', records: 1966050, dataFiles: ALL_PARQUET['3nh_u9eC'], reused: false },
-      { file: '91dc7cc2-m2', type: 'deleted', records: 33920, dataFiles: ['snow_ZID6-CpHlgY_IBaqKMuCqxg_0_1_004.parquet'], reused: false },
+      { file: '1e8a5be1-m0', contentType: 0, type: 'existing', rows: 1200000, files: ALL.gNyIOyKF, reused: true },
+      { file: 'c1267686-m0', contentType: 0, type: 'existing', rows: 60, files: ALL.AgAjQxSF, reused: true },
+      { file: 'abc519c1-m0', contentType: 0, type: 'existing', rows: 2000000, files: ALL['X-rqSgaF'], reused: true },
+      { file: '1855a186-m1', contentType: 1, type: 'added', rows: 440, files: ALL.whCeZSOF, reused: false, note: '6 puffin files (DELETE 200 rows)' },
+      { file: '1855a186-m0', contentType: 1, type: 'deleted', rows: 140, files: ALL.QmqdMRWF, reused: false, note: 'Snap 3 puffins superseded' },
     ],
-    activeDataFiles: { B7ompAGD: ALL_PARQUET.B7ompAGD },
-    orphanDataFiles: [
-      { family: 'gAaTscqC', files: ALL_PARQUET.gAaTscqC, reason: 'Replaced in Snap 2' },
-      { family: 'IBaqKMuC', files: ALL_PARQUET.IBaqKMuC, reason: 'Replaced in Snap 2/3' },
-      { family: 'gETOXvSC', files: ALL_PARQUET.gETOXvSC, reason: 'Replaced in Snap 5' },
-      { family: '3nh_u9eC', files: ALL_PARQUET['3nh_u9eC'], reason: 'Replaced in Snap 5' },
+    activeParquet: { 'X-rqSgaF': ALL['X-rqSgaF'], AgAjQxSF: ALL.AgAjQxSF, gNyIOyKF: ALL.gNyIOyKF },
+    activePuffin: { whCeZSOF: ALL.whCeZSOF },
+    orphanManifestLists: ['snap-4266675115824445705-abc519c1', 'snap-7307837349431736038-c1267686', 'snap-2262732046837108839-a6133c18', 'snap-2111496596829886963-1e8a5be1'],
+    orphanParquet: [],
+    orphanPuffin: [
+      { family: 'BAAjQxSF', files: ALL.BAAjQxSF, reason: 'Superseded in Snap 3' },
+      { family: 'QmqdMRWF', files: ALL.QmqdMRWF, reason: 'Superseded in Snap 5' },
     ],
-    orphanManifestLists: ['snap-683231059597613261-543776f0', 'snap-3524853346065267316-cf092e73', 'snap-3153525453017687988-a062f65b', 'snap-6453267428948014672-4930b1b7'],
   },
   {
-    num: 6,
-    id: '6464769320989197946',
-    operation: 'overwrite',
-    timestamp: '12:03:54',
-    description: 'UPDATE 40 records — Iceberg copy-on-write rewrote all 7 Parquet files',
-    recordCount: 3499770,
-    delta: 'UPDATE 40',
-    deltaColor: '#7C3AED',
+    num: 6, id: '187341245160280515', operation: 'overwrite', timestamp: '12:42:55',
+    description: 'UPDATE 40 rows — rewrites affected files + new puffin vectors. AgAjQxSF files now orphaned.',
+    recordCount: 3350054, delta: 'UPDATE 40', deltaColor: '#7C3AED',
     metadataFiles: [
-      { file: '00001-2dc9637a', active: false, snapshotIds: ['683231059597613261'] },
-      { file: '00002-14ee9634', active: false, snapshotIds: ['683231059597613261', '3524853346065267316'] },
-      { file: '00003-d71a587c', active: false, snapshotIds: ['...', '3153525453017687988'] },
-      { file: '00004-825a4846', active: false, snapshotIds: ['...', '6453267428948014672'] },
-      { file: '00005-b4b5befa', active: false, snapshotIds: ['...', '8792066272258428054'] },
-      { file: '00006-a1090c96', active: true, snapshotIds: ['...', '6464769320989197946'] },
+      { file: '00001-53b570e8', active: false },
+      { file: '00002-7023a79a', active: false },
+      { file: '00003-ae4702eb', active: false },
+      { file: '00004-aee50960', active: false },
+      { file: '00005-0015cd9d', active: false },
+      { file: '00006-edf55cf2', active: true },
     ],
-    manifestList: 'snap-6464769320989197946-53880c0c',
+    manifestList: 'snap-187341245160280515-060cb698',
     manifests: [
-      { file: '53880c0c-m1', type: 'added', records: 3499770, dataFiles: ALL_PARQUET.AAR0xhCD, reused: false },
-      { file: '53880c0c-m0', type: 'deleted', records: 3499770, dataFiles: ALL_PARQUET.B7ompAGD, reused: false },
+      { file: '060cb698-m2', contentType: 0, type: 'added', rows: 150054, files: ALL.wxCeZSOF, reused: false, note: '5 new Parquet files (rewritten rows)' },
+      { file: '1e8a5be1-m0', contentType: 0, type: 'existing', rows: 1200000, files: ALL.gNyIOyKF, reused: true },
+      { file: '060cb698-m0', contentType: 0, type: 'deleted', rows: 60, files: ALL.AgAjQxSF, reused: false, note: 'Snap 2 data files replaced' },
+      { file: 'abc519c1-m0', contentType: 0, type: 'existing', rows: 2000000, files: ALL['X-rqSgaF'], reused: true },
+      { file: '060cb698-m3', contentType: 1, type: 'added', rows: 150434, files: ALL.xRCeZSOF, reused: false, note: '6 new puffin delete vectors' },
+      { file: '060cb698-m1', contentType: 1, type: 'deleted', rows: 440, files: ALL.whCeZSOF, reused: false, note: 'Snap 5 puffins superseded' },
     ],
-    activeDataFiles: { AAR0xhCD: ALL_PARQUET.AAR0xhCD },
-    orphanDataFiles: [
-      { family: 'gAaTscqC', files: ALL_PARQUET.gAaTscqC, reason: 'Replaced in Snap 2' },
-      { family: 'IBaqKMuC', files: ALL_PARQUET.IBaqKMuC, reason: 'Replaced in Snap 2/3' },
-      { family: 'gETOXvSC', files: ALL_PARQUET.gETOXvSC, reason: 'Replaced in Snap 5' },
-      { family: '3nh_u9eC', files: ALL_PARQUET['3nh_u9eC'], reason: 'Replaced in Snap 5' },
-      { family: 'B7ompAGD', files: ALL_PARQUET.B7ompAGD, reason: 'Replaced in Snap 6 compaction' },
+    activeParquet: { 'X-rqSgaF': ALL['X-rqSgaF'], gNyIOyKF: ALL.gNyIOyKF, wxCeZSOF: ALL.wxCeZSOF },
+    activePuffin: { xRCeZSOF: ALL.xRCeZSOF },
+    orphanManifestLists: ['snap-4266675115824445705-abc519c1', 'snap-7307837349431736038-c1267686', 'snap-2262732046837108839-a6133c18', 'snap-2111496596829886963-1e8a5be1', 'snap-8999721586070847566-1855a186'],
+    orphanParquet: [{ family: 'AgAjQxSF', files: ALL.AgAjQxSF, reason: 'Snap 2 UPDATE rows replaced in Snap 6' }],
+    orphanPuffin: [
+      { family: 'BAAjQxSF', files: ALL.BAAjQxSF, reason: 'Superseded in Snap 3' },
+      { family: 'QmqdMRWF', files: ALL.QmqdMRWF, reason: 'Superseded in Snap 5' },
+      { family: 'whCeZSOF', files: ALL.whCeZSOF, reason: 'Superseded in Snap 6' },
     ],
-    orphanManifestLists: ['snap-683231059597613261-543776f0', 'snap-3524853346065267316-cf092e73', 'snap-3153525453017687988-a062f65b', 'snap-6453267428948014672-4930b1b7', 'snap-8792066272258428054-91dc7cc2'],
   },
 ];
 
-const OP_COLOR = { append: '#16a34a', overwrite: '#f97316' };
-const OP_LABEL = { append: 'INSERT', overwrite: 'UPDATE / DELETE' };
+const OP_COLOR = { append: '#16a34a', overwrite: '#7C3AED', delete: '#ef5350' };
+const OP_LABEL = { append: 'INSERT', overwrite: 'UPDATE', delete: 'DELETE' };
 
 function Tooltip({ text, children }) {
   const [show, setShow] = useState(false);
@@ -254,64 +240,23 @@ function Arrow() {
   );
 }
 
-function FileBox({ label, fullName, active, type, reused, note, small }) {
-  const typeStyles = {
-    added: { border: '2px solid #16a34a', background: '#f0fdf4' },
-    deleted: { border: '2px solid #ef5350', background: '#fff5f5' },
-    existing: { border: '2px solid #f97316', background: '#fff7ed' },
-    active: { border: '2px solid #29B5E8', background: '#f0fbff' },
-    orphan: { border: '1.5px dashed #cbd5e1', background: '#f8fafc', opacity: 0.7 },
-    metadata: { border: '2px solid #29B5E8', background: '#f0fbff' },
-    'metadata-inactive': { border: '1.5px solid #e2e8f0', background: '#f8fafc' },
-  };
-  const style = typeStyles[type] || typeStyles.active;
-  return (
-    <Tooltip text={fullName || label}>
-      <div style={{
-        ...style,
-        borderRadius: 8, padding: small ? '5px 8px' : '8px 10px',
-        fontSize: small ? 10 : 11, fontFamily: "'Monaco','Consolas',monospace",
-        color: type === 'orphan' || type === 'metadata-inactive' ? '#94a3b8' : '#1e293b',
-        textAlign: 'center', minWidth: small ? 80 : 100, maxWidth: 140,
-        position: 'relative', lineHeight: 1.4,
-      }}>
-        {label}
-        {reused && <div style={{ fontSize: 9, color: '#f97316', fontWeight: 700, marginTop: 2 }}>REUSED</div>}
-        {note && <div style={{ fontSize: 9, color: '#64748b', marginTop: 2 }}>{note}</div>}
-      </div>
-    </Tooltip>
-  );
-}
-
-function ManifestTypeBadge({ type }) {
-  const styles = {
-    added: { background: '#16a34a', color: 'white' },
-    deleted: { background: '#ef5350', color: 'white' },
-    existing: { background: '#f97316', color: 'white' },
-  };
-  const labels = { added: 'ADDED', deleted: 'REMOVES ROWS', existing: 'EXISTING' };
-  return (
-    <span style={{ ...styles[type], fontSize: 9, padding: '1px 6px', borderRadius: 8, fontWeight: 700, display: 'block', marginTop: 3 }}>
-      {labels[type]}
-    </span>
-  );
-}
-
-function DataFileStack({ files, family, orphan }) {
+function FileStack({ files, family, orphan, puffin }) {
+  const activeColor = puffin ? '#7C3AED' : '#29B5E8';
+  const activeBg = puffin ? '#faf5ff' : '#f0fbff';
   return (
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4 }}>
-      <div style={{ fontSize: 10, fontWeight: 700, color: orphan ? '#94a3b8' : '#0e7490', marginBottom: 2, fontFamily: 'monospace' }}>
+      <div style={{ fontSize: 10, fontWeight: 700, color: orphan ? '#94a3b8' : (puffin ? '#7C3AED' : '#0e7490'), marginBottom: 2, fontFamily: 'monospace' }}>
         {family}
       </div>
-      <div style={{ position: 'relative', display: 'flex', flexDirection: 'column', gap: 2 }}>
-        {files.map((f, i) => (
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+        {files.map(f => (
           <Tooltip key={f} text={f}>
             <div style={{
-              border: orphan ? '1.5px dashed #cbd5e1' : '1.5px solid #29B5E8',
-              background: orphan ? '#f8fafc' : '#f0fbff',
+              border: orphan ? '1.5px dashed #cbd5e1' : `1.5px solid ${activeColor}`,
+              background: orphan ? '#f8fafc' : activeBg,
               borderRadius: 5, padding: '3px 7px',
               fontSize: 10, fontFamily: "'Monaco','Consolas',monospace",
-              color: orphan ? '#94a3b8' : '#0e7490',
+              color: orphan ? '#94a3b8' : (puffin ? '#7C3AED' : '#0e7490'),
               opacity: orphan ? 0.65 : 1,
             }}>
               {short(f)}
@@ -319,11 +264,24 @@ function DataFileStack({ files, family, orphan }) {
           </Tooltip>
         ))}
       </div>
-      {orphan && (
-        <div style={{ fontSize: 9, color: '#94a3b8', marginTop: 2, fontStyle: 'italic', textAlign: 'center', maxWidth: 110 }}>
-          orphan
-        </div>
-      )}
+      {orphan && <div style={{ fontSize: 9, color: '#94a3b8', marginTop: 2, fontStyle: 'italic' }}>orphan</div>}
+    </div>
+  );
+}
+
+function ManifestBadge({ type, contentType }) {
+  const colors = {
+    added: '#16a34a', deleted: '#ef5350', existing: '#f97316',
+  };
+  const labels = { added: 'ADDED', deleted: 'REMOVES', existing: 'REUSED' };
+  return (
+    <div style={{ display: 'flex', gap: 4, justifyContent: 'center', marginTop: 3, flexWrap: 'wrap' }}>
+      <span style={{ background: colors[type], color: 'white', fontSize: 9, padding: '1px 6px', borderRadius: 8, fontWeight: 700 }}>
+        {labels[type]}
+      </span>
+      <span style={{ background: contentType === 1 ? '#7C3AED' : '#0e7490', color: 'white', fontSize: 9, padding: '1px 6px', borderRadius: 8, fontWeight: 700 }}>
+        {contentType === 1 ? '🔴 DELETE VEC' : '📦 DATA'}
+      </span>
     </div>
   );
 }
@@ -334,12 +292,9 @@ function SnapshotDiagram({ snap }) {
 
       {/* Catalog */}
       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: 4 }}>
-        <div style={{
-          border: '2px solid #29B5E8', borderRadius: '50% / 12px', background: 'linear-gradient(180deg,#f0fbff,#e0f4fd)',
-          padding: '10px 32px', textAlign: 'center', position: 'relative', minWidth: 200,
-        }}>
+        <div style={{ border: '2px solid #29B5E8', borderRadius: '50% / 12px', background: 'linear-gradient(180deg,#f0fbff,#e0f4fd)', padding: '10px 32px', textAlign: 'center', minWidth: 200 }}>
           <div style={{ fontSize: 12, fontWeight: 700, color: '#0e7490' }}>🗄 Snowflake Catalog</div>
-          <div style={{ fontSize: 11, color: '#475569', marginTop: 4, fontFamily: 'monospace' }}>ORDERS_ICEBERG</div>
+          <div style={{ fontSize: 11, color: '#475569', marginTop: 4, fontFamily: 'monospace' }}>ORDERS_ICEBERG (V3)</div>
           <div style={{ fontSize: 10, color: '#64748b', marginTop: 4 }}>
             current → <span style={{ color: '#0e7490', fontWeight: 600 }}>{snap.metadataFiles.find(m => m.active)?.file}.metadata.json</span>
           </div>
@@ -347,47 +302,47 @@ function SnapshotDiagram({ snap }) {
         <Arrow />
       </div>
 
-      {/* Layer label */}
-      <div style={{ fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', color: '#94a3b8', marginBottom: 8 }}>
-        — metadata layer —
-      </div>
+      <div style={{ fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', color: '#94a3b8', marginBottom: 8 }}>— metadata layer —</div>
 
-      {/* Metadata files row */}
+      {/* Metadata files */}
       <div style={{ display: 'flex', justifyContent: 'center', gap: 10, marginBottom: 4, flexWrap: 'wrap' }}>
         {snap.metadataFiles.map(m => (
-          <FileBox
-            key={m.file}
-            label={m.file + '.json'}
-            fullName={m.file + '.metadata.json'}
-            type={m.active ? 'metadata' : 'metadata-inactive'}
-          />
+          <Tooltip key={m.file} text={m.file + '.metadata.json'}>
+            <div style={{
+              border: m.active ? '2px solid #29B5E8' : '1.5px solid #e2e8f0',
+              background: m.active ? '#f0fbff' : '#f8fafc',
+              borderRadius: 8, padding: '7px 10px', textAlign: 'center',
+              fontSize: 11, fontFamily: "'Monaco','Consolas',monospace",
+              color: m.active ? '#0e7490' : '#94a3b8',
+            }}>
+              {m.file}.json
+            </div>
+          </Tooltip>
         ))}
       </div>
       <Arrow />
 
-      {/* Manifest List row — active + orphan manifest lists side by side */}
+      {/* Manifest list row + orphan manifest lists */}
       <div style={{ display: 'flex', gap: 0, alignItems: 'flex-start', marginBottom: 4 }}>
         <div style={{ flex: 1, display: 'flex', justifyContent: 'center' }}>
           <div style={{ border: '2px solid #29B5E8', background: '#f0fbff', borderRadius: 8, padding: '8px 16px', textAlign: 'center' }}>
             <div style={{ fontSize: 10, fontWeight: 700, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 3 }}>Manifest List</div>
             <Tooltip text={snap.manifestList + '.avro'}>
               <div style={{ fontSize: 11, fontFamily: "'Monaco','Consolas',monospace", color: '#0e7490' }}>
-                {snap.manifestList.split('-').slice(0, 3).join('-') + '…' + snap.manifestList.slice(-8)}
+                snap-{snap.id.slice(0, 6)}…{snap.manifestList.slice(-8)}
               </div>
             </Tooltip>
           </div>
         </div>
         {snap.orphanManifestLists.length > 0 && (
-          <div style={{ borderLeft: '1.5px dashed #e2e8f0', paddingLeft: 16, display: 'flex', flexDirection: 'column', gap: 4, minWidth: 0 }}>
-            <div style={{ fontSize: 9, fontWeight: 700, color: '#cbd5e1', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 2 }}>Orphan Manifest Lists</div>
+          <div style={{ borderLeft: '1.5px dashed #e2e8f0', paddingLeft: 16 }}>
+            <div style={{ fontSize: 9, fontWeight: 700, color: '#cbd5e1', textTransform: 'uppercase', marginBottom: 4 }}>Orphan Manifest Lists</div>
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
               {snap.orphanManifestLists.map(ml => (
                 <Tooltip key={ml} text={ml + '.avro'}>
-                  <div style={{ border: '1.5px dashed #cbd5e1', background: '#f8fafc', borderRadius: 7, padding: '5px 10px', textAlign: 'center', opacity: 0.7 }}>
+                  <div style={{ border: '1.5px dashed #cbd5e1', background: '#f8fafc', borderRadius: 7, padding: '5px 10px', opacity: 0.7 }}>
                     <div style={{ fontSize: 9, fontWeight: 600, color: '#94a3b8', textTransform: 'uppercase', marginBottom: 1 }}>Manifest List</div>
-                    <div style={{ fontSize: 10, fontFamily: "'Monaco','Consolas',monospace", color: '#94a3b8' }}>
-                      snap-{ml.replace('snap-', '').slice(0, 6)}…{ml.slice(-8)}
-                    </div>
+                    <div style={{ fontSize: 10, fontFamily: "'Monaco','Consolas',monospace", color: '#94a3b8' }}>snap-{ml.replace('snap-', '').slice(0, 6)}…{ml.slice(-8)}</div>
                   </div>
                 </Tooltip>
               ))}
@@ -397,55 +352,82 @@ function SnapshotDiagram({ snap }) {
       </div>
       <Arrow />
 
-      {/* Manifests row */}
-      <div style={{ display: 'flex', justifyContent: 'center', gap: 14, marginBottom: 4, flexWrap: 'wrap' }}>
-        {snap.manifests.map(m => (
-          <div key={m.file} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-            <div style={{
-              border: m.type === 'added' ? '2px solid #16a34a' : m.type === 'deleted' ? '2px solid #ef5350' : '2px solid #f97316',
-              background: m.type === 'added' ? '#f0fdf4' : m.type === 'deleted' ? '#fff5f5' : '#fff7ed',
-              borderRadius: 8, padding: '7px 12px', textAlign: 'center', minWidth: 110,
-            }}>
-              <div style={{ fontSize: 10, fontWeight: 700, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.07em' }}>Manifest</div>
-              <Tooltip text={m.file + '.avro'}>
-                <div style={{ fontSize: 11, fontFamily: "'Monaco','Consolas',monospace", color: '#1e293b', marginTop: 2 }}>{m.file}</div>
-              </Tooltip>
-              <ManifestTypeBadge type={m.type} />
-              {m.reused && <div style={{ fontSize: 9, color: '#f97316', fontWeight: 700, marginTop: 2 }}>↩ REUSED</div>}
-              <div style={{ fontSize: 10, color: '#64748b', marginTop: 3 }}>{m.records.toLocaleString()} rows</div>
-              {m.note && <div style={{ fontSize: 9, color: '#64748b', marginTop: 2, fontStyle: 'italic' }}>{m.note}</div>}
-            </div>
+      {/* Manifests */}
+      <div style={{ display: 'flex', justifyContent: 'center', gap: 10, marginBottom: 4, flexWrap: 'wrap' }}>
+        {snap.manifests.map((m, i) => (
+          <div key={i} style={{
+            border: m.type === 'added' ? '2px solid #16a34a' : m.type === 'deleted' ? '2px solid #ef5350' : '2px solid #f97316',
+            background: m.type === 'added' ? '#f0fdf4' : m.type === 'deleted' ? '#fff5f5' : '#fff7ed',
+            borderRadius: 8, padding: '7px 10px', textAlign: 'center', minWidth: 110,
+          }}>
+            <div style={{ fontSize: 9, fontWeight: 700, color: '#64748b', textTransform: 'uppercase' }}>Manifest</div>
+            <Tooltip text={m.file + '.avro'}>
+              <div style={{ fontSize: 11, fontFamily: "'Monaco','Consolas',monospace", color: '#1e293b', marginTop: 2 }}>{m.file}</div>
+            </Tooltip>
+            <ManifestBadge type={m.type} contentType={m.contentType} />
+            <div style={{ fontSize: 10, color: '#64748b', marginTop: 3 }}>{m.rows.toLocaleString()} rows</div>
+            {m.note && <div style={{ fontSize: 9, color: '#64748b', marginTop: 2, fontStyle: 'italic' }}>{m.note}</div>}
           </div>
         ))}
       </div>
       <Arrow />
 
-      {/* Layer label */}
-      <div style={{ fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', color: '#94a3b8', marginBottom: 10 }}>
-        — data layer —
-      </div>
+      <div style={{ fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', color: '#94a3b8', marginBottom: 10 }}>— data layer —</div>
 
-      {/* Data layer — active + orphan data files side by side */}
-      <div style={{ display: 'flex', gap: 0, alignItems: 'flex-start' }}>
-        <div style={{ flex: 1, display: 'flex', justifyContent: 'center', gap: 20, flexWrap: 'wrap' }}>
-          {Object.entries(snap.activeDataFiles).map(([family, files]) => (
-            <DataFileStack key={family} family={family} files={files} orphan={false} />
-          ))}
+      {/* Active Parquet + orphan Parquet */}
+      <div style={{ display: 'flex', gap: 0, alignItems: 'flex-start', marginBottom: 16 }}>
+        <div style={{ flex: 1 }}>
+          <div style={{ fontSize: 10, color: '#0e7490', fontWeight: 700, textTransform: 'uppercase', marginBottom: 8, textAlign: 'center' }}>📦 Parquet Data Files</div>
+          <div style={{ display: 'flex', justifyContent: 'center', gap: 16, flexWrap: 'wrap' }}>
+            {Object.entries(snap.activeParquet).map(([family, files]) => (
+              <FileStack key={family} family={family} files={files} orphan={false} puffin={false} />
+            ))}
+          </div>
         </div>
-        {snap.orphanDataFiles.length > 0 && (
-          <div style={{ borderLeft: '1.5px dashed #e2e8f0', paddingLeft: 16, minWidth: 0 }}>
-            <div style={{ fontSize: 9, fontWeight: 700, color: '#cbd5e1', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 8 }}>Orphan Data Files</div>
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 16 }}>
-              {snap.orphanDataFiles.map(o => (
+        {snap.orphanParquet.length > 0 && (
+          <div style={{ borderLeft: '1.5px dashed #e2e8f0', paddingLeft: 16 }}>
+            <div style={{ fontSize: 9, fontWeight: 700, color: '#cbd5e1', textTransform: 'uppercase', marginBottom: 8 }}>Orphan Parquet</div>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 14 }}>
+              {snap.orphanParquet.map(o => (
                 <div key={o.family} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                  <DataFileStack family={o.family} files={o.files} orphan={true} />
-                  <div style={{ fontSize: 9, color: '#94a3b8', marginTop: 4, fontStyle: 'italic', textAlign: 'center', maxWidth: 110 }}>{o.reason}</div>
+                  <FileStack family={o.family} files={o.files} orphan={true} puffin={false} />
+                  <div style={{ fontSize: 9, color: '#94a3b8', marginTop: 4, fontStyle: 'italic', maxWidth: 110, textAlign: 'center' }}>{o.reason}</div>
                 </div>
               ))}
             </div>
           </div>
         )}
       </div>
+
+      {/* Active Puffin + orphan Puffin */}
+      {(Object.keys(snap.activePuffin).length > 0 || snap.orphanPuffin.length > 0) && (
+        <div style={{ display: 'flex', gap: 0, alignItems: 'flex-start' }}>
+          <div style={{ flex: 1 }}>
+            <div style={{ fontSize: 10, color: '#7C3AED', fontWeight: 700, textTransform: 'uppercase', marginBottom: 8, textAlign: 'center' }}>🔴 Puffin Delete Vectors (V3)</div>
+            <div style={{ display: 'flex', justifyContent: 'center', gap: 16, flexWrap: 'wrap' }}>
+              {Object.keys(snap.activePuffin).length > 0
+                ? Object.entries(snap.activePuffin).map(([family, files]) => (
+                    <FileStack key={family} family={family} files={files} orphan={false} puffin={true} />
+                  ))
+                : <div style={{ fontSize: 12, color: '#94a3b8', fontStyle: 'italic' }}>none (clean snapshot)</div>
+              }
+            </div>
+          </div>
+          {snap.orphanPuffin.length > 0 && (
+            <div style={{ borderLeft: '1.5px dashed #e2e8f0', paddingLeft: 16 }}>
+              <div style={{ fontSize: 9, fontWeight: 700, color: '#cbd5e1', textTransform: 'uppercase', marginBottom: 8 }}>Orphan Puffin</div>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 14 }}>
+                {snap.orphanPuffin.map(o => (
+                  <div key={o.family} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                    <FileStack family={o.family} files={o.files} orphan={true} puffin={true} />
+                    <div style={{ fontSize: 9, color: '#94a3b8', marginTop: 4, fontStyle: 'italic', maxWidth: 110, textAlign: 'center' }}>{o.reason}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 }
@@ -457,48 +439,32 @@ export default function IcebergStorage() {
   return (
     <div>
       <h2 style={{ fontSize: 24, fontWeight: 700, color: '#1e293b', marginBottom: 6 }}>Iceberg Cloud Storage</h2>
-      <p style={{ color: '#64748b', fontSize: 14, marginBottom: 28, maxWidth: 680 }}>
-        Real metadata files from <code style={{ background: '#f1f5f9', padding: '1px 5px', borderRadius: 4 }}>ORDERS_ICEBERG</code>. Use the slider to walk through each snapshot and see how the active metadata chain and orphan files change.
-      </p>
+      <div style={{ display: 'flex', gap: 10, marginBottom: 20, flexWrap: 'wrap' }}>
+        <div style={{ background: '#faf5ff', border: '1.5px solid #d8b4fe', borderRadius: 8, padding: '8px 14px', fontSize: 13, color: '#7C3AED' }}>
+          <strong>Format Version 3</strong> — introduces <strong>Puffin delete vectors</strong> (merge-on-read). DELETE/UPDATE no longer rewrites entire Parquet files.
+        </div>
+      </div>
 
-      {/* Slider + header */}
+      {/* Slider */}
       <div style={{ background: 'white', border: '1.5px solid #e2e8f0', borderRadius: 12, padding: '20px 24px', marginBottom: 20 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginBottom: 14 }}>
           <div style={{ fontSize: 13, fontWeight: 700, color: '#64748b', whiteSpace: 'nowrap' }}>Snapshot</div>
-          <input
-            type="range" min={0} max={5} value={snapIdx}
-            onChange={e => setSnapIdx(Number(e.target.value))}
-            style={{ flex: 1, accentColor: '#29B5E8', cursor: 'pointer' }}
-          />
-          <div style={{ fontSize: 13, fontWeight: 700, color: '#64748b', whiteSpace: 'nowrap' }}>
-            {snapIdx + 1} / 6
-          </div>
+          <input type="range" min={0} max={5} value={snapIdx} onChange={e => setSnapIdx(Number(e.target.value))} style={{ flex: 1, accentColor: '#29B5E8', cursor: 'pointer' }} />
+          <div style={{ fontSize: 13, fontWeight: 700, color: '#64748b', whiteSpace: 'nowrap' }}>{snapIdx + 1} / 6</div>
         </div>
-
-        {/* Snapshot markers */}
         <div style={{ display: 'flex', gap: 6, marginBottom: 14 }}>
           {SNAPSHOTS.map((s, i) => (
-            <button
-              key={i}
-              onClick={() => setSnapIdx(i)}
-              style={{
-                flex: 1, padding: '6px 4px', borderRadius: 8, cursor: 'pointer', fontSize: 11, fontWeight: 600,
-                border: i === snapIdx ? `2px solid ${OP_COLOR[s.operation]}` : '1.5px solid #e2e8f0',
-                background: i === snapIdx ? (s.operation === 'append' ? '#f0fdf4' : '#fff7ed') : '#f8fafc',
-                color: i === snapIdx ? OP_COLOR[s.operation] : '#94a3b8',
-              }}
-            >
-              S{s.num}
-            </button>
+            <button key={i} onClick={() => setSnapIdx(i)} style={{
+              flex: 1, padding: '6px 4px', borderRadius: 8, cursor: 'pointer', fontSize: 11, fontWeight: 600,
+              border: i === snapIdx ? `2px solid ${OP_COLOR[s.operation]}` : '1.5px solid #e2e8f0',
+              background: i === snapIdx ? `${OP_COLOR[s.operation]}15` : '#f8fafc',
+              color: i === snapIdx ? OP_COLOR[s.operation] : '#94a3b8',
+            }}>S{s.num}</button>
           ))}
         </div>
-
-        {/* Snapshot summary */}
         <div style={{ display: 'flex', gap: 16, alignItems: 'flex-start', flexWrap: 'wrap' }}>
           <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
-            <span style={{ background: OP_COLOR[snap.operation], color: 'white', padding: '3px 10px', borderRadius: 20, fontSize: 11, fontWeight: 700 }}>
-              {OP_LABEL[snap.operation]}
-            </span>
+            <span style={{ background: OP_COLOR[snap.operation], color: 'white', padding: '3px 10px', borderRadius: 20, fontSize: 11, fontWeight: 700 }}>{OP_LABEL[snap.operation]}</span>
             <span style={{ fontSize: 12, color: '#64748b' }}>{snap.timestamp}</span>
           </div>
           <div style={{ fontSize: 13, color: '#475569', flex: 1 }}>{snap.description}</div>
@@ -511,13 +477,13 @@ export default function IcebergStorage() {
 
       <SnapshotDiagram snap={snap} />
 
-      {/* Legend */}
-      <div style={{ marginTop: 16, display: 'flex', gap: 16, flexWrap: 'wrap', fontSize: 11, color: '#64748b' }}>
+      <div style={{ marginTop: 16, display: 'flex', gap: 14, flexWrap: 'wrap', fontSize: 11, color: '#64748b' }}>
         {[
           { color: '#29B5E8', label: 'Active path' },
-          { color: '#16a34a', label: 'Added files' },
-          { color: '#ef5350', label: 'Deleted files' },
-          { color: '#f97316', label: 'Existing / reused' },
+          { color: '#16a34a', label: 'Added' },
+          { color: '#ef5350', label: 'Removes / deactivates' },
+          { color: '#f97316', label: 'Reused from prior snapshot' },
+          { color: '#7C3AED', label: 'Puffin delete vectors (V3)' },
           { color: '#cbd5e1', label: 'Orphan (in storage, not referenced)', dashed: true },
         ].map(item => (
           <div key={item.label} style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
