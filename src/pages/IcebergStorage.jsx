@@ -288,6 +288,16 @@ const FULL_FILENAME = {
 };
 const fullName = key => FULL_FILENAME[key] || key;
 
+function PopupIcon({ size = 14 }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ display: 'inline', verticalAlign: 'middle', marginLeft: 4 }}>
+      <rect x="3" y="3" width="18" height="18" rx="2"/>
+      <path d="M3 9h18"/>
+      <path d="M9 21V9"/>
+    </svg>
+  );
+}
+
 const PROCEDURES = {
   INSERT: `CREATE OR REPLACE PROCEDURE ETL_TESTING.ICEBERG_DEMO.INSERT_ORDERS_ICEBERG(NUM_RECORDS INT)
 RETURNS VARCHAR LANGUAGE SQL AS
@@ -353,13 +363,13 @@ const SNAPSHOT_SQL = {
     CATALOG = 'SNOWFLAKE'
     EXTERNAL_VOLUME = 'S3SNOWFLAKEICEBERG'
     BASE_LOCATION = 'iceberg_demo/iceberg_testing/'
-    ICEBERG_VERSION = 3;`, procedure: null, logicalRows: 0 },
-  1: { sql: 'CALL ETL_TESTING.ICEBERG_DEMO.INSERT_ORDERS_ICEBERG(2000000);', procedure: 'INSERT', logicalRows: 2000000 },
-  2: { sql: 'CALL ETL_TESTING.ICEBERG_DEMO.UPDATE_ORDERS_ICEBERG(60);', procedure: 'UPDATE', logicalRows: 2000000 },
-  3: { sql: 'CALL ETL_TESTING.ICEBERG_DEMO.DELETE_ORDERS_ICEBERG(80);', procedure: 'DELETE', logicalRows: 1999920 },
-  4: { sql: 'CALL ETL_TESTING.ICEBERG_DEMO.INSERT_ORDERS_ICEBERG(1200000);', procedure: 'INSERT', logicalRows: 3199920 },
-  5: { sql: 'CALL ETL_TESTING.ICEBERG_DEMO.DELETE_ORDERS_ICEBERG(300);', procedure: 'DELETE', logicalRows: 3199620 },
-  6: { sql: 'CALL ETL_TESTING.ICEBERG_DEMO.UPDATE_ORDERS_ICEBERG(150000);', procedure: 'UPDATE', logicalRows: 3199620 },
+    ICEBERG_VERSION = 3;`, procedure: null, logicalRows: 0, queryId: '01c4151f-0208-bdf5-0067-4e870aa1eb22' },
+  1: { sql: 'CALL ETL_TESTING.ICEBERG_DEMO.INSERT_ORDERS_ICEBERG(2000000);', procedure: 'INSERT', logicalRows: 2000000, queryId: '01c41520-0208-bece-0067-4e870aa2c542' },
+  2: { sql: 'CALL ETL_TESTING.ICEBERG_DEMO.UPDATE_ORDERS_ICEBERG(60);', procedure: 'UPDATE', logicalRows: 2000000, queryId: '01c41520-0208-bee9-0067-4e870aa360ca' },
+  3: { sql: 'CALL ETL_TESTING.ICEBERG_DEMO.DELETE_ORDERS_ICEBERG(80);', procedure: 'DELETE', logicalRows: 1999920, queryId: '01c41521-0208-becf-0067-4e870aa3216e' },
+  4: { sql: 'CALL ETL_TESTING.ICEBERG_DEMO.INSERT_ORDERS_ICEBERG(1200000);', procedure: 'INSERT', logicalRows: 3199920, queryId: '01c41521-0208-bdf5-0067-4e870aa1eb66' },
+  5: { sql: 'CALL ETL_TESTING.ICEBERG_DEMO.DELETE_ORDERS_ICEBERG(300);', procedure: 'DELETE', logicalRows: 3199620, queryId: null },
+  6: { sql: 'CALL ETL_TESTING.ICEBERG_DEMO.UPDATE_ORDERS_ICEBERG(150000);', procedure: 'UPDATE', logicalRows: 3199620, queryId: null },
 };
 
 
@@ -415,7 +425,9 @@ function SqlModal({ snap, onClose }) {
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '14px 20px', borderBottom: '1.5px solid #e2e8f0' }}>
           <div>
             <div style={{ fontSize: 13, fontWeight: 700, color: '#1e293b' }}>S{snap.num} — {snap.description.split('—')[0].trim()}</div>
-            <div style={{ fontSize: 11, color: '#94a3b8', marginTop: 2, fontStyle: 'italic' }}>Query ID: TBD</div>
+            {info?.queryId
+              ? <div style={{ fontSize: 11, color: '#64748b', fontFamily: 'monospace', marginTop: 2 }}>Query ID: {info.queryId}</div>
+              : <div style={{ fontSize: 11, color: '#94a3b8', marginTop: 2, fontStyle: 'italic' }}>Query ID: TBD</div>}
           </div>
           <button onClick={onClose} style={{ background: 'none', border: 'none', fontSize: 20, cursor: 'pointer', color: '#64748b', lineHeight: 1, padding: '4px 8px' }}>✕</button>
         </div>
@@ -899,7 +911,9 @@ export default function IcebergStorage() {
           <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
             <span style={{ background: OP_COLOR[snap.operation], color: 'white', padding: '3px 10px', borderRadius: 20, fontSize: 11, fontWeight: 700 }}>{OP_LABEL[snap.operation]}</span>
             <span style={{ fontSize: 12, color: '#64748b' }}>{snap.timestamp}</span>
-            <button onClick={() => setSqlModal(true)} style={{ background: '#f8fafc', border: '1.5px solid #e2e8f0', borderRadius: 8, padding: '3px 10px', fontSize: 11, fontWeight: 600, color: '#475569', cursor: 'pointer' }}>SQL ↗</button>
+            <button onClick={() => setSqlModal(true)} style={{ background: 'none', border: 'none', padding: 0, cursor: 'pointer', color: '#29B5E8', fontWeight: 600, fontSize: 11, display: 'inline-flex', alignItems: 'center' }}>
+              SQL <PopupIcon size={12} />
+            </button>
           </div>
           <div style={{ fontSize: 13, color: '#475569', flex: 1 }}>{snap.description}</div>
           <div style={{ textAlign: 'right' }}>
