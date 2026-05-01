@@ -427,7 +427,7 @@ function SnapshotDiagram({ snap }) {
           {/* LEFT: Active content */}
           <div style={{ flex: 1 }}>
             {/* Catalog */}
-            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', marginBottom: 20 }}>
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: 20 }}>
               <div ref={setRef('catalog')} style={{ border: '2px solid #29B5E8', borderRadius: '50% / 12px', background: 'linear-gradient(180deg,#f0fbff,#e0f4fd)', padding: '10px 32px', textAlign: 'center', minWidth: 200 }}>
                 <div style={{ fontSize: 12, fontWeight: 700, color: '#0e7490' }}>🗄 Snowflake Catalog</div>
                 <div style={{ fontSize: 11, color: '#475569', marginTop: 4, fontFamily: 'monospace' }}>ORDERS_ICEBERG (V3)</div>
@@ -440,7 +440,7 @@ function SnapshotDiagram({ snap }) {
             <div style={{ fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', color: '#475569', marginBottom: 10 }}>— metadata layer —</div>
 
             {/* Active metadata file */}
-            <div style={{ display: 'flex', justifyContent: 'flex-start', marginBottom: 20 }}>
+            <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 20 }}>
               {snap.metadataFiles.filter(m => m.active).map(m => (
                 <Tooltip key={m.file} text={m.file + '.metadata.json'}>
                   <div ref={setRef('activeMeta')} style={{ border: '2px solid #29B5E8', background: '#f0fbff', borderRadius: 8, padding: '7px 10px', textAlign: 'center', fontSize: 11, fontFamily: "'Monaco','Consolas',monospace", color: '#0e7490' }}>
@@ -454,7 +454,7 @@ function SnapshotDiagram({ snap }) {
             {snap.manifestList ? (
               <>
                 {/* Manifest list */}
-                <div style={{ display: 'flex', justifyContent: 'flex-start', marginBottom: 20 }}>
+                <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 20 }}>
                   <div ref={setRef('manifestList')} style={{ border: '2px solid #29B5E8', background: '#f0fbff', borderRadius: 8, padding: '8px 16px', textAlign: 'center' }}>
                     <div style={{ fontSize: 10, fontWeight: 700, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 3 }}>Manifest List {ML_NUM[snap.manifestList]}</div>
                     <Tooltip text={snap.manifestList + '.avro'}>
@@ -473,7 +473,7 @@ function SnapshotDiagram({ snap }) {
 
                 {/* Manifest file columns + data stacks */}
                 <div style={{ marginBottom: 10 }}>
-                  <div style={{ display: 'flex', justifyContent: 'flex-start', gap: 16, flexWrap: 'wrap' }}>
+                  <div style={{ display: 'flex', justifyContent: 'center', gap: 16, flexWrap: 'wrap' }}>
                     {[...reusedManifests, ...addedManifests].sort((a, b) => (MF_NUM[a.file] || 99) - (MF_NUM[b.file] || 99)).map((m, i) => {
                       const family = getFamily(m.files);
                       const isParquet = m.contentType === 0;
