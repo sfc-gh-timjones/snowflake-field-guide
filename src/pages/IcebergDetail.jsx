@@ -411,6 +411,17 @@ export default function IcebergDetail({ onNavigate }) {
               </span>
             </div>
 
+            <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: 12 }}>
+              <button
+                onClick={() => onNavigate('iceberg-storage')}
+                style={{ background: 'none', border: '1.5px solid #94a3b8', borderRadius: 8, padding: '4px 12px', cursor: 'pointer', fontSize: 13, color: '#64748b', fontWeight: 600, display: 'inline-flex', alignItems: 'center', gap: 4 }}
+                onMouseEnter={e => { e.currentTarget.style.background = '#f1f5f9'; e.currentTarget.style.borderColor = '#475569'; e.currentTarget.style.color = '#1e293b'; }}
+                onMouseLeave={e => { e.currentTarget.style.background = 'none'; e.currentTarget.style.borderColor = '#94a3b8'; e.currentTarget.style.color = '#64748b'; }}
+              >
+                Explore <span>→</span>
+              </button>
+            </div>
+
             <div style={{ borderTop: '1px solid #e2e8f0', paddingTop: 16 }}>
               <div style={{ fontSize: 13, color: '#64748b', marginBottom: 12, fontWeight: 500 }}>Files stored:</div>
               <div
