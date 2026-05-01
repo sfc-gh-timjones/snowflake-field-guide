@@ -522,7 +522,7 @@ function SnapshotDiagram({ snap }) {
             (snap.orphanManifestFiles && snap.orphanManifestFiles.length > 0) ||
             snap.orphanParquet.length > 0 ||
             snap.orphanPuffin.length > 0) && (
-            <div style={{ borderLeft: '1.5px dashed #e2e8f0', paddingLeft: 16, width: 460, flexShrink: 0 }}>
+            <div style={{ borderLeft: '1.5px dashed #e2e8f0', paddingLeft: 16, width: 505, flexShrink: 0 }}>
               <div style={{ fontSize: 9, fontWeight: 700, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 14 }}>— orphaned —</div>
 
               {/* Orphan metadata files */}
