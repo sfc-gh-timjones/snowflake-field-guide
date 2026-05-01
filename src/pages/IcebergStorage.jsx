@@ -74,6 +74,7 @@ const SNAPSHOTS = [
     activeParquet: {},
     activePuffin: {},
     orphanManifestLists: [],
+    orphanManifestFiles: [],
     orphanParquet: [],
     orphanPuffin: [],
   },
@@ -92,6 +93,7 @@ const SNAPSHOTS = [
     activeParquet: { 'X-rqSgaF': ALL['X-rqSgaF'] },
     activePuffin: {},
     orphanManifestLists: [],
+    orphanManifestFiles: [],
     orphanParquet: [],
     orphanPuffin: [],
   },
@@ -112,6 +114,7 @@ const SNAPSHOTS = [
     activeParquet: { 'X-rqSgaF': ALL['X-rqSgaF'], AgAjQxSF: ALL.AgAjQxSF },
     activePuffin: { BAAjQxSF: ALL.BAAjQxSF },
     orphanManifestLists: ['snap-4266675115824445705-abc519c1'],
+    orphanManifestFiles: [],
     orphanParquet: [],
     orphanPuffin: [],
   },
@@ -134,6 +137,9 @@ const SNAPSHOTS = [
     activeParquet: { 'X-rqSgaF': ALL['X-rqSgaF'], AgAjQxSF: ALL.AgAjQxSF },
     activePuffin: { QmqdMRWF: ALL.QmqdMRWF },
     orphanManifestLists: ['snap-4266675115824445705-abc519c1', 'snap-7307837349431736038-c1267686'],
+    orphanManifestFiles: [
+      { file: 'c1267686-m1', contentType: 1, reason: 'BAAjQxSF puffins from S2 replaced by QmqdMRWF' },
+    ],
     orphanParquet: [],
     orphanPuffin: [{ family: 'BAAjQxSF', files: ALL.BAAjQxSF, reason: 'Snap 2 puffins superseded by QmqdMRWF' }],
   },
@@ -157,6 +163,10 @@ const SNAPSHOTS = [
     activeParquet: { 'X-rqSgaF': ALL['X-rqSgaF'], AgAjQxSF: ALL.AgAjQxSF, gNyIOyKF: ALL.gNyIOyKF },
     activePuffin: { QmqdMRWF: ALL.QmqdMRWF },
     orphanManifestLists: ['snap-4266675115824445705-abc519c1', 'snap-7307837349431736038-c1267686', 'snap-2262732046837108839-a6133c18'],
+    orphanManifestFiles: [
+      { file: 'c1267686-m1', contentType: 1, reason: 'Orphaned in S3' },
+      { file: 'a6133c18-m0', contentType: 1, reason: 'REMOVES manifest from S3 not carried into S4' },
+    ],
     orphanParquet: [],
     orphanPuffin: [{ family: 'BAAjQxSF', files: ALL.BAAjQxSF, reason: 'Superseded in Snap 3' }],
   },
@@ -182,6 +192,11 @@ const SNAPSHOTS = [
     activeParquet: { 'X-rqSgaF': ALL['X-rqSgaF'], AgAjQxSF: ALL.AgAjQxSF, gNyIOyKF: ALL.gNyIOyKF },
     activePuffin: { whCeZSOF: ALL.whCeZSOF },
     orphanManifestLists: ['snap-4266675115824445705-abc519c1', 'snap-7307837349431736038-c1267686', 'snap-2262732046837108839-a6133c18', 'snap-2111496596829886963-1e8a5be1'],
+    orphanManifestFiles: [
+      { file: 'c1267686-m1', contentType: 1, reason: 'Orphaned in S3' },
+      { file: 'a6133c18-m0', contentType: 1, reason: 'Orphaned in S4' },
+      { file: 'a6133c18-m1', contentType: 1, reason: 'QmqdMRWF puffins from S3, replaced by whCeZSOF in S5' },
+    ],
     orphanParquet: [],
     orphanPuffin: [
       { family: 'BAAjQxSF', files: ALL.BAAjQxSF, reason: 'Superseded in Snap 3' },
@@ -212,6 +227,14 @@ const SNAPSHOTS = [
     activeParquet: { 'X-rqSgaF': ALL['X-rqSgaF'], gNyIOyKF: ALL.gNyIOyKF, wxCeZSOF: ALL.wxCeZSOF },
     activePuffin: { xRCeZSOF: ALL.xRCeZSOF },
     orphanManifestLists: ['snap-4266675115824445705-abc519c1', 'snap-7307837349431736038-c1267686', 'snap-2262732046837108839-a6133c18', 'snap-2111496596829886963-1e8a5be1', 'snap-8999721586070847566-1855a186'],
+    orphanManifestFiles: [
+      { file: 'c1267686-m1', contentType: 1, reason: 'Orphaned in S3' },
+      { file: 'a6133c18-m0', contentType: 1, reason: 'Orphaned in S4' },
+      { file: 'a6133c18-m1', contentType: 1, reason: 'Orphaned in S5' },
+      { file: 'c1267686-m0', contentType: 0, reason: 'AgAjQxSF replaced by wxCeZSOF in S6' },
+      { file: '1855a186-m1', contentType: 1, reason: 'whCeZSOF puffins superseded in S6' },
+      { file: '1855a186-m0', contentType: 1, reason: 'REMOVES manifest from S5 not carried into S6' },
+    ],
     orphanParquet: [{ family: 'AgAjQxSF', files: ALL.AgAjQxSF, reason: 'Snap 2 UPDATE rows replaced in Snap 6' }],
     orphanPuffin: [
       { family: 'BAAjQxSF', files: ALL.BAAjQxSF, reason: 'Superseded in Snap 3' },
@@ -239,7 +262,25 @@ function Tooltip({ text, children }) {
         }}>
           {text}
           <div style={{ position: 'absolute', top: '100%', left: '50%', transform: 'translateX(-50%)', borderTop: '5px solid #1e293b', borderLeft: '5px solid transparent', borderRight: '5px solid transparent' }} />
-        </div>
+          {/* Orphan manifest files */}
+        {snap.orphanManifestFiles && snap.orphanManifestFiles.length > 0 && (
+          <div style={{ borderLeft: '1.5px dashed #e2e8f0', paddingLeft: 16 }}>
+            <div style={{ fontSize: 9, fontWeight: 700, color: '#cbd5e1', textTransform: 'uppercase', marginBottom: 4 }}>Orphan Manifest Files</div>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+              {snap.orphanManifestFiles.map((m, i) => (
+                <div key={i} style={{ border: '1.5px dashed #cbd5e1', background: '#f8fafc', borderRadius: 8, padding: '7px 10px', textAlign: 'center', minWidth: 110, opacity: 0.7 }}>
+                  <div style={{ fontSize: 9, fontWeight: 700, color: '#94a3b8', textTransform: 'uppercase' }}>Manifest File</div>
+                  <div style={{ fontSize: 11, fontFamily: "'Monaco','Consolas',monospace", color: '#94a3b8', marginTop: 2 }}>{m.file}</div>
+                  <span style={{ background: m.contentType === 1 ? '#7C3AED' : '#0e7490', color: 'white', fontSize: 9, padding: '1px 6px', borderRadius: 8, fontWeight: 700, display: 'inline-block', marginTop: 3 }}>
+                    {m.contentType === 1 ? '🔴 DELETE VEC' : '📦 DATA'}
+                  </span>
+                  <div style={{ fontSize: 9, color: '#94a3b8', marginTop: 3, fontStyle: 'italic' }}>{m.reason}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
       )}
     </span>
   );
