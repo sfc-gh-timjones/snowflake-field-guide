@@ -81,8 +81,8 @@ const SNAPSHOTS = [
   },
   {
     num: 2, id: '7307837349431736038', operation: 'overwrite', timestamp: '12:40:45',
-    description: 'UPDATE 55 rows — V3 merge-on-read: tiny new files + puffin delete vectors. No full rewrite!',
-    recordCount: 2000060, delta: 'UPDATE 55', deltaColor: '#7C3AED',
+    description: 'UPDATE 60 rows — V3 merge-on-read: tiny new files + puffin delete vectors. No full rewrite!',
+    recordCount: 2000060, delta: 'UPDATE 60', deltaColor: '#7C3AED',
     metadataFiles: [
       { file: '00001-53b570e8', active: false },
       { file: '00002-7023a79a', active: true },
@@ -101,7 +101,7 @@ const SNAPSHOTS = [
   },
   {
     num: 3, id: '2262732046837108839', operation: 'delete', timestamp: '12:41:15',
-    description: 'DELETE 30 rows — V3: zero data file rewrites. New puffin file marks row positions as deleted.',
+    description: 'DELETE 80 rows — V3: zero data file rewrites. New puffin file marks row positions as deleted.',
     recordCount: 2000060, delta: '−30', deltaColor: '#ef5350',
     metadataFiles: [
       { file: '00001-53b570e8', active: false },
@@ -146,7 +146,7 @@ const SNAPSHOTS = [
   },
   {
     num: 5, id: '8999721586070847566', operation: 'delete', timestamp: '12:42:09',
-    description: 'DELETE 200 rows — V3: again zero data rewrites. New puffin replaces old puffin.',
+    description: 'DELETE 300 rows — V3: again zero data rewrites. New puffin replaces old puffin.',
     recordCount: 3200060, delta: '−200', deltaColor: '#ef5350',
     metadataFiles: [
       { file: '00001-53b570e8', active: false },
@@ -174,8 +174,8 @@ const SNAPSHOTS = [
   },
   {
     num: 6, id: '187341245160280515', operation: 'overwrite', timestamp: '12:42:55',
-    description: 'UPDATE 40 rows — rewrites affected files + new puffin vectors. AgAjQxSF files now orphaned.',
-    recordCount: 3350054, delta: 'UPDATE 40', deltaColor: '#7C3AED',
+    description: 'UPDATE 150,054 rows — large update rewrites affected Parquet files + new puffin vectors. AgAjQxSF files now orphaned.',
+    recordCount: 3350054, delta: 'UPDATE 150K', deltaColor: '#7C3AED',
     metadataFiles: [
       { file: '00001-53b570e8', active: false },
       { file: '00002-7023a79a', active: false },
