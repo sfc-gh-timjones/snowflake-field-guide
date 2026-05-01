@@ -122,7 +122,7 @@ const SNAPSHOTS = [
       { file: 'c1267686-m0', contentType: 0, type: 'existing', rows: 60, files: ALL.AgAjQxSF, reused: true },
       { file: 'abc519c1-m0', contentType: 0, type: 'existing', rows: 2000000, files: ALL['X-rqSgaF'], reused: true },
       { file: 'a6133c18-m1', contentType: 1, type: 'added', rows: 140, files: ALL.QmqdMRWF, reused: false, note: '4 puffin files (DELETE 80 rows)' },
-      { file: 'a6133c18-m0', contentType: 1, type: 'deleted', rows: 60, files: ALL.BAAjQxSF, reused: false, note: 'Snap 2 puffins superseded' },
+      { file: 'a6133c18-m0', contentType: 1, type: 'deleted', rows: 60, files: ALL.BAAjQxSF, reused: false, note: 'REMOVES entry: S2 puffins declared removed in S3 manifest list' },
     ],
     activeParquet: { 'X-rqSgaF': ALL['X-rqSgaF'], AgAjQxSF: ALL.AgAjQxSF },
     activePuffin: { QmqdMRWF: ALL.QmqdMRWF },
@@ -534,7 +534,7 @@ function SnapshotDiagram({ snap }) {
               {removedManifests.length > 0 && (
                 <div style={{ borderLeft: '1.5px dashed #e2e8f0', paddingLeft: 16 }}>
                   <div style={{ fontSize: 9, fontWeight: 700, color: '#cbd5e1', textTransform: 'uppercase', marginBottom: 4 }}>Orphan Manifests</div>
-                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, auto)', gap: 8, justifyContent: 'start' }}>
                     {removedManifests.map((m, i) => (
                       <div key={i} style={{ border: '1.5px dashed #fca5a5', background: '#fff5f5', borderRadius: 8, padding: '7px 10px', textAlign: 'center', minWidth: 110, opacity: 0.75 }}>
                         <div style={{ fontSize: 9, fontWeight: 700, color: '#475569', textTransform: 'uppercase' }}>Manifest File {MF_NUM[m.file]}</div>
@@ -550,7 +550,7 @@ function SnapshotDiagram({ snap }) {
               {snap.orphanManifestFiles && snap.orphanManifestFiles.length > 0 && (
                 <div style={{ borderLeft: '1.5px dashed #e2e8f0', paddingLeft: 16 }}>
                   <div style={{ fontSize: 9, fontWeight: 700, color: '#cbd5e1', textTransform: 'uppercase', marginBottom: 4 }}>Orphan Manifest Files</div>
-                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, auto)', gap: 8, justifyContent: 'start' }}>
                     {snap.orphanManifestFiles.map((m, i) => (
                       <div key={i} style={{ border: '1.5px dashed #cbd5e1', background: '#f8fafc', borderRadius: 8, padding: '7px 10px', textAlign: 'center', minWidth: 110, opacity: 0.7 }}>
                         <div style={{ fontSize: 9, fontWeight: 700, color: '#475569', textTransform: 'uppercase' }}>Manifest File {MF_NUM[m.file]}</div>
@@ -651,7 +651,7 @@ export default function IcebergStorage() {
           <div style={{ fontSize: 13, color: '#475569', flex: 1 }}>{snap.description}</div>
           <div style={{ textAlign: 'right' }}>
             <div style={{ fontSize: 18, fontWeight: 800, color: snap.deltaColor }}>{snap.delta}</div>
-            <div style={{ fontSize: 11, color: '#475569' }}>{snap.recordCount.toLocaleString()} total</div>
+            <div style={{ fontSize: 11, color: '#475569' }}>{snap.recordCount.toLocaleString()} rows in files</div>
           </div>
         </div>
       </div>
