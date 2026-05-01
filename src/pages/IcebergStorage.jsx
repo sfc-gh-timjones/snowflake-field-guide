@@ -616,7 +616,32 @@ function SnapshotDiagram({ snap }) {
 
 export default function IcebergStorage() {
   const [snapIdx, setSnapIdx] = useState(0);
+  const [playing, setPlaying] = useState(false);
+  const intervalRef = useRef(null);
   const snap = SNAPSHOTS[snapIdx];
+
+  const startPlay = () => {
+    setSnapIdx(0);
+    setPlaying(true);
+    let i = 0;
+    clearInterval(intervalRef.current);
+    intervalRef.current = setInterval(() => {
+      i += 1;
+      if (i >= SNAPSHOTS.length) {
+        clearInterval(intervalRef.current);
+        setPlaying(false);
+      } else {
+        setSnapIdx(i);
+      }
+    }, 1000);
+  };
+
+  const stopPlay = () => {
+    clearInterval(intervalRef.current);
+    setPlaying(false);
+  };
+
+  useEffect(() => () => clearInterval(intervalRef.current), []);
 
   return (
     <div>
@@ -628,10 +653,25 @@ export default function IcebergStorage() {
       </div>
 
       <div style={{ background: 'white', border: '1.5px solid #e2e8f0', borderRadius: 12, padding: '20px 24px', marginBottom: 20 }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginBottom: 14 }}>
-          <div style={{ fontSize: 13, fontWeight: 700, color: '#64748b', whiteSpace: 'nowrap' }}>Snapshot</div>
-          <input type="range" min={0} max={6} value={snapIdx} onChange={e => setSnapIdx(Number(e.target.value))} style={{ flex: 1, accentColor: '#29B5E8', cursor: 'pointer' }} />
-          <div style={{ fontSize: 13, fontWeight: 700, color: '#64748b', whiteSpace: 'nowrap' }}>{snapIdx + 1} / 7</div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 14 }}>
+          <button onClick={playing ? stopPlay : startPlay} style={{
+            display: 'flex', alignItems: 'center', gap: 6,
+            background: playing ? '#ef5350' : '#29B5E8',
+            color: 'white', border: 'none', borderRadius: 8,
+            padding: '7px 18px', fontSize: 13, fontWeight: 700, cursor: 'pointer',
+            whiteSpace: 'nowrap',
+          }}>
+            {playing ? '⏹ Stop' : '▶ Play'}
+          </button>
+          {playing && (
+            <div style={{ flex: 1, height: 4, background: '#e2e8f0', borderRadius: 2, overflow: 'hidden' }}>
+              <div style={{
+                height: '100%', background: '#29B5E8', borderRadius: 2,
+                width: `${((snapIdx + 1) / SNAPSHOTS.length) * 100}%`,
+                transition: 'width 0.8s ease',
+              }} />
+            </div>
+          )}
         </div>
         <div style={{ display: 'flex', gap: 6, marginBottom: 14 }}>
           {SNAPSHOTS.map((s, i) => (
