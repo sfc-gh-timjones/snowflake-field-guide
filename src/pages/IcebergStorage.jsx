@@ -259,6 +259,35 @@ const MF_NUM = {
 const OP_COLOR = { create: '#64748b', append: '#16a34a', overwrite: '#7C3AED', delete: '#ef5350' };
 const OP_LABEL = { create: 'CREATE TABLE', append: 'INSERT', overwrite: 'UPDATE', delete: 'DELETE' };
 
+const FULL_FILENAME = {
+  '00000-26833116': '00000-26833116-a13f-425a-b5c4-8ac248e1140e.metadata.json',
+  '00001-53b570e8': '00001-53b570e8-4661-41a2-bd53-88c5f6e40f6d.metadata.json',
+  '00002-7023a79a': '00002-7023a79a-e9af-43c8-99ca-0284103ec570.metadata.json',
+  '00003-ae4702eb': '00003-ae4702eb-fc2d-42d3-b852-a500b850081f.metadata.json',
+  '00004-aee50960': '00004-aee50960-d70c-4a88-845c-b53bce35d20d.metadata.json',
+  '00005-0015cd9d': '00005-0015cd9d-22ca-4366-9678-dce25b9a6d41.metadata.json',
+  '00006-edf55cf2': '00006-edf55cf2-5826-4bbc-8c1c-62ddedbde0f3.metadata.json',
+  'snap-4266675115824445705-abc519c1': 'snap-4266675115824445705-1-abc519c1-ae05-453d-ad04-42f411166b5d.avro',
+  'snap-7307837349431736038-c1267686': 'snap-7307837349431736038-1-c1267686-6d77-4cea-b051-476398fc8362.avro',
+  'snap-2262732046837108839-a6133c18': 'snap-2262732046837108839-1-a6133c18-0f37-4b70-8aaf-0af0bf06ab8a.avro',
+  'snap-2111496596829886963-1e8a5be1': 'snap-2111496596829886963-1-1e8a5be1-f26d-4118-a102-1bc0b281841d.avro',
+  'snap-8999721586070847566-1855a186': 'snap-8999721586070847566-1-1855a186-ce01-47c4-8b5e-61ddbb91bcaf.avro',
+  'snap-187341245160280515-060cb698': 'snap-187341245160280515-1-060cb698-b4ad-4c2e-9df1-f49b2ec047dd.avro',
+  'abc519c1-m0': 'abc519c1-ae05-453d-ad04-42f411166b5d-m0.avro',
+  'c1267686-m0': 'c1267686-6d77-4cea-b051-476398fc8362-m0.avro',
+  'c1267686-m1': 'c1267686-6d77-4cea-b051-476398fc8362-m1.avro',
+  'a6133c18-m0': 'a6133c18-0f37-4b70-8aaf-0af0bf06ab8a-m0.avro',
+  'a6133c18-m1': 'a6133c18-0f37-4b70-8aaf-0af0bf06ab8a-m1.avro',
+  '1e8a5be1-m0': '1e8a5be1-f26d-4118-a102-1bc0b281841d-m0.avro',
+  '1855a186-m0': '1855a186-ce01-47c4-8b5e-61ddbb91bcaf-m0.avro',
+  '1855a186-m1': '1855a186-ce01-47c4-8b5e-61ddbb91bcaf-m1.avro',
+  '060cb698-m0': '060cb698-b4ad-4c2e-9df1-f49b2ec047dd-m0.avro',
+  '060cb698-m1': '060cb698-b4ad-4c2e-9df1-f49b2ec047dd-m1.avro',
+  '060cb698-m2': '060cb698-b4ad-4c2e-9df1-f49b2ec047dd-m2.avro',
+  '060cb698-m3': '060cb698-b4ad-4c2e-9df1-f49b2ec047dd-m3.avro',
+};
+const fullName = key => FULL_FILENAME[key] || key;
+
 function JsonNode({ label, value, depth = 0 }) {
   const [open, setOpen] = useState(depth < 2);
   const isObj = value !== null && typeof value === 'object' && !Array.isArray(value);
@@ -309,7 +338,7 @@ function JsonModal({ fileKey, label, onClose }) {
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '14px 20px', borderBottom: '1.5px solid #e2e8f0' }}>
           <div>
             <div style={{ fontSize: 13, fontWeight: 700, color: '#1e293b' }}>{label}</div>
-            <div style={{ fontSize: 11, color: '#64748b', fontFamily: 'monospace', marginTop: 2 }}>{fileKey}</div>
+            <div style={{ fontSize: 11, color: '#64748b', fontFamily: 'monospace', marginTop: 2 }}>{fullName(fileKey)}</div>
           </div>
           <button onClick={onClose} style={{ background: 'none', border: 'none', fontSize: 20, cursor: 'pointer', color: '#64748b', lineHeight: 1, padding: '4px 8px' }}>✕</button>
         </div>
@@ -512,7 +541,7 @@ function SnapshotDiagram({ snap, onFileClick }) {
                 <Tooltip key={m.file} text={m.file + '.metadata.json'}>
                   <div ref={setRef('activeMeta')} onClick={() => openFile(m.file, `Metadata File ${META_NUM[m.file]}`)} style={{ border: '2px solid #29B5E8', background: '#f0fbff', borderRadius: 8, padding: '7px 10px', textAlign: 'center', fontSize: 11, fontFamily: "'Monaco','Consolas',monospace", color: '#0e7490', ...clickStyle(m.file) }}>
                     <div style={{ fontSize: 9, fontWeight: 700, color: '#29B5E8', textTransform: 'uppercase', marginBottom: 3 }}>Metadata File {META_NUM[m.file]}</div>
-                    {m.file}.json
+                    <Tooltip text={fullName(m.file)}>{m.file}.json</Tooltip>
                   </div>
                 </Tooltip>
               ))}
@@ -524,9 +553,9 @@ function SnapshotDiagram({ snap, onFileClick }) {
                 <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 20 }}>
                   <div ref={setRef('manifestList')} onClick={() => openFile(snap.manifestList, `Manifest List ${ML_NUM[snap.manifestList]}`)} style={{ border: '2px solid #29B5E8', background: '#f0fbff', borderRadius: 8, padding: '8px 16px', textAlign: 'center', ...clickStyle(snap.manifestList) }}>
                     <div style={{ fontSize: 10, fontWeight: 700, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 3 }}>Manifest List {ML_NUM[snap.manifestList]}</div>
-                    <Tooltip text={snap.manifestList + '.avro'}>
+                    <Tooltip text={fullName(snap.manifestList)}>
                       <div style={{ fontSize: 11, fontFamily: "'Monaco','Consolas',monospace", color: '#0e7490' }}>
-                        snap-{snap.id.slice(0, 6)}…{snap.manifestList.slice(-8)}
+                        snap-…{snap.manifestList.slice(-12)}
                       </div>
                     </Tooltip>
                     <div style={{ fontSize: 9, color: '#64748b', marginTop: 5, lineHeight: 1.5 }}>
@@ -547,7 +576,7 @@ function SnapshotDiagram({ snap, onFileClick }) {
                       borderRadius: 8, padding: '7px 10px', textAlign: 'center', minWidth: 110, ...clickStyle(m.file),
                     }}>
                       <div style={{ fontSize: 9, fontWeight: 700, color: '#64748b', textTransform: 'uppercase' }}>Manifest File {MF_NUM[m.file]}</div>
-                      <Tooltip text={m.file + '.avro'}><div style={{ fontSize: 11, fontFamily: "'Monaco','Consolas',monospace", color: '#1e293b', marginTop: 2 }}>{m.file}</div></Tooltip>
+                      <Tooltip text={fullName(m.file)}><div style={{ fontSize: 11, fontFamily: "'Monaco','Consolas',monospace", color: '#1e293b', marginTop: 2 }}>{m.file}</div></Tooltip>
                       <ManifestBadge type={m.type} contentType={m.contentType} />
                       <div style={{ fontSize: 10, color: '#64748b', marginTop: 3 }}>{m.rows.toLocaleString()} rows</div>
                       {m.note && <div style={{ fontSize: 9, color: '#64748b', marginTop: 2, fontStyle: 'italic' }}>{m.note}</div>}
