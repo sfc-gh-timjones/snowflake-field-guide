@@ -13,8 +13,8 @@ export default function AzureDataFactory() {
       <div style={{ background: 'white', border: '1.5px solid #e2e8f0', borderRadius: 12, padding: '24px', marginBottom: 20 }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
           <h3 style={{ fontSize: 16, fontWeight: 700, color: '#1e293b', margin: 0 }}>Loading into Snowflake</h3>
-          <a href="https://learn.microsoft.com/en-us/azure/data-factory/connector-snowflake?tabs=data-factory" target="_blank" rel="noreferrer" style={{ fontSize: 11, color: '#29B5E8', textDecoration: 'none', fontWeight: 600 }} onMouseEnter={e => e.currentTarget.style.textDecoration = 'underline'} onMouseLeave={e => e.currentTarget.style.textDecoration = 'none'}>
-            Microsoft Docs
+          <a href="https://learn.microsoft.com/en-us/azure/data-factory/connector-snowflake?tabs=data-factory" target="_blank" rel="noreferrer" style={{ fontSize: 13, color: '#29B5E8', textDecoration: 'none', fontWeight: 600 }} onMouseEnter={e => e.currentTarget.style.textDecoration = 'underline'} onMouseLeave={e => e.currentTarget.style.textDecoration = 'none'}>
+            Microsoft Docs for Snowflake as a Source/Sink
           </a>
         </div>
 
