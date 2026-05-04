@@ -90,6 +90,7 @@ export default function AzureDataFactory() {
             <li>ADF maps to Snowflake's <code style={{ background: '#f1f5f9', padding: '1px 4px', borderRadius: 3, fontSize: 11 }}>COPY INTO [table]</code> command internally</li>
             <li>Connector version <strong>V2 (version 1.1)</strong> is recommended — supports key pair auth and managed identity</li>
             <li><span style={{ color: '#ef5350', fontWeight: 600 }}>Data Flow is not the recommended pattern</span> — prefer an ELT approach where ADF handles orchestration + movement, and Snowflake handles transformations</li>
+            <li><span style={{ color: '#ef5350', fontWeight: 600 }}>ADF does not perform log-based CDC</span> — incremental loads from OLTP sources must be implemented using watermarks or by querying database-side CDC/change tables. ADF does not mine database redo/WAL logs like Fivetran-style tools. For log-based CDC, use a dedicated CDC solution.</li>
             <li>Write behavior options: <code style={{ background: '#f1f5f9', padding: '1px 4px', borderRadius: 3, fontSize: 11 }}>Insert</code>, <code style={{ background: '#f1f5f9', padding: '1px 4px', borderRadius: 3, fontSize: 11 }}>Upsert</code>, <code style={{ background: '#f1f5f9', padding: '1px 4px', borderRadius: 3, fontSize: 11 }}>Recreate</code></li>
           </ul>
         </div>
