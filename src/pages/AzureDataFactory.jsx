@@ -1,9 +1,18 @@
+function LinkIcon({ size = 14 }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ display: 'inline', verticalAlign: 'middle', marginLeft: 4 }}>
+      <path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/>
+      <path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/>
+    </svg>
+  );
+}
+
 export default function AzureDataFactory() {
   return (
     <div>
       <h2 style={{ fontSize: 24, fontWeight: 700, color: '#1e293b', marginBottom: 6 }}>
-        <a href="https://azure.microsoft.com/en-us/products/data-factory" target="_blank" rel="noreferrer" style={{ color: '#1e293b', textDecoration: 'none' }} onMouseEnter={e => e.currentTarget.style.textDecoration = 'underline'} onMouseLeave={e => e.currentTarget.style.textDecoration = 'none'}>
-          Azure Data Factory
+        <a href="https://azure.microsoft.com/en-us/products/data-factory" target="_blank" rel="noreferrer" style={{ color: '#29B5E8', textDecoration: 'none', display: 'inline-flex', alignItems: 'center' }} onMouseEnter={e => e.currentTarget.style.textDecoration = 'underline'} onMouseLeave={e => e.currentTarget.style.textDecoration = 'none'}>
+          Azure Data Factory <LinkIcon size={16} />
         </a>
       </h2>
       <p style={{ color: '#64748b', fontSize: 14, marginBottom: 28 }}>
@@ -13,8 +22,8 @@ export default function AzureDataFactory() {
       <div style={{ background: 'white', border: '1.5px solid #e2e8f0', borderRadius: 12, padding: '24px', marginBottom: 20 }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
           <h3 style={{ fontSize: 16, fontWeight: 700, color: '#1e293b', margin: 0 }}>Loading into Snowflake</h3>
-          <a href="https://learn.microsoft.com/en-us/azure/data-factory/connector-snowflake?tabs=data-factory" target="_blank" rel="noreferrer" style={{ fontSize: 13, color: '#29B5E8', textDecoration: 'none', fontWeight: 600 }} onMouseEnter={e => e.currentTarget.style.textDecoration = 'underline'} onMouseLeave={e => e.currentTarget.style.textDecoration = 'none'}>
-            Microsoft Docs for Snowflake as a Source/Sink
+          <a href="https://learn.microsoft.com/en-us/azure/data-factory/connector-snowflake?tabs=data-factory" target="_blank" rel="noreferrer" style={{ fontSize: 13, color: '#29B5E8', textDecoration: 'none', fontWeight: 600, display: 'inline-flex', alignItems: 'center' }} onMouseEnter={e => e.currentTarget.style.textDecoration = 'underline'} onMouseLeave={e => e.currentTarget.style.textDecoration = 'none'}>
+            Microsoft Docs for Snowflake as a Source/Sink <LinkIcon size={12} />
           </a>
         </div>
 
@@ -53,7 +62,7 @@ export default function AzureDataFactory() {
               <span style={{ background: '#16a34a', color: 'white', borderRadius: 4, padding: '2px 8px', fontSize: 10, fontWeight: 700 }}>MOST CASES</span>
               <span>Source (DB/API) → ADF → Blob (staging) → Snowflake COPY INTO</span>
             </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
               <span style={{ background: '#f97316', color: 'white', borderRadius: 4, padding: '2px 8px', fontSize: 10, fontWeight: 700 }}>LESS COMMON</span>
               <span>Blob (already correct format) → Snowflake COPY INTO (no ADF staging)</span>
             </div>
@@ -92,11 +101,11 @@ export default function AzureDataFactory() {
         <a
           href="https://learn.microsoft.com/en-us/azure/data-factory/connector-overview#supported-data-stores"
           target="_blank" rel="noreferrer"
-          style={{ position: 'absolute', bottom: 16, right: 16, background: 'none', border: '1.5px solid #94a3b8', borderRadius: 8, padding: '4px 12px', fontSize: 13, color: '#64748b', fontWeight: 600, textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: 4 }}
-          onMouseEnter={e => { e.currentTarget.style.background = '#f1f5f9'; e.currentTarget.style.borderColor = '#475569'; e.currentTarget.style.color = '#1e293b'; }}
-          onMouseLeave={e => { e.currentTarget.style.background = 'none'; e.currentTarget.style.borderColor = '#94a3b8'; e.currentTarget.style.color = '#64748b'; }}
+          style={{ position: 'absolute', bottom: 16, right: 16, fontSize: 13, color: '#29B5E8', fontWeight: 600, textDecoration: 'none', display: 'inline-flex', alignItems: 'center' }}
+          onMouseEnter={e => e.currentTarget.style.textDecoration = 'underline'}
+          onMouseLeave={e => e.currentTarget.style.textDecoration = 'none'}
         >
-          Connectors <span>&rarr;</span>
+          Connectors <LinkIcon size={12} />
         </a>
       </div>
     </div>
