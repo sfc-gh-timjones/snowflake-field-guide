@@ -89,13 +89,13 @@ export default function AzureDataFactory() {
             <li><strong>Staging is almost always required</strong> — direct copy only works if source is Azure Blob/ADLS with files already in Parquet/CSV/JSON</li>
             <li>ADF maps to Snowflake's <code style={{ background: '#f1f5f9', padding: '1px 4px', borderRadius: 3, fontSize: 11 }}>COPY INTO [table]</code> command internally</li>
             <li>Connector version <strong>V2 (version 1.1)</strong> is recommended — supports key pair auth and managed identity</li>
-            <li>Data Flow transformations run on Spark and write to Snowflake via the same staging mechanism</li>
+            <li><span style={{ color: '#ef5350', fontWeight: 600 }}>Data Flow is not the recommended pattern</span> — prefer an ELT approach where ADF handles orchestration + movement, and Snowflake handles transformations</li>
             <li>Write behavior options: <code style={{ background: '#f1f5f9', padding: '1px 4px', borderRadius: 3, fontSize: 11 }}>Insert</code>, <code style={{ background: '#f1f5f9', padding: '1px 4px', borderRadius: 3, fontSize: 11 }}>Upsert</code>, <code style={{ background: '#f1f5f9', padding: '1px 4px', borderRadius: 3, fontSize: 11 }}>Recreate</code></li>
           </ul>
         </div>
       </div>
 
-      <div style={{ background: 'white', border: '1.5px solid #e2e8f0', borderRadius: 12, padding: '24px', position: 'relative', minHeight: 80 }}>
+      <div style={{ background: 'white', border: '1.5px solid #e2e8f0', borderRadius: 12, padding: '24px', position: 'relative', minHeight: 80, marginBottom: 20 }}>
         <h3 style={{ fontSize: 16, fontWeight: 700, color: '#1e293b', margin: '0 0 12px' }}>Supported Sources</h3>
         <p style={{ fontSize: 12, color: '#64748b', lineHeight: 1.6, margin: 0 }}>
           ADF supports 100+ connectors as data sources. Any of them can write to Snowflake via staged copy.
