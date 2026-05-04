@@ -1,5 +1,11 @@
 const CARDS = [
   {
+    id: 'integration',
+    title: 'Integration Tools',
+    description: 'Data pipeline and ETL tools that connect to Snowflake.',
+    color: '#f97316',
+  },
+  {
     id: 'iceberg',
     title: 'Iceberg Tables',
     description: 'Open table format for large analytic datasets on cloud storage.',

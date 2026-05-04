@@ -4,12 +4,16 @@ import Home from './pages/Home';
 import IcebergDetail from './pages/IcebergDetail';
 import CatalogOptions from './pages/CatalogOptions';
 import IcebergStorage from './pages/IcebergStorage';
+import IntegrationTools from './pages/IntegrationTools';
+import AzureDataFactory from './pages/AzureDataFactory';
 
 const PAGES = {
   home: { label: 'Home', component: Home },
   iceberg: { label: 'Iceberg Tables', component: IcebergDetail },
   'iceberg-catalog': { label: 'Catalog Options', component: CatalogOptions },
   'iceberg-storage': { label: 'Iceberg Cloud Storage', component: IcebergStorage },
+  integration: { label: 'Integration Tools', component: IntegrationTools },
+  adf: { label: 'Azure Data Factory', component: AzureDataFactory },
 };
 
 const BREADCRUMBS = {
@@ -17,6 +21,8 @@ const BREADCRUMBS = {
   iceberg: [{ label: 'Home', page: 'home' }, { label: 'Iceberg Tables', page: 'iceberg' }],
   'iceberg-catalog': [{ label: 'Home', page: 'home' }, { label: 'Iceberg Tables', page: 'iceberg' }, { label: 'Catalog Options', page: 'iceberg-catalog' }],
   'iceberg-storage': [{ label: 'Home', page: 'home' }, { label: 'Iceberg Tables', page: 'iceberg' }, { label: 'Iceberg Cloud Storage', page: 'iceberg-storage' }],
+  integration: [{ label: 'Home', page: 'home' }, { label: 'Integration Tools', page: 'integration' }],
+  adf: [{ label: 'Home', page: 'home' }, { label: 'Integration Tools', page: 'integration' }, { label: 'Azure Data Factory', page: 'adf' }],
 };
 
 export default function App() {
