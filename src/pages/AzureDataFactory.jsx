@@ -110,6 +110,17 @@ export default function AzureDataFactory() {
           Connectors <LinkIcon size={12} />
         </a>
       </div>
+
+      <div style={{ background: 'white', border: '1.5px solid #e2e8f0', borderRadius: 12, padding: '24px', marginTop: 20 }}>
+        <h3 style={{ fontSize: 16, fontWeight: 700, color: '#1e293b', margin: '0 0 12px' }}>Useful Resources</h3>
+        <ul style={{ margin: 0, paddingLeft: 18, fontSize: 13, lineHeight: 2 }}>
+          <li>
+            <a href="https://learn.microsoft.com/en-us/answers/questions/2283200/how-to-load-the-data-from-sql-server-db-to-snowfla" target="_blank" rel="noreferrer" style={{ color: '#29B5E8', textDecoration: 'none', fontWeight: 600, display: 'inline-flex', alignItems: 'center' }} onMouseEnter={e => e.currentTarget.style.textDecoration = 'underline'} onMouseLeave={e => e.currentTarget.style.textDecoration = 'none'}>
+              Loading Data from SQL Server to Snowflake via ADF <LinkIcon size={12} />
+            </a>
+          </li>
+        </ul>
+      </div>
     </div>
   );
 }
