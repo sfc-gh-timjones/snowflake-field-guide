@@ -52,6 +52,9 @@ export default function AzureDataFactory() {
               <li>Source linked service is <strong>Azure Blob Storage</strong> or <strong>Amazon S3</strong> — not SQL DBs, APIs, etc.</li>
             </ul>
             <div style={{ fontSize: 11, color: '#94a3b8', marginTop: 10, fontStyle: 'italic' }}>If either condition is not met, ADF forces staged copy.</div>
+            <div style={{ fontSize: 12, color: '#475569', marginTop: 12, padding: '10px 12px', background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 6, lineHeight: 1.6 }}>
+              <strong>Note:</strong> If data is already landing in Azure Blob Storage via another process, ADF may be bypassed altogether — Snowflake-native <strong>Snowpipe</strong> or <code style={{ background: '#f1f5f9', padding: '1px 4px', borderRadius: 3, fontSize: 11 }}>COPY INTO</code> can handle the ingest directly.
+            </div>
           </div>
         </div>
 
@@ -84,7 +87,6 @@ export default function AzureDataFactory() {
           <div style={{ fontSize: 13, fontWeight: 700, color: '#1e293b', marginBottom: 10 }}>Key Considerations</div>
           <ul style={{ fontSize: 12, color: '#475569', lineHeight: 1.8, margin: 0, paddingLeft: 18 }}>
             <li><strong>Staging is almost always required</strong> — direct copy only works if source is Azure Blob/ADLS with files already in Parquet/CSV/JSON</li>
-            <li>"No staging" means ADF doesn't create an intermediate layer — <em>not</em> that no storage is involved (Snowflake still reads from files)</li>
             <li>ADF maps to Snowflake's <code style={{ background: '#f1f5f9', padding: '1px 4px', borderRadius: 3, fontSize: 11 }}>COPY INTO [table]</code> command internally</li>
             <li>Connector version <strong>V2 (version 1.1)</strong> is recommended — supports key pair auth and managed identity</li>
             <li>Data Flow transformations run on Spark and write to Snowflake via the same staging mechanism</li>

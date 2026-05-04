@@ -42,8 +42,8 @@ export default function IntegrationTools({ onNavigate }) {
             }}
           >
             <div style={{ fontSize: 15, fontWeight: 700, marginBottom: 6 }}>
-              <a href={tool.link} target="_blank" rel="noreferrer" onClick={e => e.stopPropagation()} style={{ color: '#1e293b', textDecoration: 'none' }} onMouseEnter={e => e.currentTarget.style.textDecoration = 'underline'} onMouseLeave={e => e.currentTarget.style.textDecoration = 'none'}>
-                {tool.title}
+              <a href={tool.link} target="_blank" rel="noreferrer" onClick={e => e.stopPropagation()} style={{ color: '#29B5E8', textDecoration: 'none', fontWeight: 700, display: 'inline-flex', alignItems: 'center' }} onMouseEnter={e => e.currentTarget.style.textDecoration = 'underline'} onMouseLeave={e => e.currentTarget.style.textDecoration = 'none'}>
+                {tool.title} <svg width={13} height={13} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ display: 'inline', verticalAlign: 'middle', marginLeft: 4 }}><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/></svg>
               </a>
             </div>
             <div style={{ fontSize: 12, color: '#64748b', lineHeight: 1.5, marginBottom: 28 }}>
@@ -54,11 +54,11 @@ export default function IntegrationTools({ onNavigate }) {
                 href={tool.connectorsLink}
                 target="_blank" rel="noreferrer"
                 onClick={e => e.stopPropagation()}
-                style={{ position: 'absolute', bottom: 12, right: 12, fontSize: 11, color: '#64748b', fontWeight: 600, textDecoration: 'none', border: '1px solid #e2e8f0', borderRadius: 6, padding: '3px 8px' }}
-                onMouseEnter={e => { e.currentTarget.style.borderColor = '#475569'; e.currentTarget.style.color = '#1e293b'; }}
-                onMouseLeave={e => { e.currentTarget.style.borderColor = '#e2e8f0'; e.currentTarget.style.color = '#64748b'; }}
+                style={{ position: 'absolute', bottom: 12, right: 12, fontSize: 12, color: '#29B5E8', fontWeight: 600, textDecoration: 'none', display: 'inline-flex', alignItems: 'center' }}
+                onMouseEnter={e => e.currentTarget.style.textDecoration = 'underline'}
+                onMouseLeave={e => e.currentTarget.style.textDecoration = 'none'}
               >
-                Connectors &rarr;
+                Connectors <svg width={11} height={11} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ display: 'inline', verticalAlign: 'middle', marginLeft: 4 }}><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/></svg>
               </a>
             )}
           </div>
