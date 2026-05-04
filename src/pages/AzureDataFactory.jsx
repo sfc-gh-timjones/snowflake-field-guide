@@ -95,7 +95,14 @@ export default function AzureDataFactory() {
               </div>
               <div style={{ flex: 1, minWidth: 180, border: '1px solid #e2e8f0', borderRadius: 8, padding: '10px 12px', background: 'white' }}>
                 <div style={{ fontSize: 11, fontWeight: 700, color: '#0e7490', marginBottom: 4 }}>APIs (REST, SaaS)</div>
-                <div style={{ fontSize: 11, color: '#475569', lineHeight: 1.6 }}>Not SQL queries — you configure endpoint, pagination, and headers. ADF handles the calls.</div>
+                <div style={{ fontSize: 11, color: '#475569', lineHeight: 1.6, marginBottom: 8 }}>Not SQL queries — you configure endpoint, pagination, and headers. ADF handles the calls.</div>
+                <div style={{ fontSize: 10, fontWeight: 600, color: '#1e293b', marginBottom: 4 }}>Incremental patterns:</div>
+                <div style={{ fontSize: 10, color: '#475569', lineHeight: 1.7 }}>
+                  <div style={{ marginBottom: 3 }}><strong>1. Timestamp filter:</strong> <code style={{ background: '#f1f5f9', padding: '0 3px', borderRadius: 2, fontSize: 9 }}>?updated_after=@watermark</code></div>
+                  <div style={{ marginBottom: 3 }}><strong>2. Cursor/token:</strong> API returns <code style={{ background: '#f1f5f9', padding: '0 3px', borderRadius: 2, fontSize: 9 }}>next_cursor</code>, ADF loops pages</div>
+                  <div style={{ marginBottom: 3 }}><strong>3. ID-based:</strong> <code style={{ background: '#f1f5f9', padding: '0 3px', borderRadius: 2, fontSize: 9 }}>?since_id=@lastId</code></div>
+                </div>
+                <div style={{ fontSize: 10, color: '#94a3b8', marginTop: 6, fontStyle: 'italic' }}>ADF can parameterize requests and store watermarks, but does NOT infer incremental logic — you configure it based on what the API supports.</div>
               </div>
             </div>
           </div>
