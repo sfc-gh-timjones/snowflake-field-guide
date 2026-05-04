@@ -72,6 +72,35 @@ export default function AzureDataFactory() {
           </div>
         </div>
 
+        <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 8, padding: '14px 18px', marginBottom: 20 }}>
+          <div style={{ fontSize: 12, fontWeight: 700, color: '#64748b', marginBottom: 10, textTransform: 'uppercase', letterSpacing: '0.05em' }}>How ADF Actually Works</div>
+          <div style={{ fontSize: 12, color: '#475569', lineHeight: 1.8 }}>
+            <p style={{ margin: '0 0 10px' }}>ADF executes whatever extraction logic you define against the source, then moves the results to your sink. <strong>You define the "what" — ADF handles the "when/where/how" to move it.</strong></p>
+            <p style={{ margin: '0 0 10px' }}>For most sources (Oracle, SQL Server, REST, etc.), you either:</p>
+            <ul style={{ margin: '0 0 12px', paddingLeft: 18 }}>
+              <li>Point Copy Activity at a table (full pull), or</li>
+              <li>Provide a query (e.g., watermark predicate for incrementals)</li>
+            </ul>
+            <p style={{ margin: '0 0 12px', color: '#64748b', fontStyle: 'italic', fontSize: 11 }}>There are a few higher-level features (CDC resource, Mapping Data Flow CDC) for specific sources, but in general ADF doesn't infer change logic or mine logs.</p>
+
+            <div style={{ fontSize: 12, fontWeight: 700, color: '#1e293b', marginBottom: 8 }}>How extraction differs by source type:</div>
+            <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
+              <div style={{ flex: 1, minWidth: 180, border: '1px solid #e2e8f0', borderRadius: 8, padding: '10px 12px', background: 'white' }}>
+                <div style={{ fontSize: 11, fontWeight: 700, color: '#0e7490', marginBottom: 4 }}>Databases (Oracle, SQL Server, etc.)</div>
+                <div style={{ fontSize: 11, color: '#475569', lineHeight: 1.6 }}>You write a query:<br/><code style={{ background: '#f1f5f9', padding: '1px 4px', borderRadius: 3, fontSize: 10 }}>SELECT * FROM table WHERE last_updated &gt; @watermark</code><br/>ADF runs it and pulls the results.</div>
+              </div>
+              <div style={{ flex: 1, minWidth: 180, border: '1px solid #e2e8f0', borderRadius: 8, padding: '10px 12px', background: 'white' }}>
+                <div style={{ fontSize: 11, fontWeight: 700, color: '#0e7490', marginBottom: 4 }}>File-based (Blob, ADLS, S3)</div>
+                <div style={{ fontSize: 11, color: '#475569', lineHeight: 1.6 }}>No query — you specify a path + file pattern. ADF reads files directly.</div>
+              </div>
+              <div style={{ flex: 1, minWidth: 180, border: '1px solid #e2e8f0', borderRadius: 8, padding: '10px 12px', background: 'white' }}>
+                <div style={{ fontSize: 11, fontWeight: 700, color: '#0e7490', marginBottom: 4 }}>APIs (REST, SaaS)</div>
+                <div style={{ fontSize: 11, color: '#475569', lineHeight: 1.6 }}>Not SQL queries — you configure endpoint, pagination, and headers. ADF handles the calls.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
         <div style={{ marginBottom: 20 }}>
           <div style={{ fontSize: 13, fontWeight: 700, color: '#1e293b', marginBottom: 10 }}>Authentication Options</div>
           <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
