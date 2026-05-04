@@ -35,14 +35,14 @@ export default function AzureDataFactory() {
             </ul>
           </div>
           <div style={{ flex: 1, minWidth: 280, border: '1.5px solid #f9731640', borderRadius: 10, padding: 16, background: '#fff7ed' }}>
-            <div style={{ fontSize: 13, fontWeight: 700, color: '#f97316', marginBottom: 8 }}>Direct Copy (Rare)</div>
+            <div style={{ fontSize: 13, fontWeight: 700, color: '#f97316', marginBottom: 8 }}>Direct Copy (Less Common)</div>
+            <div style={{ fontSize: 12, color: '#475569', lineHeight: 1.7, marginBottom: 10 }}>ADF does <strong>not</strong> create intermediate staging. Snowflake reads directly from source files via <code style={{ background: '#f1f5f9', padding: '1px 4px', borderRadius: 3, fontSize: 11 }}>COPY INTO</code>.</div>
+            <div style={{ fontSize: 12, fontWeight: 600, color: '#1e293b', marginBottom: 6 }}>Criteria (all must be true):</div>
             <ul style={{ fontSize: 12, color: '#475569', lineHeight: 1.8, margin: 0, paddingLeft: 18 }}>
-              <li>ADF does <strong>not</strong> create intermediate staging — but data must <em>already</em> exist in Azure Blob/ADLS in a supported format (Parquet, CSV, JSON)</li>
-              <li>Snowflake still runs <code style={{ background: '#f1f5f9', padding: '1px 4px', borderRadius: 3, fontSize: 11 }}>COPY INTO</code> from those files directly</li>
-              <li>Only works for very specific source + format combinations</li>
-              <li>If source is a database/API — ADF <strong>forces staged copy</strong></li>
-              <li>Edge case: row-by-row INSERT for tiny datasets, but extremely slow</li>
+              <li>Source dataset is <strong>file-based</strong>: DelimitedText, Parquet, or JSON</li>
+              <li>Source linked service is <strong>Azure Blob Storage</strong> or <strong>Amazon S3</strong> — not SQL DBs, APIs, etc.</li>
             </ul>
+            <div style={{ fontSize: 11, color: '#94a3b8', marginTop: 10, fontStyle: 'italic' }}>If either condition is not met, ADF forces staged copy.</div>
           </div>
         </div>
 
@@ -54,12 +54,8 @@ export default function AzureDataFactory() {
               <span>Source (DB/API) → ADF → Blob (staging) → Snowflake COPY INTO</span>
             </div>
             <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}>
-              <span style={{ background: '#f97316', color: 'white', borderRadius: 4, padding: '2px 8px', fontSize: 10, fontWeight: 700 }}>RARE</span>
+              <span style={{ background: '#f97316', color: 'white', borderRadius: 4, padding: '2px 8px', fontSize: 10, fontWeight: 700 }}>LESS COMMON</span>
               <span>Blob (already correct format) → Snowflake COPY INTO (no ADF staging)</span>
-            </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-              <span style={{ background: '#94a3b8', color: 'white', borderRadius: 4, padding: '2px 8px', fontSize: 10, fontWeight: 700 }}>EDGE</span>
-              <span>Any source → Snowflake INSERT (slow, small data only)</span>
             </div>
           </div>
         </div>
