@@ -35,27 +35,32 @@ export default function AzureDataFactory() {
             </ul>
           </div>
           <div style={{ flex: 1, minWidth: 280, border: '1.5px solid #f9731640', borderRadius: 10, padding: 16, background: '#fff7ed' }}>
-            <div style={{ fontSize: 13, fontWeight: 700, color: '#f97316', marginBottom: 8 }}>Direct Copy</div>
+            <div style={{ fontSize: 13, fontWeight: 700, color: '#f97316', marginBottom: 8 }}>Direct Copy (Rare)</div>
             <ul style={{ fontSize: 12, color: '#475569', lineHeight: 1.8, margin: 0, paddingLeft: 18 }}>
-              <li>ADF inserts rows directly via the Snowflake driver</li>
-              <li>No staging storage needed</li>
-              <li>Simpler setup, but <strong>significantly slower</strong> for large volumes</li>
-              <li>Best suited for small datasets (&lt;100K rows)</li>
-              <li>Uses standard INSERT statements under the hood</li>
+              <li>ADF does <strong>not</strong> create intermediate staging — but data must <em>already</em> exist in Azure Blob/ADLS in a supported format (Parquet, CSV, JSON)</li>
+              <li>Snowflake still runs <code style={{ background: '#f1f5f9', padding: '1px 4px', borderRadius: 3, fontSize: 11 }}>COPY INTO</code> from those files directly</li>
+              <li>Only works for very specific source + format combinations</li>
+              <li>If source is a database/API — ADF <strong>forces staged copy</strong></li>
+              <li>Edge case: row-by-row INSERT for tiny datasets, but extremely slow</li>
             </ul>
           </div>
         </div>
 
         <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 8, padding: '14px 18px', marginBottom: 20 }}>
-          <div style={{ fontSize: 12, fontWeight: 700, color: '#64748b', marginBottom: 8, textTransform: 'uppercase', letterSpacing: '0.05em' }}>How Staged Copy Works</div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 12, fontSize: 12, color: '#475569', flexWrap: 'wrap' }}>
-            <div style={{ background: '#0078D4', color: 'white', borderRadius: 8, padding: '6px 12px', fontWeight: 600, fontSize: 11, whiteSpace: 'nowrap' }}>Source</div>
-            <span style={{ color: '#94a3b8' }}>&rarr;</span>
-            <div style={{ background: '#0078D4', color: 'white', borderRadius: 8, padding: '6px 12px', fontWeight: 600, fontSize: 11, whiteSpace: 'nowrap' }}>ADF Pipeline</div>
-            <span style={{ color: '#94a3b8' }}>&rarr;</span>
-            <div style={{ background: '#f97316', color: 'white', borderRadius: 8, padding: '6px 12px', fontWeight: 600, fontSize: 11, whiteSpace: 'nowrap' }}>Azure Blob / ADLS</div>
-            <span style={{ color: '#94a3b8' }}>&rarr; COPY INTO &rarr;</span>
-            <div style={{ background: '#29B5E8', color: 'white', borderRadius: 8, padding: '6px 12px', fontWeight: 600, fontSize: 11, whiteSpace: 'nowrap' }}>Snowflake</div>
+          <div style={{ fontSize: 12, fontWeight: 700, color: '#64748b', marginBottom: 10, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Mental Model</div>
+          <div style={{ fontSize: 12, color: '#475569', lineHeight: 2 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}>
+              <span style={{ background: '#16a34a', color: 'white', borderRadius: 4, padding: '2px 8px', fontSize: 10, fontWeight: 700 }}>MOST CASES</span>
+              <span>Source (DB/API) → ADF → Blob (staging) → Snowflake COPY INTO</span>
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}>
+              <span style={{ background: '#f97316', color: 'white', borderRadius: 4, padding: '2px 8px', fontSize: 10, fontWeight: 700 }}>RARE</span>
+              <span>Blob (already correct format) → Snowflake COPY INTO (no ADF staging)</span>
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+              <span style={{ background: '#94a3b8', color: 'white', borderRadius: 4, padding: '2px 8px', fontSize: 10, fontWeight: 700 }}>EDGE</span>
+              <span>Any source → Snowflake INSERT (slow, small data only)</span>
+            </div>
           </div>
         </div>
 
@@ -73,7 +78,8 @@ export default function AzureDataFactory() {
         <div>
           <div style={{ fontSize: 13, fontWeight: 700, color: '#1e293b', marginBottom: 10 }}>Key Considerations</div>
           <ul style={{ fontSize: 12, color: '#475569', lineHeight: 1.8, margin: 0, paddingLeft: 18 }}>
-            <li><strong>Staging is required</strong> if your source is NOT Azure Blob, ADLS Gen2, or Amazon S3 with Parquet/CSV/JSON format</li>
+            <li><strong>Staging is almost always required</strong> — direct copy only works if source is Azure Blob/ADLS with files already in Parquet/CSV/JSON</li>
+            <li>"No staging" means ADF doesn't create an intermediate layer — <em>not</em> that no storage is involved (Snowflake still reads from files)</li>
             <li>ADF maps to Snowflake's <code style={{ background: '#f1f5f9', padding: '1px 4px', borderRadius: 3, fontSize: 11 }}>COPY INTO [table]</code> command internally</li>
             <li>Connector version <strong>V2 (version 1.1)</strong> is recommended — supports key pair auth and managed identity</li>
             <li>Data Flow transformations run on Spark and write to Snowflake via the same staging mechanism</li>
