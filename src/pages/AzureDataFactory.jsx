@@ -35,9 +35,9 @@ export default function AzureDataFactory() {
         <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap', marginBottom: 24 }}>
           <div style={{ flex: 1, minWidth: 280, border: '1.5px solid #16a34a40', borderRadius: 10, padding: 16, background: '#f0fdf4' }}>
             <div style={{ fontSize: 13, fontWeight: 700, color: '#16a34a', marginBottom: 8 }}>Staged Copy (Recommended)</div>
-            <ul style={{ fontSize: 12, color: '#475569', lineHeight: 1.8, margin: 0, paddingLeft: 18 }}>
+            <ul style={{ fontSize: 13, color: '#475569', lineHeight: 1.8, margin: 0, paddingLeft: 18 }}>
               <li>ADF writes data to a <strong>staging area</strong> (Azure Blob or ADLS Gen2)</li>
-              <li>Snowflake then runs <code style={{ background: '#f1f5f9', padding: '1px 4px', borderRadius: 3, fontSize: 11 }}>COPY INTO</code> from that stage</li>
+              <li>Snowflake then runs <code style={{ background: '#f1f5f9', padding: '1px 4px', borderRadius: 3, fontSize: 12 }}>COPY INTO</code> from that stage</li>
               <li>Fastest for large datasets (parallel bulk load)</li>
               <li>Requires an Azure Storage linked service as the staging location</li>
               <li>Supports Parquet, CSV, JSON as intermediate formats</li>
@@ -45,14 +45,14 @@ export default function AzureDataFactory() {
           </div>
           <div style={{ flex: 1, minWidth: 280, border: '1.5px solid #f9731640', borderRadius: 10, padding: 16, background: '#fff7ed' }}>
             <div style={{ fontSize: 13, fontWeight: 700, color: '#f97316', marginBottom: 8 }}>Direct Copy (Less Common)</div>
-            <div style={{ fontSize: 12, color: '#475569', lineHeight: 1.7, marginBottom: 10 }}>ADF does <strong>not</strong> create intermediate staging. Snowflake reads directly from source files via <code style={{ background: '#f1f5f9', padding: '1px 4px', borderRadius: 3, fontSize: 11 }}>COPY INTO</code>.</div>
-            <div style={{ fontSize: 12, fontWeight: 600, color: '#1e293b', marginBottom: 6 }}>Criteria (all must be true):</div>
-            <ul style={{ fontSize: 12, color: '#475569', lineHeight: 1.8, margin: 0, paddingLeft: 18 }}>
+            <div style={{ fontSize: 13, color: '#475569', lineHeight: 1.7, marginBottom: 10 }}>ADF does <strong>not</strong> create intermediate staging. Snowflake reads directly from source files via <code style={{ background: '#f1f5f9', padding: '1px 4px', borderRadius: 3, fontSize: 12 }}>COPY INTO</code>.</div>
+            <div style={{ fontSize: 13, fontWeight: 600, color: '#1e293b', marginBottom: 6 }}>Criteria (all must be true):</div>
+            <ul style={{ fontSize: 13, color: '#475569', lineHeight: 1.8, margin: 0, paddingLeft: 18 }}>
               <li>Source dataset is <strong>file-based</strong>: DelimitedText, Parquet, or JSON</li>
               <li>Source linked service is <strong>Azure Blob Storage</strong> or <strong>Amazon S3</strong> — not SQL DBs, APIs, etc.</li>
             </ul>
-            <div style={{ fontSize: 11, color: '#94a3b8', marginTop: 10, fontStyle: 'italic' }}>If either condition is not met, ADF forces staged copy.</div>
-            <div style={{ fontSize: 12, color: '#475569', marginTop: 12, padding: '10px 12px', background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 6, lineHeight: 1.6 }}>
+            <div style={{ fontSize: 12, color: '#94a3b8', marginTop: 10, fontStyle: 'italic' }}>If either condition is not met, ADF forces staged copy.</div>
+            <div style={{ fontSize: 13, color: '#475569', marginTop: 12, padding: '10px 12px', background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 6, lineHeight: 1.6 }}>
               <strong>Note:</strong> If data is already landing in Azure Blob Storage via another process, ADF may be bypassed altogether — Snowflake-native <strong>Snowpipe</strong> or <code style={{ background: '#f1f5f9', padding: '1px 4px', borderRadius: 3, fontSize: 11 }}>COPY INTO</code> can handle the ingest directly.
             </div>
           </div>
@@ -60,7 +60,7 @@ export default function AzureDataFactory() {
 
         <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 8, padding: '14px 18px', marginBottom: 20 }}>
           <div style={{ fontSize: 12, fontWeight: 700, color: '#64748b', marginBottom: 10, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Mental Model</div>
-          <div style={{ fontSize: 12, color: '#475569', lineHeight: 2 }}>
+          <div style={{ fontSize: 13, color: '#475569', lineHeight: 2 }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}>
               <span style={{ background: '#16a34a', color: 'white', borderRadius: 4, padding: '2px 8px', fontSize: 10, fontWeight: 700 }}>MOST CASES</span>
               <span>Source (DB/API) → ADF → Blob (staging) → Snowflake COPY INTO</span>
@@ -74,35 +74,35 @@ export default function AzureDataFactory() {
 
         <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 8, padding: '14px 18px', marginBottom: 20 }}>
           <div style={{ fontSize: 12, fontWeight: 700, color: '#64748b', marginBottom: 10, textTransform: 'uppercase', letterSpacing: '0.05em' }}>How ADF Actually Works</div>
-          <div style={{ fontSize: 12, color: '#475569', lineHeight: 1.8 }}>
+          <div style={{ fontSize: 13, color: '#475569', lineHeight: 1.8 }}>
             <p style={{ margin: '0 0 10px' }}>ADF executes whatever extraction logic you define against the source, then moves the results to your sink. <strong>You define the "what" — ADF handles the "when/where/how" to move it.</strong></p>
             <p style={{ margin: '0 0 10px' }}>For most sources (Oracle, SQL Server, REST, etc.), you either:</p>
             <ul style={{ margin: '0 0 12px', paddingLeft: 18 }}>
               <li>Point Copy Activity at a table (full pull), or</li>
               <li>Provide a query (e.g., watermark predicate for incrementals)</li>
             </ul>
-            <p style={{ margin: '0 0 12px', color: '#64748b', fontStyle: 'italic', fontSize: 11 }}>There are a few higher-level features (CDC resource, Mapping Data Flow CDC) for specific sources, but in general ADF doesn't infer change logic or mine logs.</p>
+            <p style={{ margin: '0 0 12px', color: '#64748b', fontStyle: 'italic', fontSize: 12 }}>There are a few higher-level features (CDC resource, Mapping Data Flow CDC) for specific sources, but in general ADF doesn't infer change logic or mine logs.</p>
 
-            <div style={{ fontSize: 12, fontWeight: 700, color: '#1e293b', marginBottom: 8 }}>How extraction differs by source type:</div>
+            <div style={{ fontSize: 13, fontWeight: 700, color: '#1e293b', marginBottom: 8 }}>How extraction differs by source type:</div>
             <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
               <div style={{ flex: 1, minWidth: 180, border: '1px solid #e2e8f0', borderRadius: 8, padding: '10px 12px', background: 'white' }}>
-                <div style={{ fontSize: 11, fontWeight: 700, color: '#0e7490', marginBottom: 4 }}>Databases (Oracle, SQL Server, etc.)</div>
-                <div style={{ fontSize: 11, color: '#475569', lineHeight: 1.6 }}>You write a query:<br/><code style={{ background: '#f1f5f9', padding: '1px 4px', borderRadius: 3, fontSize: 10 }}>SELECT * FROM table WHERE last_updated &gt; @watermark</code><br/>ADF runs it and pulls the results.</div>
+                <div style={{ fontSize: 12, fontWeight: 700, color: '#0e7490', marginBottom: 4 }}>Databases (Oracle, SQL Server, etc.)</div>
+                <div style={{ fontSize: 12, color: '#475569', lineHeight: 1.6 }}>You write a query:<br/><code style={{ background: '#f1f5f9', padding: '1px 4px', borderRadius: 3, fontSize: 11 }}>SELECT * FROM table WHERE last_updated &gt; @watermark</code><br/>ADF runs it and pulls the results.</div>
               </div>
               <div style={{ flex: 1, minWidth: 180, border: '1px solid #e2e8f0', borderRadius: 8, padding: '10px 12px', background: 'white' }}>
-                <div style={{ fontSize: 11, fontWeight: 700, color: '#0e7490', marginBottom: 4 }}>File-based (Blob, ADLS, S3)</div>
-                <div style={{ fontSize: 11, color: '#475569', lineHeight: 1.6 }}>No query — you specify a path + file pattern. ADF reads files directly.</div>
+                <div style={{ fontSize: 12, fontWeight: 700, color: '#0e7490', marginBottom: 4 }}>File-based (Blob, ADLS, S3)</div>
+                <div style={{ fontSize: 12, color: '#475569', lineHeight: 1.6 }}>No query — you specify a path + file pattern. ADF reads files directly.</div>
               </div>
               <div style={{ flex: 1, minWidth: 180, border: '1px solid #e2e8f0', borderRadius: 8, padding: '10px 12px', background: 'white' }}>
-                <div style={{ fontSize: 11, fontWeight: 700, color: '#0e7490', marginBottom: 4 }}>APIs (REST, SaaS)</div>
-                <div style={{ fontSize: 11, color: '#475569', lineHeight: 1.6, marginBottom: 8 }}>Not SQL queries — you configure endpoint, pagination, and headers. ADF handles the calls.</div>
-                <div style={{ fontSize: 10, fontWeight: 600, color: '#1e293b', marginBottom: 4 }}>Incremental patterns:</div>
-                <div style={{ fontSize: 10, color: '#475569', lineHeight: 1.7 }}>
-                  <div style={{ marginBottom: 3 }}><strong>1. Timestamp filter:</strong> <code style={{ background: '#f1f5f9', padding: '0 3px', borderRadius: 2, fontSize: 9 }}>?updated_after=@watermark</code></div>
-                  <div style={{ marginBottom: 3 }}><strong>2. Cursor/token:</strong> API returns <code style={{ background: '#f1f5f9', padding: '0 3px', borderRadius: 2, fontSize: 9 }}>next_cursor</code>, ADF loops pages</div>
-                  <div style={{ marginBottom: 3 }}><strong>3. ID-based:</strong> <code style={{ background: '#f1f5f9', padding: '0 3px', borderRadius: 2, fontSize: 9 }}>?since_id=@lastId</code></div>
+                <div style={{ fontSize: 12, fontWeight: 700, color: '#0e7490', marginBottom: 4 }}>APIs (REST, SaaS)</div>
+                <div style={{ fontSize: 12, color: '#475569', lineHeight: 1.6, marginBottom: 8 }}>Not SQL queries — you configure endpoint, pagination, and headers. ADF handles the calls.</div>
+                <div style={{ fontSize: 11, fontWeight: 600, color: '#1e293b', marginBottom: 4 }}>Incremental patterns:</div>
+                <div style={{ fontSize: 11, color: '#475569', lineHeight: 1.7 }}>
+                  <div style={{ marginBottom: 3 }}><strong>1. Timestamp filter:</strong> <code style={{ background: '#f1f5f9', padding: '0 3px', borderRadius: 2, fontSize: 10 }}>?updated_after=@watermark</code></div>
+                  <div style={{ marginBottom: 3 }}><strong>2. Cursor/token:</strong> API returns <code style={{ background: '#f1f5f9', padding: '0 3px', borderRadius: 2, fontSize: 10 }}>next_cursor</code>, ADF loops pages</div>
+                  <div style={{ marginBottom: 3 }}><strong>3. ID-based:</strong> <code style={{ background: '#f1f5f9', padding: '0 3px', borderRadius: 2, fontSize: 10 }}>?since_id=@lastId</code></div>
                 </div>
-                <div style={{ fontSize: 10, color: '#94a3b8', marginTop: 6, fontStyle: 'italic' }}>ADF can parameterize requests and store watermarks, but does NOT infer incremental logic — you configure it based on what the API supports.</div>
+                <div style={{ fontSize: 11, color: '#94a3b8', marginTop: 6, fontStyle: 'italic' }}>ADF can parameterize requests and store watermarks, but does NOT infer incremental logic — you configure it based on what the API supports.</div>
               </div>
             </div>
           </div>
@@ -112,7 +112,7 @@ export default function AzureDataFactory() {
           <div style={{ fontSize: 13, fontWeight: 700, color: '#1e293b', marginBottom: 10 }}>Authentication Options</div>
           <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
             {['Basic (user/password)', 'Key Pair', 'AAD Service Principal', 'System-Assigned MI', 'User-Assigned MI'].map(method => (
-              <div key={method} style={{ background: '#f1f5f9', border: '1px solid #e2e8f0', borderRadius: 6, padding: '5px 12px', fontSize: 11, color: '#475569', fontWeight: 500 }}>
+              <div key={method} style={{ background: '#f1f5f9', border: '1px solid #e2e8f0', borderRadius: 6, padding: '5px 12px', fontSize: 12, color: '#475569', fontWeight: 500 }}>
                 {method}
               </div>
             ))}
@@ -121,20 +121,20 @@ export default function AzureDataFactory() {
 
         <div>
           <div style={{ fontSize: 13, fontWeight: 700, color: '#1e293b', marginBottom: 10 }}>Key Considerations</div>
-          <ul style={{ fontSize: 12, color: '#475569', lineHeight: 1.8, margin: 0, paddingLeft: 18 }}>
+          <ul style={{ fontSize: 13, color: '#475569', lineHeight: 1.8, margin: 0, paddingLeft: 18 }}>
             <li><strong>Staging is almost always required</strong> — direct copy only works if source is Azure Blob/ADLS with files already in Parquet/CSV/JSON</li>
-            <li>ADF maps to Snowflake's <code style={{ background: '#f1f5f9', padding: '1px 4px', borderRadius: 3, fontSize: 11 }}>COPY INTO [table]</code> command internally</li>
+            <li>ADF maps to Snowflake's <code style={{ background: '#f1f5f9', padding: '1px 4px', borderRadius: 3, fontSize: 12 }}>COPY INTO [table]</code> command internally</li>
             <li>Connector version <strong>V2 (version 1.1)</strong> is recommended — supports key pair auth and managed identity</li>
             <li><span style={{ color: '#ef5350', fontWeight: 600 }}>Data Flow is not the recommended pattern</span> — prefer an ELT approach where ADF handles orchestration + movement, and Snowflake handles transformations</li>
             <li><span style={{ color: '#ef5350', fontWeight: 600 }}>ADF does not perform log-based CDC</span> — incremental loads from OLTP sources must be implemented using watermarks or by querying database-side CDC/change tables. ADF does not mine database redo/WAL logs like Fivetran-style tools. For log-based CDC, use a dedicated CDC solution.</li>
-            <li>Write behavior options: <code style={{ background: '#f1f5f9', padding: '1px 4px', borderRadius: 3, fontSize: 11 }}>Insert</code>, <code style={{ background: '#f1f5f9', padding: '1px 4px', borderRadius: 3, fontSize: 11 }}>Upsert</code>, <code style={{ background: '#f1f5f9', padding: '1px 4px', borderRadius: 3, fontSize: 11 }}>Recreate</code></li>
+            <li>Write behavior options: <code style={{ background: '#f1f5f9', padding: '1px 4px', borderRadius: 3, fontSize: 12 }}>Insert</code>, <code style={{ background: '#f1f5f9', padding: '1px 4px', borderRadius: 3, fontSize: 12 }}>Upsert</code>, <code style={{ background: '#f1f5f9', padding: '1px 4px', borderRadius: 3, fontSize: 12 }}>Recreate</code></li>
           </ul>
         </div>
       </div>
 
       <div style={{ background: 'white', border: '1.5px solid #e2e8f0', borderRadius: 12, padding: '24px', position: 'relative', minHeight: 80, marginBottom: 20 }}>
         <h3 style={{ fontSize: 16, fontWeight: 700, color: '#1e293b', margin: '0 0 12px' }}>Supported Sources</h3>
-        <p style={{ fontSize: 12, color: '#64748b', lineHeight: 1.6, margin: 0 }}>
+        <p style={{ fontSize: 13, color: '#64748b', lineHeight: 1.6, margin: 0 }}>
           ADF supports 100+ connectors as data sources. Any of them can write to Snowflake via staged copy.
         </p>
         <a
