@@ -15,9 +15,14 @@ export default function AzureDataFactory() {
           Azure Data Factory <LinkIcon size={16} />
         </a>
       </h2>
-      <p style={{ color: '#64748b', fontSize: 14, marginBottom: 28 }}>
-        Cloud ETL service for data integration and transformation pipelines.
-      </p>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginBottom: 28 }}>
+        <p style={{ color: '#64748b', fontSize: 14, margin: 0 }}>
+          Cloud ETL service for data integration and transformation pipelines.
+        </p>
+        <a href="https://learn.microsoft.com/en-us/azure/data-factory/connector-overview#supported-data-stores" target="_blank" rel="noreferrer" style={{ fontSize: 13, color: '#29B5E8', textDecoration: 'none', fontWeight: 600, display: 'inline-flex', alignItems: 'center', whiteSpace: 'nowrap' }} onMouseEnter={e => e.currentTarget.style.textDecoration = 'underline'} onMouseLeave={e => e.currentTarget.style.textDecoration = 'none'}>
+          Connectors <LinkIcon size={12} />
+        </a>
+      </div>
 
       <div style={{ background: 'white', border: '1.5px solid #e2e8f0', borderRadius: 12, padding: '24px', marginBottom: 20 }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
@@ -108,16 +113,6 @@ export default function AzureDataFactory() {
           </div>
         </div>
 
-        <div style={{ marginBottom: 20 }}>
-          <div style={{ fontSize: 13, fontWeight: 700, color: '#1e293b', marginBottom: 10 }}>Authentication Options</div>
-          <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
-            {['Basic (user/password)', 'Key Pair', 'AAD Service Principal', 'System-Assigned MI', 'User-Assigned MI'].map(method => (
-              <div key={method} style={{ background: '#f1f5f9', border: '1px solid #e2e8f0', borderRadius: 6, padding: '5px 12px', fontSize: 12, color: '#475569', fontWeight: 500 }}>
-                {method}
-              </div>
-            ))}
-          </div>
-        </div>
 
         <div>
           <div style={{ fontSize: 13, fontWeight: 700, color: '#1e293b', marginBottom: 10 }}>Key Considerations</div>
@@ -127,25 +122,8 @@ export default function AzureDataFactory() {
             <li>Connector version <strong>V2 (version 1.1)</strong> is recommended — supports key pair auth and managed identity</li>
             <li><span style={{ color: '#ef5350', fontWeight: 600 }}>Data Flow is not the recommended pattern</span> — prefer an ELT approach where ADF handles orchestration + movement, and Snowflake handles transformations</li>
             <li><span style={{ color: '#ef5350', fontWeight: 600 }}>ADF does not perform log-based CDC</span> — incremental loads from OLTP sources must be implemented using watermarks or by querying database-side CDC/change tables. ADF does not mine database redo/WAL logs like Fivetran-style tools. For log-based CDC, use a dedicated CDC solution.</li>
-            <li>Write behavior options: <code style={{ background: '#f1f5f9', padding: '1px 4px', borderRadius: 3, fontSize: 12 }}>Insert</code>, <code style={{ background: '#f1f5f9', padding: '1px 4px', borderRadius: 3, fontSize: 12 }}>Upsert</code>, <code style={{ background: '#f1f5f9', padding: '1px 4px', borderRadius: 3, fontSize: 12 }}>Recreate</code></li>
           </ul>
         </div>
-      </div>
-
-      <div style={{ background: 'white', border: '1.5px solid #e2e8f0', borderRadius: 12, padding: '24px', position: 'relative', minHeight: 80, marginBottom: 20 }}>
-        <h3 style={{ fontSize: 16, fontWeight: 700, color: '#1e293b', margin: '0 0 12px' }}>Supported Sources</h3>
-        <p style={{ fontSize: 13, color: '#64748b', lineHeight: 1.6, margin: 0 }}>
-          ADF supports 100+ connectors as data sources. Any of them can write to Snowflake via staged copy.
-        </p>
-        <a
-          href="https://learn.microsoft.com/en-us/azure/data-factory/connector-overview#supported-data-stores"
-          target="_blank" rel="noreferrer"
-          style={{ position: 'absolute', bottom: 16, right: 16, fontSize: 13, color: '#29B5E8', fontWeight: 600, textDecoration: 'none', display: 'inline-flex', alignItems: 'center' }}
-          onMouseEnter={e => e.currentTarget.style.textDecoration = 'underline'}
-          onMouseLeave={e => e.currentTarget.style.textDecoration = 'none'}
-        >
-          Connectors <LinkIcon size={12} />
-        </a>
       </div>
 
       <div style={{ background: 'white', border: '1.5px solid #e2e8f0', borderRadius: 12, padding: '24px', marginTop: 20 }}>
