@@ -508,6 +508,43 @@ function SqlModal({ snap, onClose }) {
   );
 }
 
+function PuffinHelper({ data }) {
+  const blob = data?.blobs?.[0];
+  if (!blob) return null;
+  const refFile = blob['referenced-data-file'] || '';
+  const shortRef = refFile.split('/').pop();
+  return (
+    <div style={{ fontSize: 12, color: '#475569', lineHeight: 1.8 }}>
+      <div style={{ fontSize: 11, fontWeight: 700, color: '#7C3AED', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 12 }}>How to Read This</div>
+      <div style={{ marginBottom: 14 }}>
+        <div style={{ fontWeight: 700, color: '#1e293b', marginBottom: 2 }}>What is this file?</div>
+        <div>A <strong>Puffin file</strong> containing a <strong>deletion vector</strong> — a compact bitmap that tells Snowflake which row positions to skip when reading a specific Parquet data file.</div>
+      </div>
+      <div style={{ marginBottom: 14 }}>
+        <div style={{ fontWeight: 700, color: '#1e293b', marginBottom: 2 }}>What does it do?</div>
+        <div>Instead of rewriting the entire Parquet file to remove {blob.cardinality} row{blob.cardinality !== 1 ? 's' : ''}, Snowflake writes this tiny file ({data['file-size-bytes']} bytes) that says:</div>
+        <div style={{ background: '#faf5ff', border: '1px solid #7C3AED30', borderRadius: 6, padding: '8px 12px', marginTop: 6, fontFamily: 'Monaco,Consolas,monospace', fontSize: 11 }}>
+          "When reading <strong>{shortRef}</strong>, skip <strong>{blob.cardinality}</strong> specific row positions"
+        </div>
+      </div>
+      <div style={{ marginBottom: 14 }}>
+        <div style={{ fontWeight: 700, color: '#1e293b', marginBottom: 4 }}>Field-by-field:</div>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+          <div><code style={{ background: '#f1f5f9', padding: '1px 4px', borderRadius: 3, fontSize: 11 }}>type</code> — always "deletion-vector-v1" for Iceberg V3 deletes</div>
+          <div><code style={{ background: '#f1f5f9', padding: '1px 4px', borderRadius: 3, fontSize: 11 }}>referenced-data-file</code> — the Parquet file these deletes apply to</div>
+          <div><code style={{ background: '#f1f5f9', padding: '1px 4px', borderRadius: 3, fontSize: 11 }}>cardinality</code> — number of rows marked as deleted</div>
+          <div><code style={{ background: '#f1f5f9', padding: '1px 4px', borderRadius: 3, fontSize: 11 }}>fields: [2147483645]</code> — special ID meaning "all columns" (full row delete)</div>
+          <div><code style={{ background: '#f1f5f9', padding: '1px 4px', borderRadius: 3, fontSize: 11 }}>offset / length</code> — where the roaring bitmap blob lives in this file</div>
+          <div><code style={{ background: '#f1f5f9', padding: '1px 4px', borderRadius: 3, fontSize: 11 }}>snapshot-id: -1</code> — sentinel value; actual snapshot context comes from the manifest</div>
+        </div>
+      </div>
+      <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 6, padding: '10px 12px', fontSize: 11, color: '#64748b', lineHeight: 1.6 }}>
+        <strong>Why this matters:</strong> This is the Iceberg V3 "merge-on-read" optimization. The {blob.cardinality} deleted rows still physically exist in the Parquet file, but are filtered out at query time using this bitmap. No expensive rewrite needed.
+      </div>
+    </div>
+  );
+}
+
 function JsonModal({ fileKey, label, onClose }) {
   const data = FILE_CONTENTS[fileKey] || PUFFIN_CONTENTS[fileKey];
   const isPuffin = !!PUFFIN_CONTENTS[fileKey];
@@ -515,7 +552,7 @@ function JsonModal({ fileKey, label, onClose }) {
   return (
     <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.45)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
       onClick={onClose}>
-      <div style={{ background: 'white', borderRadius: 14, width: '80vw', maxWidth: 900, maxHeight: '85vh', display: 'flex', flexDirection: 'column', boxShadow: '0 20px 60px rgba(0,0,0,0.3)' }}
+      <div style={{ background: 'white', borderRadius: 14, width: isPuffin ? '90vw' : '80vw', maxWidth: isPuffin ? 1100 : 900, maxHeight: '85vh', display: 'flex', flexDirection: 'column', boxShadow: '0 20px 60px rgba(0,0,0,0.3)' }}
         onClick={e => e.stopPropagation()}>
         <div style={{ padding: '14px 20px', borderBottom: '1.5px solid #e2e8f0' }}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
@@ -539,8 +576,15 @@ function JsonModal({ fileKey, label, onClose }) {
             />
           </div>
         </div>
-        <div style={{ overflow: 'auto', padding: '16px 20px', flex: 1 }}>
-          {data ? <JsonNode value={data} depth={0} search={search} defaultOpen={isPuffin ? 99 : 2} /> : <div style={{ color: '#94a3b8', fontStyle: 'italic' }}>No data available for this file yet.</div>}
+        <div style={{ overflow: 'auto', padding: '16px 20px', flex: 1, display: isPuffin ? 'flex' : 'block', gap: isPuffin ? 20 : 0 }}>
+          <div style={{ flex: isPuffin ? 1 : undefined, minWidth: 0 }}>
+            {data ? <JsonNode value={data} depth={0} search={search} defaultOpen={isPuffin ? 99 : 2} /> : <div style={{ color: '#94a3b8', fontStyle: 'italic' }}>No data available for this file yet.</div>}
+          </div>
+          {isPuffin && (
+            <div style={{ width: 320, flexShrink: 0, borderLeft: '1.5px solid #e2e8f0', paddingLeft: 20 }}>
+              <PuffinHelper data={data} />
+            </div>
+          )}
         </div>
       </div>
     </div>
@@ -610,7 +654,7 @@ function ManifestBadge({ type, contentType }) {
     <div style={{ display: 'flex', gap: 4, justifyContent: 'center', marginTop: 3, flexWrap: 'wrap' }}>
       <span style={{ background: colors[type], color: 'white', fontSize: 9, padding: '1px 6px', borderRadius: 8, fontWeight: 700 }}>{labels[type]}</span>
       <span style={{ background: '#0e7490', color: 'white', fontSize: 9, padding: '1px 6px', borderRadius: 8, fontWeight: 700 }}>
-        {contentType === 1 ? '🔴 DELETE VEC' : 'DATA'}
+        {contentType === 1 ? 'DELETE VEC' : 'DATA'}
       </span>
     </div>
   );
@@ -878,7 +922,7 @@ function SnapshotDiagram({ snap, onFileClick }) {
                         <div style={{ fontSize: 9, fontWeight: 700, color: '#475569', textTransform: 'uppercase' }}>Manifest File {MF_NUM[m.file]}</div>
                         <div style={{ fontSize: 11, fontFamily: "'Monaco','Consolas',monospace", color: '#475569', marginTop: 1 }}>{m.file}</div>
                         <span style={{ background: '#0e7490', color: 'white', fontSize: 9, padding: '1px 6px', borderRadius: 8, fontWeight: 700, display: 'inline-block', marginTop: 3 }}>
-                          {m.contentType === 1 ? '🔴 DELETE VEC' : 'DATA'}
+                          {m.contentType === 1 ? 'DELETE VEC' : 'DATA'}
                         </span>
                         <div style={{ fontSize: 9, color: '#94a3b8', marginTop: 2, fontStyle: 'italic' }}>{m.reason}</div>
                       </div>
