@@ -775,15 +775,17 @@ function FileStack({ files, family, orphan, puffin, onFileClick }) {
   );
 }
 
-function ManifestBadge({ type, contentType }) {
+function ManifestBadge({ type, contentType, orphan }) {
   const colors = { added: '#16a34a', deleted: '#ef5350', existing: '#1e3a5f' };
   const labels = { added: 'ADDED', deleted: 'REMOVES', existing: 'REUSED' };
   return (
     <div style={{ display: 'flex', gap: 4, justifyContent: 'center', marginTop: 3, flexWrap: 'wrap' }}>
       <span style={{ background: colors[type], color: 'white', fontSize: 9, padding: '1px 6px', borderRadius: 8, fontWeight: 700 }}>{labels[type]}</span>
-      <span style={{ background: '#0e7490', color: 'white', fontSize: 9, padding: '1px 6px', borderRadius: 8, fontWeight: 700 }}>
-        {contentType === 1 ? 'DELETE VEC' : 'DATA'}
-      </span>
+      {orphan && (
+        <span style={{ background: '#0e7490', color: 'white', fontSize: 9, padding: '1px 6px', borderRadius: 8, fontWeight: 700 }}>
+          {contentType === 1 ? 'DELETE VEC' : 'DATA'}
+        </span>
+      )}
     </div>
   );
 }
@@ -1041,7 +1043,7 @@ function SnapshotDiagram({ snap, onFileClick }) {
                       <div key={i} onClick={() => openFile(m.file, `Manifest File ${MF_NUM[m.file]}`)} style={{ border: '1.5px dashed #fca5a5', background: '#fff5f5', borderRadius: 7, padding: '5px 10px', textAlign: 'center', opacity: 0.75, ...clickStyle(m.file) }}>
                         <div style={{ fontSize: 9, fontWeight: 700, color: '#475569', textTransform: 'uppercase' }}>Manifest File {MF_NUM[m.file]}</div>
                         <Tooltip text={fullName(m.file)}><div style={{ fontSize: 11, fontFamily: "'Monaco','Consolas',monospace", color: '#475569', marginTop: 1 }}>{m.file}</div></Tooltip>
-                        <ManifestBadge type={m.type} contentType={m.contentType} />
+                        <ManifestBadge type={m.type} contentType={m.contentType} orphan={true} />
                         {m.note && <div style={{ fontSize: 9, color: '#94a3b8', marginTop: 2, fontStyle: 'italic' }}>{m.note}</div>}
                       </div>
                     ))}
