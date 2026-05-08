@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { FILE_CONTENTS } from '../data/fileContents.js';
 import { PUFFIN_CONTENTS } from '../data/puffinContents.js';
+import { PARQUET_CONTENTS } from '../data/parquetContents.js';
 
 const short = full => {
   const m = full.match(/_([\w\-]{8,10})(?:qxg|Fqxg)_0_\d_(\d+)\.(parquet|puffin)/);
@@ -592,6 +593,38 @@ function ManifestFileHelper() {
   );
 }
 
+function ParquetFileHelper({ data }) {
+  if (!data) return null;
+  return (
+    <div style={{ fontSize: 12, color: '#475569', lineHeight: 1.8 }}>
+      <div style={{ fontSize: 11, fontWeight: 700, color: '#29B5E8', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 12 }}>How to Read This</div>
+      <div style={{ marginBottom: 14 }}>
+        <div style={{ fontWeight: 700, color: '#1e293b', marginBottom: 2 }}>What is this file?</div>
+        <div>A <strong>Parquet data file</strong> — contains the actual row data in compressed columnar format. This is what Snowflake physically scans at query time.</div>
+      </div>
+      <div style={{ marginBottom: 14 }}>
+        <div style={{ fontWeight: 700, color: '#1e293b', marginBottom: 4 }}>File stats:</div>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+          <div><strong>{data.num_rows}</strong> rows × <strong>{data.num_columns}</strong> columns</div>
+          <div><strong>{(data.file_size_bytes / 1024).toFixed(1)} KB</strong> on disk (compressed)</div>
+          <div><strong>{data.row_groups}</strong> row group{data.row_groups > 1 ? 's' : ''}</div>
+        </div>
+      </div>
+      <div style={{ marginBottom: 14 }}>
+        <div style={{ fontWeight: 700, color: '#1e293b', marginBottom: 4 }}>Columns:</div>
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4 }}>
+          {data.schema?.map(col => (
+            <span key={col.name} style={{ background: '#f1f5f9', border: '1px solid #e2e8f0', borderRadius: 4, padding: '2px 6px', fontSize: 10, fontFamily: 'Monaco,Consolas,monospace' }}>{col.name}</span>
+          ))}
+        </div>
+      </div>
+      <div style={{ background: '#f0fbff', border: '1px solid #29B5E830', borderRadius: 6, padding: '10px 12px', fontSize: 11, color: '#64748b', lineHeight: 1.6 }}>
+        <strong>Context:</strong> These are the 60 rows written by the UPDATE in S2. Since Iceberg V3 uses merge-on-read, the updated rows are written as new data files (not overwriting the original). The old row positions are marked deleted via puffin files.
+      </div>
+    </div>
+  );
+}
+
 function PuffinHelper({ data }) {
   const blob = data?.blobs?.[0];
   if (!blob) return null;
@@ -630,12 +663,13 @@ function PuffinHelper({ data }) {
 }
 
 function JsonModal({ fileKey, label, onClose }) {
-  const data = FILE_CONTENTS[fileKey] || PUFFIN_CONTENTS[fileKey];
+  const data = FILE_CONTENTS[fileKey] || PUFFIN_CONTENTS[fileKey] || PARQUET_CONTENTS[fileKey];
   const isPuffin = !!PUFFIN_CONTENTS[fileKey];
+  const isParquetFile = !!PARQUET_CONTENTS[fileKey];
   const isManifestList = fileKey.startsWith('snap-');
   const isManifestFile = !isPuffin && !isManifestList && /-m\d+$/.test(fileKey);
   const isMetadata = /^\d{5}-/.test(fileKey);
-  const hasHelper = isPuffin || isManifestList || isManifestFile || isMetadata;
+  const hasHelper = isPuffin || isManifestList || isManifestFile || isMetadata || isParquetFile;
   const [search, setSearch] = useState('');
   return (
     <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.45)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
@@ -674,6 +708,7 @@ function JsonModal({ fileKey, label, onClose }) {
               {isManifestList && <ManifestListHelper />}
               {isManifestFile && <ManifestFileHelper />}
               {isMetadata && <MetadataFileHelper />}
+              {isParquetFile && <ParquetFileHelper data={data} />}
             </div>
           )}
         </div>
@@ -714,10 +749,12 @@ function FileStack({ files, family, orphan, puffin, onFileClick }) {
       <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
         {files.map(f => {
           const hasPuffinData = puffin && PUFFIN_CONTENTS[f];
+          const hasParquetData = !puffin && PARQUET_CONTENTS[f];
+          const isClickable = hasPuffinData || hasParquetData;
           return (
             <Tooltip key={f} text={f}>
               <div
-                onClick={hasPuffinData ? () => onFileClick && onFileClick({ key: f, label: `Puffin Delete Vector` }) : undefined}
+                onClick={isClickable ? () => onFileClick && onFileClick({ key: f, label: puffin ? 'Puffin Delete Vector' : 'Parquet Data File' }) : undefined}
                 style={{
                   border: orphan ? '1.5px dashed #94a3b8' : `1.5px solid ${activeColor}`,
                   background: orphan ? '#f1f5f9' : activeBg,
@@ -725,7 +762,7 @@ function FileStack({ files, family, orphan, puffin, onFileClick }) {
                   fontSize: 10, fontFamily: "'Monaco','Consolas',monospace",
                   color: orphan ? '#475569' : (puffin ? '#7C3AED' : '#0e7490'),
                   opacity: orphan ? 0.85 : 1,
-                  cursor: hasPuffinData ? 'pointer' : 'default',
+                  cursor: isClickable ? 'pointer' : 'default',
                 }}>
                 {short(f)}
               </div>
@@ -786,8 +823,8 @@ function SnapshotDiagram({ snap, onFileClick }) {
   const [lines, setLines] = useState([]);
   const [svgH, setSvgH] = useState(0);
 
-  const openFile = (key, label) => onFileClick && (FILE_CONTENTS[key] || PUFFIN_CONTENTS[key]) && onFileClick({ key, label });
-  const clickStyle = (key) => (FILE_CONTENTS[key] || PUFFIN_CONTENTS[key]) ? { cursor: 'pointer', transition: 'box-shadow 0.15s' } : {};
+  const openFile = (key, label) => onFileClick && (FILE_CONTENTS[key] || PUFFIN_CONTENTS[key] || PARQUET_CONTENTS[key]) && onFileClick({ key, label });
+  const clickStyle = (key) => (FILE_CONTENTS[key] || PUFFIN_CONTENTS[key] || PARQUET_CONTENTS[key]) ? { cursor: 'pointer', transition: 'box-shadow 0.15s' } : {};
 
   const addedManifests = snap.manifests.filter(m => m.type === 'added');
   const reusedManifests = snap.manifests.filter(m => m.type === 'existing');
