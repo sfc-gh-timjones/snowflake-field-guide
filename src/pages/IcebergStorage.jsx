@@ -379,11 +379,9 @@ const SNAPSHOT_SQL = {
 
 In S2, we updated 60 rows. Those 60 lived in their own Parquet files (AgAjQxSF). In S6, our UPDATE of 150,000 rows happened to overlap with 6 of those 60 — meaning 6 ORDER_IDs (primary key) were updated in both S2 and S6.
 
-Because 6 of the AgAjQxSF rows were invalidated, Iceberg had to retire Manifest File 2 (which tracked those files) from the manifest list. But the remaining 54 rows in AgAjQxSF were still valid — they needed to be carried forward. Snowflake rewrote all 60 AgAjQxSF rows into the new wxCeZSOF files:
-  • 6 rows with NEW updated values (part of the 150,000 actual changes)
-  • 54 rows with SAME values as before (carried forward, no actual change)
+Because 6 of the AgAjQxSF rows were invalidated, Iceberg had to retire Manifest File 2 (which tracked those files) from the manifest list. But the remaining 54 rows in AgAjQxSF were still valid — they needed to be carried forward. Those 54 rows are "refugees" — their data didn't change, but their old Parquet files are being retired, so they must be rewritten into the new wxCeZSOF files.
 
-So the new Parquet files contain: 149,994 (from original files) + 60 (from AgAjQxSF) = 150,054.
+So the new Parquet files contain: 150,000 (from S6 updates) + 54 (from S2 updates carried forward unchanged) = 150,054.
 
 The puffin delete vector (Manifest File 11) shows 150,434 masked positions because it must mark ALL old row positions to skip:
   • 150,000 original positions for the S6 update
