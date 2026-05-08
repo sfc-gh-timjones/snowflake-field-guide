@@ -105,7 +105,7 @@ function CombinedModal({ onClose }) {
     },
     {
       file: 'manifest-list.avro', type: 'AVRO', typeColor: '#8b5cf6',
-      note: 'Contains a list of all manifests for this snapshot',
+      note: 'New file created every snapshot — never reused. Lists which manifests belong to this snapshot.',
       relation: 'one manifest list → many manifests',
     },
     {

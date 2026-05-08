@@ -508,6 +508,33 @@ function SqlModal({ snap, onClose }) {
   );
 }
 
+function MetadataFileHelper() {
+  return (
+    <div style={{ fontSize: 12, color: '#475569', lineHeight: 1.8 }}>
+      <div style={{ fontSize: 11, fontWeight: 700, color: '#f59e0b', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 12 }}>How to Read This</div>
+      <div style={{ marginBottom: 14 }}>
+        <div style={{ fontWeight: 700, color: '#1e293b', marginBottom: 2 }}>What is this file?</div>
+        <div>The <strong>table metadata file</strong> (JSON) — the root of the entire Iceberg table. A new one is written on every commit. The catalog always points to the current one.</div>
+      </div>
+      <div style={{ marginBottom: 14 }}>
+        <div style={{ fontWeight: 700, color: '#1e293b', marginBottom: 4 }}>Key fields:</div>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+          <div><code style={{ background: '#f1f5f9', padding: '1px 4px', borderRadius: 3, fontSize: 11, fontWeight: 700 }}>format-version</code> — Iceberg spec version (3 = V3 with delete vectors)</div>
+          <div><code style={{ background: '#f1f5f9', padding: '1px 4px', borderRadius: 3, fontSize: 11, fontWeight: 700 }}>current-snapshot-id</code> — which snapshot is "active" right now</div>
+          <div><code style={{ background: '#f1f5f9', padding: '1px 4px', borderRadius: 3, fontSize: 11, fontWeight: 700 }}>snapshots</code> — array of all snapshot entries within retention window</div>
+          <div><code style={{ background: '#f1f5f9', padding: '1px 4px', borderRadius: 3, fontSize: 11, fontWeight: 700 }}>snapshot-log</code> — ordered history of which snapshot was current and when</div>
+          <div><code style={{ background: '#f1f5f9', padding: '1px 4px', borderRadius: 3, fontSize: 11, fontWeight: 700 }}>schemas</code> — table schema definitions (column names, types, IDs)</div>
+          <div><code style={{ background: '#f1f5f9', padding: '1px 4px', borderRadius: 3, fontSize: 11, fontWeight: 700 }}>location</code> — root S3/ADLS path where all table data lives</div>
+          <div><code style={{ background: '#f1f5f9', padding: '1px 4px', borderRadius: 3, fontSize: 11, fontWeight: 700 }}>properties</code> — table-level config (write format, compression, Snowflake-specific settings)</div>
+        </div>
+      </div>
+      <div style={{ background: '#fffbeb', border: '1px solid #f59e0b30', borderRadius: 6, padding: '10px 12px', fontSize: 11, color: '#64748b', lineHeight: 1.6 }}>
+        <strong>Why it matters:</strong> This is the entry point for reading the table. The catalog resolves the current metadata file, which points to the current snapshot, which points to the manifest list, and so on down the chain.
+      </div>
+    </div>
+  );
+}
+
 function ManifestListHelper() {
   return (
     <div style={{ fontSize: 12, color: '#475569', lineHeight: 1.8 }}>
@@ -607,7 +634,8 @@ function JsonModal({ fileKey, label, onClose }) {
   const isPuffin = !!PUFFIN_CONTENTS[fileKey];
   const isManifestList = fileKey.startsWith('snap-');
   const isManifestFile = !isPuffin && !isManifestList && /-m\d+$/.test(fileKey);
-  const hasHelper = isPuffin || isManifestList || isManifestFile;
+  const isMetadata = /^\d{5}-/.test(fileKey);
+  const hasHelper = isPuffin || isManifestList || isManifestFile || isMetadata;
   const [search, setSearch] = useState('');
   return (
     <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.45)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
@@ -645,6 +673,7 @@ function JsonModal({ fileKey, label, onClose }) {
               {isPuffin && <PuffinHelper data={data} />}
               {isManifestList && <ManifestListHelper />}
               {isManifestFile && <ManifestFileHelper />}
+              {isMetadata && <MetadataFileHelper />}
             </div>
           )}
         </div>
