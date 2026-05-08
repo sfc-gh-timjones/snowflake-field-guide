@@ -379,7 +379,7 @@ const SNAPSHOT_SQL = {
 
 In S2, we updated 60 rows. Those 60 lived in their own Parquet files (AgAjQxSF). In S6, our UPDATE of 150,000 rows happened to overlap with 6 of those 60 — meaning 6 ORDER_IDs (primary key) were updated in both S2 and S6.
 
-Because 6 of the AgAjQxSF rows were invalidated, Iceberg had to retire that entire manifest entry. But the remaining 54 rows in AgAjQxSF were still valid — they needed to be carried forward. Snowflake rewrote all 60 AgAjQxSF rows into the new wxCeZSOF files:
+Because 6 of the AgAjQxSF rows were invalidated, Iceberg had to retire Manifest File 2 (which tracked those files) from the manifest list. But the remaining 54 rows in AgAjQxSF were still valid — they needed to be carried forward. Snowflake rewrote all 60 AgAjQxSF rows into the new wxCeZSOF files:
   • 6 rows with NEW updated values (part of the 150,000 actual changes)
   • 54 rows with SAME values as before (carried forward, no actual change)
 
