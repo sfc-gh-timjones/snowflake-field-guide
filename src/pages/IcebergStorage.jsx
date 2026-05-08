@@ -414,12 +414,12 @@ function HighlightText({ text, term }) {
   return <>{parts}</>;
 }
 
-function JsonNode({ label, value, depth = 0, search = '' }) {
+function JsonNode({ label, value, depth = 0, search = '', defaultOpen = 2 }) {
   const term = search.toLowerCase();
   const hasMatch = term && jsonContainsSearch(value, term);
   const labelMatch = term && label && label.toLowerCase().includes(term);
   const forceOpen = hasMatch || labelMatch;
-  const [open, setOpen] = useState(depth < 2);
+  const [open, setOpen] = useState(depth < defaultOpen);
   const prevForce = useRef(forceOpen);
   useEffect(() => {
     if (forceOpen && !prevForce.current) setOpen(true);
@@ -458,7 +458,7 @@ function JsonNode({ label, value, depth = 0, search = '' }) {
       {isOpen && (
         <>
           {keys.map(k => (
-            <JsonNode key={k} label={isArr ? `[${k}]` : k} value={value[k]} depth={depth + 1} search={search} />
+            <JsonNode key={k} label={isArr ? `[${k}]` : k} value={value[k]} depth={depth + 1} search={search} defaultOpen={defaultOpen} />
           ))}
           <div style={{ paddingLeft: 0, fontSize: 12, fontFamily: 'Monaco,Consolas,monospace', color: '#475569' }}>{isArr ? ']' : '}'}</div>
         </>
@@ -510,6 +510,7 @@ function SqlModal({ snap, onClose }) {
 
 function JsonModal({ fileKey, label, onClose }) {
   const data = FILE_CONTENTS[fileKey] || PUFFIN_CONTENTS[fileKey];
+  const isPuffin = !!PUFFIN_CONTENTS[fileKey];
   const [search, setSearch] = useState('');
   return (
     <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.45)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
@@ -524,6 +525,7 @@ function JsonModal({ fileKey, label, onClose }) {
             </div>
             <button onClick={onClose} style={{ background: 'none', border: 'none', fontSize: 20, cursor: 'pointer', color: '#64748b', lineHeight: 1, padding: '4px 8px' }}>✕</button>
           </div>
+          {isPuffin && <div style={{ fontSize: 10, color: '#94a3b8', marginTop: 6, fontStyle: 'italic' }}>*Note: Puffin file parsed from binary PFA1 format — footer metadata extracted, blob contents (roaring bitmap) are not human-readable.</div>}
           <div style={{ marginTop: 10 }}>
             <input
               type="text"
@@ -538,7 +540,7 @@ function JsonModal({ fileKey, label, onClose }) {
           </div>
         </div>
         <div style={{ overflow: 'auto', padding: '16px 20px', flex: 1 }}>
-          {data ? <JsonNode value={data} depth={0} search={search} /> : <div style={{ color: '#94a3b8', fontStyle: 'italic' }}>No data available for this file yet.</div>}
+          {data ? <JsonNode value={data} depth={0} search={search} defaultOpen={isPuffin ? 99 : 2} /> : <div style={{ color: '#94a3b8', fontStyle: 'italic' }}>No data available for this file yet.</div>}
         </div>
       </div>
     </div>
