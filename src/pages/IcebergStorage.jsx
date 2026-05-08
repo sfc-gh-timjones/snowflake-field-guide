@@ -373,21 +373,26 @@ const SNAPSHOT_SQL = {
   5: { sql: 'CALL ETL_TESTING.ICEBERG_DEMO.DELETE_ORDERS_ICEBERG(300);', procedure: 'DELETE', logicalRows: 3199620, queryId: '01c41522-0208-bdf6-0067-4e870aa1fbb6', queryId2: '01c41522-0208-bdf6-0067-4e870aa1fbba' },
   6: { sql: 'CALL ETL_TESTING.ICEBERG_DEMO.UPDATE_ORDERS_ICEBERG(150000);', procedure: 'UPDATE', logicalRows: 3199620, queryId: '01c41522-0208-bdf6-0067-4e870aa1fbce', queryId2: '01c41522-0208-bdf6-0067-4e870aa1fbd2',
     explainer: {
-      title: 'Why 54 delta?',
+      title: 'Why 150,054 instead of 150,000?',
       queryId: '01c41522-0208-bdf6-0067-4e870aa1fbd2',
-      body: `Snowflake reports 150,000 rows updated — but Iceberg metadata shows 150,054 physical rows written to the new wxCeZSOF Parquet files. Where do the extra 54 come from?
+      body: `Snowflake reports 150,000 rows updated — but Iceberg wrote 150,054 rows to the new wxCeZSOF Parquet files. Why the extra 54?
 
-Look at the Join [2] node in the query profile:
-  • Left side:  150k  (ORDER_IDs from SortWithLimit — the LIMIT 150000 subquery)
-  • Right side: 152.2k  (physical rows returned by TableScan [7] scanning all 18 partitions)
+In S2, we updated 60 rows. Those 60 lived in their own Parquet files (AgAjQxSF). In S6, our UPDATE of 150,000 rows happened to overlap with 6 of those 60 — meaning 6 ORDER_IDs were updated in both S2 and S6.
 
-Snowflake counts LOGICAL rows updated — 150,000 unique ORDER_IDs that were changed. Iceberg counts PHYSICAL rows written to new Parquet files. The 54-row gap comes from how Snowflake batches those 150,000 rows into 5 new Parquet files:
+Because 6 of the AgAjQxSF rows were invalidated, Iceberg had to retire that entire manifest entry. But the remaining 54 rows in AgAjQxSF were still valid — they needed to be carried forward. Snowflake rewrote all 60 AgAjQxSF rows into the new wxCeZSOF files:
+  • 6 rows with NEW updated values (part of the 150,000 actual changes)
+  • 54 rows with SAME values as before (carried forward, no actual change)
 
-  30,714 + 47,985 + 30,706 + 25,544 + 15,105 = 150,054
+So the new Parquet files contain: 149,994 (from original files) + 60 (from AgAjQxSF) = 150,054.
 
-The file-writer doesn't split on exact row boundaries — it splits on data size thresholds. Rows near a partition boundary get included with the batch, producing slightly uneven counts across files. The 60 rows from S2's merge-on-read (AgAjQxSF) that were absorbed into this batch also contribute to the boundary slop.
+The puffin delete vector (Manifest File 11) shows 150,434 masked positions because it must mark ALL old row positions to skip:
+  • 150,000 original positions for the S6 update
+  • 54 original positions for the S2 updates carried forward
+  • 80 positions from the S3 delete
+  • 300 positions from the S5 delete
+  • 54 + 80 + 300 + 150,000 = 150,434
 
-Bottom line: Snowflake reports what it promised to update. Iceberg records what was physically written to disk.`
+Bottom line: EXCEPT shows 150,000 (actual value changes). Parquet has 150,054 (includes 54 unchanged rows absorbed from retired AgAjQxSF files).`
     }
   },
 };
