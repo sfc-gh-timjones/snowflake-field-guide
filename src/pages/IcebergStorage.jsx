@@ -379,7 +379,7 @@ const SNAPSHOT_SQL = {
 
 In S2, we updated 60 rows. Those 60 lived in their own Parquet files (AgAjQxSF). In S6, our UPDATE of 150,000 rows happened to overlap with 6 of those 60 — meaning 6 ORDER_IDs (primary key) were updated in both S2 and S6.
 
-Because 6 of the AgAjQxSF rows were invalidated, Iceberg had to retire Manifest File 2 (which tracked those files) from the manifest list. But the remaining 54 rows in AgAjQxSF were still valid — they needed to be carried forward. Those 54 rows are "refugees" — their data didn't change, but their old Parquet files are being retired, so they must be rewritten into the new wxCeZSOF files.
+Because 6 rows in the data files associated with Manifest File 2 were invalidated, Iceberg had to retire Manifest File 2 from the manifest list. But the remaining 54 rows in those data files were still valid — they needed to be carried forward. Those 54 rows are "refugees" — their data didn't change, but their old Parquet files are being retired, so they must be rewritten into the new wxCeZSOF files.
 
 So the new Parquet files contain: 150,000 (from S6 updates) + 54 (from S2 updates carried forward unchanged) = 150,054.
 
