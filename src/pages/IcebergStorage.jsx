@@ -198,7 +198,7 @@ const SNAPSHOTS = [
   },
   {
     num: 6, id: '187341245160280515', operation: 'overwrite', timestamp: '12:42:55',
-    description: 'UPDATE 150,054 rows — large update rewrites affected Parquet files + new puffin vectors. AgAjQxSF files now orphaned.',
+    description: 'UPDATE 150,000 rows — large update rewrites affected Parquet files + new puffin vectors. AgAjQxSF files now orphaned.',
     recordCount: 3350054, delta: 'UPDATE 150K', deltaColor: '#7C3AED',
     metadataFiles: [
       { file: '00001-53b570e8', active: false },
@@ -1098,11 +1098,11 @@ function SnapshotDiagram({ snap, onFileClick }) {
 const MOR_DATA = {
   0: null,
   1: { type: 'direct', note: 'Direct read — no delete vectors', files: [{ family: 'X-rqSgaF', count: 4, rows: '2,000,000' }], puffins: null, result: '2,000,000' },
-  2: { type: 'mor', note: 'UPDATE 60 → merge-on-read applies delete vectors during scan', files: [{ family: 'X-rqSgaF', count: 4, rows: '2,000,000' }, { family: 'AgAjQxSF (new)', count: 3, rows: '60' }], puffins: { family: 'BAAjQxSF', count: 4, deletes: 60, targets: 'X-rqSgaF files' }, result: '2,000,000' },
-  3: { type: 'mor', note: 'DELETE 80 → new puffins replace S2 puffins, now masking 140 positions', files: [{ family: 'X-rqSgaF', count: 4, rows: '2,000,000' }, { family: 'AgAjQxSF', count: 3, rows: '60' }], puffins: { family: 'QmqdMRWF', count: 4, deletes: 140, targets: 'X-rqSgaF files' }, result: '1,999,920' },
-  4: { type: 'mor', note: 'INSERT 1.2M → new data files added, same puffins still active', files: [{ family: 'X-rqSgaF', count: 4, rows: '2,000,000' }, { family: 'AgAjQxSF', count: 3, rows: '60' }, { family: 'gNyIOyKF', count: 2, rows: '1,200,000' }], puffins: { family: 'QmqdMRWF', count: 4, deletes: 140, targets: 'X-rqSgaF files' }, result: '3,199,920' },
-  5: { type: 'mor', note: 'DELETE 300 → new puffins replace S3 puffins, now masking 440 positions', files: [{ family: 'X-rqSgaF', count: 4, rows: '2,000,000' }, { family: 'AgAjQxSF', count: 3, rows: '60' }, { family: 'gNyIOyKF', count: 2, rows: '1,200,000' }], puffins: { family: 'whCeZSOF', count: 6, deletes: 440, targets: 'X-rqSgaF + gNyIOyKF files' }, result: '3,199,620' },
-  6: { type: 'mor', note: 'UPDATE 150K → large rewrite of affected rows + new puffin vectors', files: [{ family: 'X-rqSgaF', count: 4, rows: '2,000,000' }, { family: 'gNyIOyKF', count: 2, rows: '1,200,000' }, { family: 'wxCeZSOF (rewritten)', count: 5, rows: '150,054' }], puffins: { family: 'xRCeZSOF', count: 6, deletes: '150,434', targets: 'X-rqSgaF + gNyIOyKF files' }, result: '3,199,620' },
+  2: { type: 'mor', note: 'UPDATE 60 → merge-on-read applies delete vectors during scan', files: [{ family: 'X-rqSgaF', count: 4, rows: '2,000,000' }, { family: 'AgAjQxSF (new)', count: 3, rows: '60' }], puffins: { family: 'BAAjQxSF', count: 4, deletes: 60, breakdown: '60 updates in S2', targets: 'X-rqSgaF files' }, result: '2,000,000' },
+  3: { type: 'mor', note: 'DELETE 80 → new puffins replace S2 puffins, now masking 140 positions', files: [{ family: 'X-rqSgaF', count: 4, rows: '2,000,000' }, { family: 'AgAjQxSF', count: 3, rows: '60' }], puffins: { family: 'QmqdMRWF', count: 4, deletes: 140, breakdown: '60 updates from S2 + 80 deletes in S3', targets: 'X-rqSgaF files' }, result: '1,999,920' },
+  4: { type: 'mor', note: 'INSERT 1.2M → new data files added, same puffins still active', files: [{ family: 'X-rqSgaF', count: 4, rows: '2,000,000' }, { family: 'AgAjQxSF', count: 3, rows: '60' }, { family: 'gNyIOyKF', count: 2, rows: '1,200,000' }], puffins: { family: 'QmqdMRWF', count: 4, deletes: 140, breakdown: '60 updates from S2 + 80 deletes from S3', targets: 'X-rqSgaF files' }, result: '3,199,920' },
+  5: { type: 'mor', note: 'DELETE 300 → new puffins replace S3 puffins, now masking 440 positions', files: [{ family: 'X-rqSgaF', count: 4, rows: '2,000,000' }, { family: 'AgAjQxSF', count: 3, rows: '60' }, { family: 'gNyIOyKF', count: 2, rows: '1,200,000' }], puffins: { family: 'whCeZSOF', count: 6, deletes: 440, breakdown: '60 updates from S2 + 80 deletes from S3 + 300 deletes in S5', targets: 'X-rqSgaF + gNyIOyKF files' }, result: '3,199,620' },
+  6: { type: 'mor', note: 'UPDATE 150K → large rewrite of affected rows + new puffin vectors', files: [{ family: 'X-rqSgaF', count: 4, rows: '2,000,000' }, { family: 'gNyIOyKF', count: 2, rows: '1,200,000' }, { family: 'wxCeZSOF (rewritten)', count: 5, rows: '150,054' }], puffins: { family: 'xRCeZSOF', count: 6, deletes: '150,434', breakdown: '54 updates from S2 + 80 deletes from S3 + 300 deletes from S5 + 150,000 updates in S6', targets: 'X-rqSgaF + gNyIOyKF files' }, result: '3,199,620' },
 };
 
 function MergeOnReadVisual({ snapNum }) {
@@ -1136,7 +1136,7 @@ function MergeOnReadVisual({ snapNum }) {
               <span style={{ fontFamily: 'Monaco,Consolas,monospace', fontWeight: 600, color: '#7C3AED' }}>{d.puffins.family}</span>
             </div>
             <div style={{ fontSize: 11, color: '#475569', marginBottom: 4 }}>{d.puffins.count} puffin files</div>
-            <div style={{ fontSize: 11, color: '#475569', marginBottom: 4 }}>Masks <strong>{d.puffins.deletes}</strong> row positions</div>
+            <div style={{ fontSize: 11, color: '#475569', marginBottom: 4 }}>Masks <strong>{d.puffins.deletes}</strong> row positions{d.puffins.breakdown && <span style={{ color: '#64748b' }}> ({d.puffins.breakdown})</span>}</div>
             <div style={{ fontSize: 10, color: '#64748b', fontStyle: 'italic' }}>targets: {d.puffins.targets}</div>
           </div>
         ) : (
