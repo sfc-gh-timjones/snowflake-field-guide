@@ -198,7 +198,7 @@ const SNAPSHOTS = [
   },
   {
     num: 6, id: '187341245160280515', operation: 'overwrite', timestamp: '12:42:55',
-    description: 'UPDATE 150,000 rows — large update rewrites affected Parquet files + new puffin vectors. AgAjQxSF files now orphaned.',
+    description: 'UPDATE 150,000 rows — large update rewrites affected Parquet files + new puffin vectors. Manifest File 2 (60 updates) and associated data files now orphaned.',
     recordCount: 3350054, delta: 'UPDATE 150K', deltaColor: '#7C3AED',
     metadataFiles: [
       { file: '00001-53b570e8', active: false },
