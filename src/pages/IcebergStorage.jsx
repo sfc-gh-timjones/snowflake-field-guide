@@ -749,7 +749,7 @@ function SnapshotDiagram({ snap, onFileClick }) {
                     <div style={{ fontSize: 10, fontWeight: 700, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 3 }}>Manifest List {ML_NUM[snap.manifestList]}</div>
                     <Tooltip text={fullName(snap.manifestList)}>
                       <div style={{ fontSize: 11, fontFamily: "'Monaco','Consolas',monospace", color: '#0e7490' }}>
-                        {snap.manifestList.split('-')[0]}-{snap.manifestList.split('-')[1].slice(0,4)}…-{snap.manifestList.split('-')[2]}
+                        snap-{snap.manifestList.split('-')[1].slice(0,4)}…{snap.manifestList.slice(-8)}
                       </div>
                     </Tooltip>
                     <div style={{ fontSize: 9, color: '#64748b', marginTop: 5, lineHeight: 1.5 }}>
@@ -843,7 +843,7 @@ function SnapshotDiagram({ snap, onFileClick }) {
                       <Tooltip key={ml} text={ml + '.avro'}>
                         <div style={{ border: '1.5px dashed #cbd5e1', background: '#f8fafc', borderRadius: 7, padding: '5px 10px', opacity: 0.7 }}>
                           <div style={{ fontSize: 9, fontWeight: 600, color: '#475569', textTransform: 'uppercase', marginBottom: 1 }}>Manifest List {ML_NUM[ml]}</div>
-                          <div style={{ fontSize: 11, fontFamily: "'Monaco','Consolas',monospace", color: '#475569' }}>{ml.split('-')[0]}-{ml.split('-')[1].slice(0,4)}…-{ml.split('-')[2]}</div>
+                          <div style={{ fontSize: 11, fontFamily: "'Monaco','Consolas',monospace", color: '#475569' }}>snap-{ml.split('-')[1].slice(0,4)}…{ml.slice(-8)}</div>
                         </div>
                       </Tooltip>
                     ))}
