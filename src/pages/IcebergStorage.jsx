@@ -391,38 +391,73 @@ Bottom line: Snowflake reports what it promised to update. Iceberg records what 
 };
 
 
-function JsonNode({ label, value, depth = 0 }) {
+function jsonContainsSearch(value, term) {
+  if (!term) return false;
+  if (value === null || value === undefined) return false;
+  if (typeof value !== 'object') return String(value).toLowerCase().includes(term);
+  if (Array.isArray(value)) return value.some(v => jsonContainsSearch(v, term));
+  return Object.entries(value).some(([k, v]) => k.toLowerCase().includes(term) || jsonContainsSearch(v, term));
+}
+
+function HighlightText({ text, term }) {
+  if (!term || !text.toLowerCase().includes(term)) return <>{text}</>;
+  const parts = [];
+  let remaining = text;
+  while (remaining.length > 0) {
+    const idx = remaining.toLowerCase().indexOf(term);
+    if (idx === -1) { parts.push(remaining); break; }
+    if (idx > 0) parts.push(remaining.slice(0, idx));
+    parts.push(<mark key={parts.length} style={{ background: '#fde047', borderRadius: 2, padding: '0 1px' }}>{remaining.slice(idx, idx + term.length)}</mark>);
+    remaining = remaining.slice(idx + term.length);
+  }
+  return <>{parts}</>;
+}
+
+function JsonNode({ label, value, depth = 0, search = '' }) {
+  const term = search.toLowerCase();
+  const hasMatch = term && jsonContainsSearch(value, term);
+  const labelMatch = term && label && label.toLowerCase().includes(term);
+  const forceOpen = hasMatch || labelMatch;
   const [open, setOpen] = useState(depth < 2);
+  const prevForce = useRef(forceOpen);
+  useEffect(() => {
+    if (forceOpen && !prevForce.current) setOpen(true);
+    prevForce.current = forceOpen;
+  }, [forceOpen]);
+
   const isObj = value !== null && typeof value === 'object' && !Array.isArray(value);
   const isArr = Array.isArray(value);
   const isComplex = isObj || isArr;
   const indent = depth * 16;
 
   if (!isComplex) {
+    const strVal = String(value);
+    const valMatch = term && strVal.toLowerCase().includes(term);
     const display = typeof value === 'string'
-      ? <span style={{ color: '#16a34a' }}>"{value}"</span>
-      : <span style={{ color: typeof value === 'number' ? '#2563eb' : '#dc2626' }}>{String(value)}</span>;
+      ? <span style={{ color: '#16a34a' }}>"<HighlightText text={value} term={term} />"</span>
+      : <span style={{ color: typeof value === 'number' ? '#2563eb' : '#dc2626' }}><HighlightText text={strVal} term={term} /></span>;
     return (
-      <div style={{ paddingLeft: indent, fontSize: 12, lineHeight: 1.7, fontFamily: 'Monaco,Consolas,monospace' }}>
-        {label && <span style={{ color: '#7c3aed', fontWeight: 600 }}>{label}: </span>}{display}
+      <div style={{ paddingLeft: indent, fontSize: 12, lineHeight: 1.7, fontFamily: 'Monaco,Consolas,monospace', background: (valMatch || labelMatch) ? '#fefce8' : 'transparent', borderRadius: 3 }}>
+        {label && <span style={{ color: '#7c3aed', fontWeight: 600 }}><HighlightText text={label} term={term} />: </span>}{display}
       </div>
     );
   }
 
   const keys = isArr ? value.map((_, i) => i) : Object.keys(value);
   const preview = isArr ? `[${value.length}]` : `{${keys.length}}`;
+  const isOpen = open || forceOpen;
 
   return (
     <div style={{ paddingLeft: indent }}>
-      <div onClick={() => setOpen(o => !o)} style={{ cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6, fontSize: 12, lineHeight: 1.7, fontFamily: 'Monaco,Consolas,monospace', userSelect: 'none' }}>
-        <span style={{ color: '#29B5E8', fontSize: 20, width: 20, display: 'inline-block', textAlign: 'center' }}>{open ? '▾' : '▸'}</span>
-        {label && <span style={{ color: '#7c3aed', fontWeight: 600 }}>{label}: </span>}
-        <span style={{ color: '#475569' }}>{open ? (isArr ? '[' : '{') : <span>{isArr ? '[' : '{'}<span style={{ color: '#94a3b8', fontSize: 11 }}> {preview} </span>{isArr ? ']' : '}'}</span>}</span>}
+      <div onClick={() => setOpen(o => !o)} style={{ cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6, fontSize: 12, lineHeight: 1.7, fontFamily: 'Monaco,Consolas,monospace', userSelect: 'none', background: labelMatch ? '#fefce8' : 'transparent', borderRadius: 3 }}>
+        <span style={{ color: '#29B5E8', fontSize: 20, width: 20, display: 'inline-block', textAlign: 'center' }}>{isOpen ? '▾' : '▸'}</span>
+        {label && <span style={{ color: '#7c3aed', fontWeight: 600 }}><HighlightText text={label} term={term} />: </span>}
+        <span style={{ color: '#475569' }}>{isOpen ? (isArr ? '[' : '{') : <span>{isArr ? '[' : '{'}<span style={{ color: '#94a3b8', fontSize: 11 }}> {preview} </span>{isArr ? ']' : '}'}</span>}</span>}
       </div>
-      {open && (
+      {isOpen && (
         <>
           {keys.map(k => (
-            <JsonNode key={k} label={isArr ? `[${k}]` : k} value={value[k]} depth={depth + 1} />
+            <JsonNode key={k} label={isArr ? `[${k}]` : k} value={value[k]} depth={depth + 1} search={search} />
           ))}
           <div style={{ paddingLeft: 0, fontSize: 12, fontFamily: 'Monaco,Consolas,monospace', color: '#475569' }}>{isArr ? ']' : '}'}</div>
         </>
@@ -474,20 +509,35 @@ function SqlModal({ snap, onClose }) {
 
 function JsonModal({ fileKey, label, onClose }) {
   const data = FILE_CONTENTS[fileKey];
+  const [search, setSearch] = useState('');
   return (
     <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.45)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
       onClick={onClose}>
       <div style={{ background: 'white', borderRadius: 14, width: '80vw', maxWidth: 900, maxHeight: '85vh', display: 'flex', flexDirection: 'column', boxShadow: '0 20px 60px rgba(0,0,0,0.3)' }}
         onClick={e => e.stopPropagation()}>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '14px 20px', borderBottom: '1.5px solid #e2e8f0' }}>
-          <div>
-            <div style={{ fontSize: 13, fontWeight: 700, color: '#1e293b' }}>{label}</div>
-            <div style={{ fontSize: 11, color: '#64748b', fontFamily: 'monospace', marginTop: 2 }}>{fullName(fileKey)}</div>
+        <div style={{ padding: '14px 20px', borderBottom: '1.5px solid #e2e8f0' }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <div>
+              <div style={{ fontSize: 13, fontWeight: 700, color: '#1e293b' }}>{label}</div>
+              <div style={{ fontSize: 11, color: '#64748b', fontFamily: 'monospace', marginTop: 2 }}>{fullName(fileKey)}</div>
+            </div>
+            <button onClick={onClose} style={{ background: 'none', border: 'none', fontSize: 20, cursor: 'pointer', color: '#64748b', lineHeight: 1, padding: '4px 8px' }}>✕</button>
           </div>
-          <button onClick={onClose} style={{ background: 'none', border: 'none', fontSize: 20, cursor: 'pointer', color: '#64748b', lineHeight: 1, padding: '4px 8px' }}>✕</button>
+          <div style={{ marginTop: 10 }}>
+            <input
+              type="text"
+              placeholder="Search JSON (keys & values)..."
+              value={search}
+              onChange={e => setSearch(e.target.value)}
+              style={{ width: '100%', padding: '7px 12px', border: '1.5px solid #e2e8f0', borderRadius: 8, fontSize: 12, fontFamily: 'Monaco,Consolas,monospace', outline: 'none', background: '#f8fafc' }}
+              onFocus={e => e.currentTarget.style.borderColor = '#29B5E8'}
+              onBlur={e => e.currentTarget.style.borderColor = '#e2e8f0'}
+              autoFocus
+            />
+          </div>
         </div>
         <div style={{ overflow: 'auto', padding: '16px 20px', flex: 1 }}>
-          {data ? <JsonNode value={data} depth={0} /> : <div style={{ color: '#94a3b8', fontStyle: 'italic' }}>No data available for this file yet.</div>}
+          {data ? <JsonNode value={data} depth={0} search={search} /> : <div style={{ color: '#94a3b8', fontStyle: 'italic' }}>No data available for this file yet.</div>}
         </div>
       </div>
     </div>

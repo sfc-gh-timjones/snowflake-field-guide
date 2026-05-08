@@ -11,6 +11,12 @@ const CARDS = [
     description: 'Open table format for large analytic datasets on cloud storage.',
     color: '#00BCD4',
   },
+  {
+    id: 'competition',
+    title: 'Competition',
+    description: 'How Snowflake compares against competing platforms.',
+    color: '#7c3aed',
+  },
 ];
 
 export default function Home({ onNavigate }) {
