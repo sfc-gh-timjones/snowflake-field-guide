@@ -508,6 +508,62 @@ function SqlModal({ snap, onClose }) {
   );
 }
 
+function ManifestListHelper() {
+  return (
+    <div style={{ fontSize: 12, color: '#475569', lineHeight: 1.8 }}>
+      <div style={{ fontSize: 11, fontWeight: 700, color: '#0e7490', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 12 }}>How to Read This</div>
+      <div style={{ marginBottom: 14 }}>
+        <div style={{ fontWeight: 700, color: '#1e293b', marginBottom: 2 }}>What is this file?</div>
+        <div>A <strong>manifest list</strong> (Avro) — the "table of contents" for a snapshot. It lists which manifest files belong to this snapshot and their summary statistics.</div>
+      </div>
+      <div style={{ marginBottom: 14 }}>
+        <div style={{ fontWeight: 700, color: '#1e293b', marginBottom: 4 }}>Key fields:</div>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+          <div><code style={{ background: '#f1f5f9', padding: '1px 4px', borderRadius: 3, fontSize: 11 }}>manifest_path</code> — S3 path to each manifest file in this snapshot</div>
+          <div><code style={{ background: '#f1f5f9', padding: '1px 4px', borderRadius: 3, fontSize: 11 }}>manifest_length</code> — size in bytes of that manifest file</div>
+          <div><code style={{ background: '#f1f5f9', padding: '1px 4px', borderRadius: 3, fontSize: 11 }}>added_snapshot_id</code> — which snapshot originally created this manifest</div>
+          <div><code style={{ background: '#f1f5f9', padding: '1px 4px', borderRadius: 3, fontSize: 11 }}>content</code> — 0 = data manifest, 1 = delete manifest</div>
+          <div><code style={{ background: '#f1f5f9', padding: '1px 4px', borderRadius: 3, fontSize: 11 }}>added_data_files_count</code> — how many data files this manifest tracks</div>
+          <div><code style={{ background: '#f1f5f9', padding: '1px 4px', borderRadius: 3, fontSize: 11 }}>existing_data_files_count</code> — reused files carried from prior snapshot</div>
+          <div><code style={{ background: '#f1f5f9', padding: '1px 4px', borderRadius: 3, fontSize: 11 }}>partitions</code> — partition range summaries (min/max per partition field)</div>
+        </div>
+      </div>
+      <div style={{ background: '#f0fbff', border: '1px solid #29B5E830', borderRadius: 6, padding: '10px 12px', fontSize: 11, color: '#64748b', lineHeight: 1.6 }}>
+        <strong>Why it matters:</strong> When Snowflake reads your table, it starts here — scanning the manifest list to determine which manifest files (and therefore which data/puffin files) are relevant for the query.
+      </div>
+    </div>
+  );
+}
+
+function ManifestFileHelper() {
+  return (
+    <div style={{ fontSize: 12, color: '#475569', lineHeight: 1.8 }}>
+      <div style={{ fontSize: 11, fontWeight: 700, color: '#0e7490', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 12 }}>How to Read This</div>
+      <div style={{ marginBottom: 14 }}>
+        <div style={{ fontWeight: 700, color: '#1e293b', marginBottom: 2 }}>What is this file?</div>
+        <div>A <strong>manifest file</strong> (Avro) — tracks individual data files or delete files. Each entry describes one Parquet or Puffin file with its statistics.</div>
+      </div>
+      <div style={{ marginBottom: 14 }}>
+        <div style={{ fontWeight: 700, color: '#1e293b', marginBottom: 4 }}>Key fields:</div>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+          <div><code style={{ background: '#f1f5f9', padding: '1px 4px', borderRadius: 3, fontSize: 11 }}>data_file.file_path</code> — S3 path to the actual Parquet/Puffin file</div>
+          <div><code style={{ background: '#f1f5f9', padding: '1px 4px', borderRadius: 3, fontSize: 11 }}>data_file.file_format</code> — PARQUET or PUFFIN</div>
+          <div><code style={{ background: '#f1f5f9', padding: '1px 4px', borderRadius: 3, fontSize: 11 }}>data_file.record_count</code> — number of rows in this file</div>
+          <div><code style={{ background: '#f1f5f9', padding: '1px 4px', borderRadius: 3, fontSize: 11 }}>data_file.file_size_in_bytes</code> — physical file size</div>
+          <div><code style={{ background: '#f1f5f9', padding: '1px 4px', borderRadius: 3, fontSize: 11 }}>data_file.column_sizes</code> — bytes per column (for pruning decisions)</div>
+          <div><code style={{ background: '#f1f5f9', padding: '1px 4px', borderRadius: 3, fontSize: 11 }}>data_file.lower_bounds / upper_bounds</code> — min/max per column (enables partition pruning)</div>
+          <div><code style={{ background: '#f1f5f9', padding: '1px 4px', borderRadius: 3, fontSize: 11 }}>status</code> — 1 = added in this snapshot, 2 = deleted/removed</div>
+          <div><code style={{ background: '#f1f5f9', padding: '1px 4px', borderRadius: 3, fontSize: 11 }}>snapshot_id</code> — the snapshot that added this entry</div>
+          <div><code style={{ background: '#f1f5f9', padding: '1px 4px', borderRadius: 3, fontSize: 11 }}>sequence_number</code> — ordering for merge-on-read conflict resolution</div>
+        </div>
+      </div>
+      <div style={{ background: '#f0fbff', border: '1px solid #29B5E830', borderRadius: 6, padding: '10px 12px', fontSize: 11, color: '#64748b', lineHeight: 1.6 }}>
+        <strong>Why it matters:</strong> This is where Snowflake decides which files to actually read. The lower/upper bounds enable skipping entire files that can't match your WHERE clause (partition pruning). The column_sizes help estimate scan cost.
+      </div>
+    </div>
+  );
+}
+
 function PuffinHelper({ data }) {
   const blob = data?.blobs?.[0];
   if (!blob) return null;
@@ -548,11 +604,14 @@ function PuffinHelper({ data }) {
 function JsonModal({ fileKey, label, onClose }) {
   const data = FILE_CONTENTS[fileKey] || PUFFIN_CONTENTS[fileKey];
   const isPuffin = !!PUFFIN_CONTENTS[fileKey];
+  const isManifestList = fileKey.startsWith('snap-');
+  const isManifestFile = !isPuffin && !isManifestList && /-m\d+$/.test(fileKey);
+  const hasHelper = isPuffin || isManifestList || isManifestFile;
   const [search, setSearch] = useState('');
   return (
     <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.45)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
       onClick={onClose}>
-      <div style={{ background: 'white', borderRadius: 14, width: isPuffin ? '90vw' : '80vw', maxWidth: isPuffin ? 1100 : 900, maxHeight: '85vh', display: 'flex', flexDirection: 'column', boxShadow: '0 20px 60px rgba(0,0,0,0.3)' }}
+      <div style={{ background: 'white', borderRadius: 14, width: hasHelper ? '90vw' : '80vw', maxWidth: hasHelper ? 1100 : 900, maxHeight: '85vh', display: 'flex', flexDirection: 'column', boxShadow: '0 20px 60px rgba(0,0,0,0.3)' }}
         onClick={e => e.stopPropagation()}>
         <div style={{ padding: '14px 20px', borderBottom: '1.5px solid #e2e8f0' }}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
@@ -576,13 +635,15 @@ function JsonModal({ fileKey, label, onClose }) {
             />
           </div>
         </div>
-        <div style={{ overflow: 'auto', padding: '16px 20px', flex: 1, display: isPuffin ? 'flex' : 'block', gap: isPuffin ? 20 : 0 }}>
-          <div style={{ flex: isPuffin ? 1 : undefined, minWidth: 0 }}>
+        <div style={{ overflow: 'auto', padding: '16px 20px', flex: 1, display: hasHelper ? 'flex' : 'block', gap: hasHelper ? 20 : 0 }}>
+          <div style={{ flex: hasHelper ? 1 : undefined, minWidth: 0 }}>
             {data ? <JsonNode value={data} depth={0} search={search} defaultOpen={isPuffin ? 99 : 2} /> : <div style={{ color: '#94a3b8', fontStyle: 'italic' }}>No data available for this file yet.</div>}
           </div>
-          {isPuffin && (
+          {hasHelper && (
             <div style={{ width: 320, flexShrink: 0, borderLeft: '1.5px solid #e2e8f0', paddingLeft: 20 }}>
-              <PuffinHelper data={data} />
+              {isPuffin && <PuffinHelper data={data} />}
+              {isManifestList && <ManifestListHelper />}
+              {isManifestFile && <ManifestFileHelper />}
             </div>
           )}
         </div>
