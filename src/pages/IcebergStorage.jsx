@@ -375,11 +375,11 @@ const SNAPSHOT_SQL = {
     explainer: {
       title: 'Why 150,054 instead of 150,000?',
       queryId: '01c41522-0208-bdf6-0067-4e870aa1fbd2',
-      body: `Snowflake reports 150,000 rows updated — but Iceberg wrote 150,054 rows to the new wxCeZSOF Parquet files. Why the extra 54?
+      body: `Snowflake reports 150,000 rows updated — but Iceberg wrote 150,054 rows to the new data files associated with Manifest File 9. Why the extra 54?
 
-In S2, we updated 60 rows. Those 60 lived in their own Parquet files (AgAjQxSF). In S6, our UPDATE of 150,000 rows happened to overlap with 6 of those 60 — meaning 6 ORDER_IDs (primary key) were updated in both S2 and S6.
+In S2, we updated 60 rows. Those 60 lived in their own Parquet files (data files associated with Manifest File 2). In S6, our UPDATE of 150,000 rows happened to overlap with 6 of those 60 — meaning 6 ORDER_IDs (primary key) were updated in both S2 and S6.
 
-Because 6 rows in the data files associated with Manifest File 2 were invalidated, Iceberg had to retire Manifest File 2 from the manifest list. But the remaining 54 rows in those data files were still valid — they needed to be carried forward. Those 54 rows are "refugees" — their data didn't change, but their old Parquet files are being retired, so they must be rewritten into the new wxCeZSOF files.
+Because 6 rows in the data files associated with Manifest File 2 were invalidated, Iceberg had to retire Manifest File 2 from the manifest list. But the remaining 54 rows in those data files were still valid — they needed to be carried forward. Those 54 rows are "refugees" — their data didn't change, but their old Parquet files are being retired, so they must be rewritten into the new data files associated with Manifest File 9.
 
 So the new Parquet files contain: 150,000 (from S6 updates) + 54 (from S2 updates carried forward unchanged) = 150,054.
 
@@ -390,7 +390,7 @@ The puffin delete vector (Manifest File 11) shows 150,434 masked positions becau
   • 300 positions from the S5 delete
   • 54 + 80 + 300 + 150,000 = 150,434
 
-Bottom line: EXCEPT shows 150,000 (actual value changes). Parquet has 150,054 (includes 54 unchanged rows absorbed from retired AgAjQxSF files).`
+Bottom line: EXCEPT shows 150,000 (actual value changes). Parquet has 150,054 (includes 54 unchanged rows absorbed from retired data files associated with Manifest File 2).`
     }
   },
 };
