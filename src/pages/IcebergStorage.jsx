@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { FILE_CONTENTS } from '../data/fileContents.js';
+import { PUFFIN_CONTENTS } from '../data/puffinContents.js';
 
 const short = full => {
   const m = full.match(/_([\w\-]{8,10})(?:qxg|Fqxg)_0_\d_(\d+)\.(parquet|puffin)/);
@@ -508,7 +509,7 @@ function SqlModal({ snap, onClose }) {
 }
 
 function JsonModal({ fileKey, label, onClose }) {
-  const data = FILE_CONTENTS[fileKey];
+  const data = FILE_CONTENTS[fileKey] || PUFFIN_CONTENTS[fileKey];
   const [search, setSearch] = useState('');
   return (
     <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.45)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
@@ -565,7 +566,7 @@ function Tooltip({ text, children }) {
   );
 }
 
-function FileStack({ files, family, orphan, puffin }) {
+function FileStack({ files, family, orphan, puffin, onFileClick }) {
   const activeColor = puffin ? '#7C3AED' : '#29B5E8';
   const activeBg = puffin ? '#faf5ff' : '#f0fbff';
   return (
@@ -574,20 +575,26 @@ function FileStack({ files, family, orphan, puffin }) {
         {family}
       </div>
       <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-        {files.map(f => (
-          <Tooltip key={f} text={f}>
-            <div style={{
-              border: orphan ? '1.5px dashed #94a3b8' : `1.5px solid ${activeColor}`,
-              background: orphan ? '#f1f5f9' : activeBg,
-              borderRadius: 5, padding: '3px 7px',
-              fontSize: 10, fontFamily: "'Monaco','Consolas',monospace",
-              color: orphan ? '#475569' : (puffin ? '#7C3AED' : '#0e7490'),
-              opacity: orphan ? 0.85 : 1,
-            }}>
-              {short(f)}
-            </div>
-          </Tooltip>
-        ))}
+        {files.map(f => {
+          const hasPuffinData = puffin && PUFFIN_CONTENTS[f];
+          return (
+            <Tooltip key={f} text={f}>
+              <div
+                onClick={hasPuffinData ? () => onFileClick && onFileClick({ key: f, label: `Puffin Delete Vector` }) : undefined}
+                style={{
+                  border: orphan ? '1.5px dashed #94a3b8' : `1.5px solid ${activeColor}`,
+                  background: orphan ? '#f1f5f9' : activeBg,
+                  borderRadius: 5, padding: '3px 7px',
+                  fontSize: 10, fontFamily: "'Monaco','Consolas',monospace",
+                  color: orphan ? '#475569' : (puffin ? '#7C3AED' : '#0e7490'),
+                  opacity: orphan ? 0.85 : 1,
+                  cursor: hasPuffinData ? 'pointer' : 'default',
+                }}>
+                {short(f)}
+              </div>
+            </Tooltip>
+          );
+        })}
       </div>
       {orphan && <div style={{ fontSize: 9, color: '#475569', marginTop: 2, fontStyle: 'italic' }}>orphan</div>}
     </div>
@@ -642,8 +649,8 @@ function SnapshotDiagram({ snap, onFileClick }) {
   const [lines, setLines] = useState([]);
   const [svgH, setSvgH] = useState(0);
 
-  const openFile = (key, label) => onFileClick && FILE_CONTENTS[key] && onFileClick({ key, label });
-  const clickStyle = (key) => FILE_CONTENTS[key] ? { cursor: 'pointer', transition: 'box-shadow 0.15s' } : {};
+  const openFile = (key, label) => onFileClick && (FILE_CONTENTS[key] || PUFFIN_CONTENTS[key]) && onFileClick({ key, label });
+  const clickStyle = (key) => (FILE_CONTENTS[key] || PUFFIN_CONTENTS[key]) ? { cursor: 'pointer', transition: 'box-shadow 0.15s' } : {};
 
   const addedManifests = snap.manifests.filter(m => m.type === 'added');
   const reusedManifests = snap.manifests.filter(m => m.type === 'existing');
@@ -794,7 +801,7 @@ function SnapshotDiagram({ snap, onFileClick }) {
                         background: isParquet ? '#f0fbff' : '#faf5ff',
                         display: 'flex', flexDirection: 'column', alignItems: 'center',
                       }}>
-                        <FileStack family={family} files={stackFiles} orphan={false} puffin={!isParquet} />
+                        <FileStack family={family} files={stackFiles} orphan={false} puffin={!isParquet} onFileClick={onFileClick} />
                       </div>
                     ) : <div key={i} />;
                   })}
@@ -885,13 +892,13 @@ function SnapshotDiagram({ snap, onFileClick }) {
                   <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10 }}>
                     {snap.orphanParquet.map(o => (
                       <div key={o.family} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                        <FileStack family={o.family} files={o.files} orphan={true} puffin={false} />
+                        <FileStack family={o.family} files={o.files} orphan={true} puffin={false} onFileClick={onFileClick} />
                         <div style={{ fontSize: 9, color: '#94a3b8', marginTop: 3, fontStyle: 'italic', maxWidth: 120, textAlign: 'center' }}>{o.reason}</div>
                       </div>
                     ))}
                     {snap.orphanPuffin.map(o => (
                       <div key={o.family} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                        <FileStack family={o.family} files={o.files} orphan={true} puffin={true} />
+                        <FileStack family={o.family} files={o.files} orphan={true} puffin={true} onFileClick={onFileClick} />
                         <div style={{ fontSize: 9, color: '#94a3b8', marginTop: 3, fontStyle: 'italic', maxWidth: 120, textAlign: 'center' }}>{o.reason}</div>
                       </div>
                     ))}
