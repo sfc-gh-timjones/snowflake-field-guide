@@ -377,7 +377,7 @@ const SNAPSHOT_SQL = {
       queryId: '01c41522-0208-bdf6-0067-4e870aa1fbd2',
       body: `Snowflake reports 150,000 rows updated — but Iceberg wrote 150,054 rows to the new wxCeZSOF Parquet files. Why the extra 54?
 
-In S2, we updated 60 rows. Those 60 lived in their own Parquet files (AgAjQxSF). In S6, our UPDATE of 150,000 rows happened to overlap with 6 of those 60 — meaning 6 ORDER_IDs were updated in both S2 and S6.
+In S2, we updated 60 rows. Those 60 lived in their own Parquet files (AgAjQxSF). In S6, our UPDATE of 150,000 rows happened to overlap with 6 of those 60 — meaning 6 ORDER_IDs (primary key) were updated in both S2 and S6.
 
 Because 6 of the AgAjQxSF rows were invalidated, Iceberg had to retire that entire manifest entry. But the remaining 54 rows in AgAjQxSF were still valid — they needed to be carried forward. Snowflake rewrote all 60 AgAjQxSF rows into the new wxCeZSOF files:
   • 6 rows with NEW updated values (part of the 150,000 actual changes)
@@ -1102,7 +1102,7 @@ const MOR_DATA = {
   3: { type: 'mor', note: 'DELETE 80 → new puffins replace S2 puffins, now masking 140 positions', files: [{ family: 'X-rqSgaF', count: 4, rows: '2,000,000' }, { family: 'AgAjQxSF', count: 3, rows: '60' }], puffins: { family: 'QmqdMRWF', count: 4, deletes: 140, breakdown: '60 updates from S2 + 80 deletes in S3', targets: 'X-rqSgaF files' }, result: '1,999,920' },
   4: { type: 'mor', note: 'INSERT 1.2M → new data files added, same puffins still active', files: [{ family: 'X-rqSgaF', count: 4, rows: '2,000,000' }, { family: 'AgAjQxSF', count: 3, rows: '60' }, { family: 'gNyIOyKF', count: 2, rows: '1,200,000' }], puffins: { family: 'QmqdMRWF', count: 4, deletes: 140, breakdown: '60 updates from S2 + 80 deletes from S3', targets: 'X-rqSgaF files' }, result: '3,199,920' },
   5: { type: 'mor', note: 'DELETE 300 → new puffins replace S3 puffins, now masking 440 positions', files: [{ family: 'X-rqSgaF', count: 4, rows: '2,000,000' }, { family: 'AgAjQxSF', count: 3, rows: '60' }, { family: 'gNyIOyKF', count: 2, rows: '1,200,000' }], puffins: { family: 'whCeZSOF', count: 6, deletes: 440, breakdown: '60 updates from S2 + 80 deletes from S3 + 300 deletes in S5', targets: 'X-rqSgaF + gNyIOyKF files' }, result: '3,199,620' },
-  6: { type: 'mor', note: 'UPDATE 150K → large rewrite of affected rows + new puffin vectors', files: [{ family: 'X-rqSgaF', count: 4, rows: '2,000,000' }, { family: 'gNyIOyKF', count: 2, rows: '1,200,000' }, { family: 'wxCeZSOF (rewritten)', count: 5, rows: '150,054' }], puffins: { family: 'xRCeZSOF', count: 6, deletes: '150,434', breakdown: '54 updates from S2 + 80 deletes from S3 + 300 deletes from S5 + 150,000 updates in S6', targets: 'X-rqSgaF + gNyIOyKF files' }, result: '3,199,620' },
+  6: { type: 'mor', note: 'UPDATE 150K → large rewrite of affected rows + new puffin vectors', files: [{ family: 'X-rqSgaF', count: 4, rows: '2,000,000' }, { family: 'gNyIOyKF', count: 2, rows: '1,200,000' }, { family: 'wxCeZSOF (rewritten)', count: 5, rows: '150,054' }], puffins: { family: 'xRCeZSOF', count: 6, deletes: '150,434', breakdown: '54 updates from S2 + 80 deletes from S3 + 300 deletes from S5 + 150,000 updates in S6. Note: 6 records overlap between S2 update and S6 update', targets: 'X-rqSgaF + gNyIOyKF files' }, result: '3,199,620' },
 };
 
 function MergeOnReadVisual({ snapNum }) {
