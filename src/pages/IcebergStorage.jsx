@@ -519,13 +519,13 @@ function ManifestListHelper() {
       <div style={{ marginBottom: 14 }}>
         <div style={{ fontWeight: 700, color: '#1e293b', marginBottom: 4 }}>Key fields:</div>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-          <div><code style={{ background: '#f1f5f9', padding: '1px 4px', borderRadius: 3, fontSize: 11 }}>manifest_path</code> — S3 path to each manifest file in this snapshot</div>
-          <div><code style={{ background: '#f1f5f9', padding: '1px 4px', borderRadius: 3, fontSize: 11 }}>manifest_length</code> — size in bytes of that manifest file</div>
-          <div><code style={{ background: '#f1f5f9', padding: '1px 4px', borderRadius: 3, fontSize: 11 }}>added_snapshot_id</code> — which snapshot originally created this manifest</div>
-          <div><code style={{ background: '#f1f5f9', padding: '1px 4px', borderRadius: 3, fontSize: 11 }}>content</code> — 0 = data manifest, 1 = delete manifest</div>
-          <div><code style={{ background: '#f1f5f9', padding: '1px 4px', borderRadius: 3, fontSize: 11 }}>added_data_files_count</code> — how many data files this manifest tracks</div>
-          <div><code style={{ background: '#f1f5f9', padding: '1px 4px', borderRadius: 3, fontSize: 11 }}>existing_data_files_count</code> — reused files carried from prior snapshot</div>
-          <div><code style={{ background: '#f1f5f9', padding: '1px 4px', borderRadius: 3, fontSize: 11 }}>partitions</code> — partition range summaries (min/max per partition field)</div>
+          <div><code style={{ background: '#f1f5f9', padding: '1px 4px', borderRadius: 3, fontSize: 11, fontWeight: 700 }}>manifest_path</code> — S3 path to each manifest file in this snapshot</div>
+          <div><code style={{ background: '#f1f5f9', padding: '1px 4px', borderRadius: 3, fontSize: 11, fontWeight: 700 }}>manifest_length</code> — size in bytes of that manifest file</div>
+          <div><code style={{ background: '#f1f5f9', padding: '1px 4px', borderRadius: 3, fontSize: 11, fontWeight: 700 }}>added_snapshot_id</code> — which snapshot originally created this manifest</div>
+          <div><code style={{ background: '#f1f5f9', padding: '1px 4px', borderRadius: 3, fontSize: 11, fontWeight: 700 }}>content</code> — 0 = data manifest, 1 = delete manifest</div>
+          <div><code style={{ background: '#f1f5f9', padding: '1px 4px', borderRadius: 3, fontSize: 11, fontWeight: 700 }}>added_data_files_count</code> — how many data files this manifest tracks</div>
+          <div><code style={{ background: '#f1f5f9', padding: '1px 4px', borderRadius: 3, fontSize: 11, fontWeight: 700 }}>existing_data_files_count</code> — reused files carried from prior snapshot</div>
+          <div><code style={{ background: '#f1f5f9', padding: '1px 4px', borderRadius: 3, fontSize: 11, fontWeight: 700 }}>partitions</code> — partition range summaries (min/max per partition field)</div>
         </div>
       </div>
       <div style={{ background: '#f0fbff', border: '1px solid #29B5E830', borderRadius: 6, padding: '10px 12px', fontSize: 11, color: '#64748b', lineHeight: 1.6 }}>
@@ -546,15 +546,16 @@ function ManifestFileHelper() {
       <div style={{ marginBottom: 14 }}>
         <div style={{ fontWeight: 700, color: '#1e293b', marginBottom: 4 }}>Key fields:</div>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-          <div><code style={{ background: '#f1f5f9', padding: '1px 4px', borderRadius: 3, fontSize: 11 }}>data_file.file_path</code> — S3 path to the actual Parquet/Puffin file</div>
-          <div><code style={{ background: '#f1f5f9', padding: '1px 4px', borderRadius: 3, fontSize: 11 }}>data_file.file_format</code> — PARQUET or PUFFIN</div>
-          <div><code style={{ background: '#f1f5f9', padding: '1px 4px', borderRadius: 3, fontSize: 11 }}>data_file.record_count</code> — number of rows in this file</div>
-          <div><code style={{ background: '#f1f5f9', padding: '1px 4px', borderRadius: 3, fontSize: 11 }}>data_file.file_size_in_bytes</code> — physical file size</div>
-          <div><code style={{ background: '#f1f5f9', padding: '1px 4px', borderRadius: 3, fontSize: 11 }}>data_file.column_sizes</code> — bytes per column (for pruning decisions)</div>
-          <div><code style={{ background: '#f1f5f9', padding: '1px 4px', borderRadius: 3, fontSize: 11 }}>data_file.lower_bounds / upper_bounds</code> — min/max per column (enables partition pruning)</div>
-          <div><code style={{ background: '#f1f5f9', padding: '1px 4px', borderRadius: 3, fontSize: 11 }}>status</code> — 1 = added in this snapshot, 2 = deleted/removed</div>
-          <div><code style={{ background: '#f1f5f9', padding: '1px 4px', borderRadius: 3, fontSize: 11 }}>snapshot_id</code> — the snapshot that added this entry</div>
-          <div><code style={{ background: '#f1f5f9', padding: '1px 4px', borderRadius: 3, fontSize: 11 }}>sequence_number</code> — ordering for merge-on-read conflict resolution</div>
+          <div><code style={{ background: '#f1f5f9', padding: '1px 4px', borderRadius: 3, fontSize: 11, fontWeight: 700 }}>data_file.file_path</code> — S3 path to the actual Parquet/Puffin file</div>
+          <div><code style={{ background: '#f1f5f9', padding: '1px 4px', borderRadius: 3, fontSize: 11, fontWeight: 700 }}>data_file.file_format</code> — PARQUET or PUFFIN</div>
+          <div><code style={{ background: '#f1f5f9', padding: '1px 4px', borderRadius: 3, fontSize: 11, fontWeight: 700 }}>data_file.record_count</code> — number of rows in this file</div>
+          <div><code style={{ background: '#f1f5f9', padding: '1px 4px', borderRadius: 3, fontSize: 11, fontWeight: 700 }}>data_file.file_size_in_bytes</code> — physical file size</div>
+          <div><code style={{ background: '#f1f5f9', padding: '1px 4px', borderRadius: 3, fontSize: 11, fontWeight: 700 }}>data_file.column_sizes</code> — bytes per column (for pruning decisions)</div>
+          <div><code style={{ background: '#f1f5f9', padding: '1px 4px', borderRadius: 3, fontSize: 11, fontWeight: 700 }}>data_file.lower_bounds / upper_bounds</code> — min/max per column (enables partition pruning)</div>
+          <div><code style={{ background: '#f1f5f9', padding: '1px 4px', borderRadius: 3, fontSize: 11, fontWeight: 700 }}>data_file.referenced_data_file</code> — (puffin only) which Parquet file this delete vector applies to</div>
+          <div><code style={{ background: '#f1f5f9', padding: '1px 4px', borderRadius: 3, fontSize: 11, fontWeight: 700 }}>status</code> — 1 = added in this snapshot, 2 = deleted/removed</div>
+          <div><code style={{ background: '#f1f5f9', padding: '1px 4px', borderRadius: 3, fontSize: 11, fontWeight: 700 }}>snapshot_id</code> — the snapshot that added this entry</div>
+          <div><code style={{ background: '#f1f5f9', padding: '1px 4px', borderRadius: 3, fontSize: 11, fontWeight: 700 }}>sequence_number</code> — ordering for merge-on-read conflict resolution</div>
         </div>
       </div>
       <div style={{ background: '#f0fbff', border: '1px solid #29B5E830', borderRadius: 6, padding: '10px 12px', fontSize: 11, color: '#64748b', lineHeight: 1.6 }}>
@@ -586,12 +587,12 @@ function PuffinHelper({ data }) {
       <div style={{ marginBottom: 14 }}>
         <div style={{ fontWeight: 700, color: '#1e293b', marginBottom: 4 }}>Field-by-field:</div>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-          <div><code style={{ background: '#f1f5f9', padding: '1px 4px', borderRadius: 3, fontSize: 11 }}>type</code> — always "deletion-vector-v1" for Iceberg V3 deletes</div>
-          <div><code style={{ background: '#f1f5f9', padding: '1px 4px', borderRadius: 3, fontSize: 11 }}>referenced-data-file</code> — the Parquet file these deletes apply to</div>
-          <div><code style={{ background: '#f1f5f9', padding: '1px 4px', borderRadius: 3, fontSize: 11 }}>cardinality</code> — number of rows marked as deleted</div>
-          <div><code style={{ background: '#f1f5f9', padding: '1px 4px', borderRadius: 3, fontSize: 11 }}>fields: [2147483645]</code> — special ID meaning "all columns" (full row delete)</div>
-          <div><code style={{ background: '#f1f5f9', padding: '1px 4px', borderRadius: 3, fontSize: 11 }}>offset / length</code> — where the roaring bitmap blob lives in this file</div>
-          <div><code style={{ background: '#f1f5f9', padding: '1px 4px', borderRadius: 3, fontSize: 11 }}>snapshot-id: -1</code> — sentinel value; actual snapshot context comes from the manifest</div>
+          <div><code style={{ background: '#f1f5f9', padding: '1px 4px', borderRadius: 3, fontSize: 11, fontWeight: 700 }}>type</code> — always "deletion-vector-v1" for Iceberg V3 deletes</div>
+          <div><code style={{ background: '#f1f5f9', padding: '1px 4px', borderRadius: 3, fontSize: 11, fontWeight: 700 }}>referenced-data-file</code> — the Parquet file these deletes apply to</div>
+          <div><code style={{ background: '#f1f5f9', padding: '1px 4px', borderRadius: 3, fontSize: 11, fontWeight: 700 }}>cardinality</code> — number of rows marked as deleted</div>
+          <div><code style={{ background: '#f1f5f9', padding: '1px 4px', borderRadius: 3, fontSize: 11, fontWeight: 700 }}>fields: [2147483645]</code> — special ID meaning "all columns" (full row delete)</div>
+          <div><code style={{ background: '#f1f5f9', padding: '1px 4px', borderRadius: 3, fontSize: 11, fontWeight: 700 }}>offset / length</code> — where the roaring bitmap blob lives in this file</div>
+          <div><code style={{ background: '#f1f5f9', padding: '1px 4px', borderRadius: 3, fontSize: 11, fontWeight: 700 }}>snapshot-id: -1</code> — sentinel value; actual snapshot context comes from the manifest</div>
         </div>
       </div>
       <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 6, padding: '10px 12px', fontSize: 11, color: '#64748b', lineHeight: 1.6 }}>
