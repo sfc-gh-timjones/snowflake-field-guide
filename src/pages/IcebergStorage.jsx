@@ -1158,6 +1158,7 @@ export default function IcebergStorage() {
   const [sqlModal, setSqlModal] = useState(false);
   const [explainerModal, setExplainerModal] = useState(false);
   const [playing, setPlaying] = useState(false);
+  const [showMorRef, setShowMorRef] = useState(false);
   const intervalRef = useRef(null);
   const snap = SNAPSHOTS[snapIdx];
 
@@ -1252,14 +1253,21 @@ export default function IcebergStorage() {
 
       <MergeOnReadVisual snapNum={snap.num} />
 
-      <div style={{ background: 'white', border: '1.5px solid #e2e8f0', borderRadius: 12, padding: '20px 24px', marginTop: 16 }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
-          <div style={{ fontSize: 12, fontWeight: 700, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Merge-on-Read with Position Deletes (Visual Reference)</div>
-          <a href="https://jack-vanlightly.com/analyses/2024/7/30/understanding-apache-icebergs-consistency-model-part1" target="_blank" rel="noreferrer" style={{ fontSize: 11, color: '#29B5E8', textDecoration: 'none', fontWeight: 600, display: 'inline-flex', alignItems: 'center' }} onMouseEnter={e => e.currentTarget.style.textDecoration = 'underline'} onMouseLeave={e => e.currentTarget.style.textDecoration = 'none'}>
+      <div style={{ background: 'white', border: '1.5px solid #e2e8f0', borderRadius: 12, padding: '14px 20px', marginTop: 16 }}>
+        <div onClick={() => setShowMorRef(v => !v)} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', cursor: 'pointer', userSelect: 'none' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <span style={{ color: '#29B5E8', fontSize: 14 }}>{showMorRef ? '▾' : '▸'}</span>
+            <span style={{ fontSize: 12, fontWeight: 700, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Merge-on-Read with Position Deletes (Visual Reference)</span>
+          </div>
+          <a href="https://jack-vanlightly.com/analyses/2024/7/30/understanding-apache-icebergs-consistency-model-part1" target="_blank" rel="noreferrer" onClick={e => e.stopPropagation()} style={{ fontSize: 11, color: '#29B5E8', textDecoration: 'none', fontWeight: 600, display: 'inline-flex', alignItems: 'center' }} onMouseEnter={e => e.currentTarget.style.textDecoration = 'underline'} onMouseLeave={e => e.currentTarget.style.textDecoration = 'none'}>
             Source: Jack Vanlightly <svg width={11} height={11} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ display: 'inline', verticalAlign: 'middle', marginLeft: 4 }}><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/></svg>
           </a>
         </div>
-        <img src={`${import.meta.env.BASE_URL}MergeOnReadPositionDeletesSmall.webp`} alt="Merge-on-Read with Position Deletes" style={{ width: '100%', borderRadius: 8 }} />
+        {showMorRef && (
+          <div style={{ marginTop: 12 }}>
+            <img src={`${import.meta.env.BASE_URL}MergeOnReadPositionDeletesSmall.webp`} alt="Merge-on-Read with Position Deletes" style={{ maxWidth: 500, width: '100%', borderRadius: 8 }} />
+          </div>
+        )}
       </div>
 
       {modal && <JsonModal fileKey={modal.key} label={modal.label} onClose={() => setModal(null)} />}
