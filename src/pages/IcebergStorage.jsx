@@ -1051,6 +1051,70 @@ function SnapshotDiagram({ snap, onFileClick }) {
   );
 }
 
+const MOR_DATA = {
+  0: null,
+  1: { type: 'direct', note: 'Direct read — no delete vectors', files: [{ family: 'X-rqSgaF', count: 4, rows: '2,000,000' }], puffins: null, result: '2,000,000' },
+  2: { type: 'mor', note: 'UPDATE 60 → merge-on-read applies delete vectors during scan', files: [{ family: 'X-rqSgaF', count: 4, rows: '2,000,000' }, { family: 'AgAjQxSF (new)', count: 3, rows: '60' }], puffins: { family: 'BAAjQxSF', count: 4, deletes: 60, targets: 'X-rqSgaF files' }, result: '2,000,000' },
+  3: { type: 'mor', note: 'DELETE 80 → new puffins replace S2 puffins, now masking 140 positions', files: [{ family: 'X-rqSgaF', count: 4, rows: '2,000,000' }, { family: 'AgAjQxSF', count: 3, rows: '60' }], puffins: { family: 'QmqdMRWF', count: 4, deletes: 140, targets: 'X-rqSgaF files' }, result: '1,999,920' },
+  4: { type: 'mor', note: 'INSERT 1.2M → new data files added, same puffins still active', files: [{ family: 'X-rqSgaF', count: 4, rows: '2,000,000' }, { family: 'AgAjQxSF', count: 3, rows: '60' }, { family: 'gNyIOyKF', count: 2, rows: '1,200,000' }], puffins: { family: 'QmqdMRWF', count: 4, deletes: 140, targets: 'X-rqSgaF files' }, result: '3,199,920' },
+  5: { type: 'mor', note: 'DELETE 300 → new puffins replace S3 puffins, now masking 440 positions', files: [{ family: 'X-rqSgaF', count: 4, rows: '2,000,000' }, { family: 'AgAjQxSF', count: 3, rows: '60' }, { family: 'gNyIOyKF', count: 2, rows: '1,200,000' }], puffins: { family: 'whCeZSOF', count: 6, deletes: 440, targets: 'X-rqSgaF + gNyIOyKF files' }, result: '3,199,620' },
+  6: { type: 'mor', note: 'UPDATE 150K → large rewrite of affected rows + new puffin vectors', files: [{ family: 'X-rqSgaF', count: 4, rows: '2,000,000' }, { family: 'gNyIOyKF', count: 2, rows: '1,200,000' }, { family: 'wxCeZSOF (rewritten)', count: 5, rows: '150,054' }], puffins: { family: 'xRCeZSOF', count: 6, deletes: '150,434', targets: 'X-rqSgaF + gNyIOyKF files' }, result: '3,199,620' },
+};
+
+function MergeOnReadVisual({ snapNum }) {
+  const d = MOR_DATA[snapNum];
+  if (!d) return null;
+
+  return (
+    <div style={{ background: 'white', border: '1.5px solid #e2e8f0', borderRadius: 12, padding: '20px 24px', marginTop: 16 }}>
+      <div style={{ fontSize: 12, fontWeight: 700, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 12 }}>Merge-on-Read: What Happens at Query Time (S{snapNum})</div>
+      <div style={{ fontSize: 12, color: '#475569', marginBottom: 16, fontStyle: 'italic' }}>{d.note}</div>
+
+      <div style={{ display: 'flex', alignItems: 'stretch', gap: 0 }}>
+        <div style={{ flex: 1, border: '2px solid #16a34a', borderRadius: 10, padding: '14px 16px', background: '#f0fdf4' }}>
+          <div style={{ fontSize: 10, fontWeight: 700, color: '#16a34a', textTransform: 'uppercase', marginBottom: 10 }}>① Scan Data Files</div>
+          {d.files.map(f => (
+            <div key={f.family} style={{ fontSize: 11, color: '#475569', marginBottom: 4, display: 'flex', justifyContent: 'space-between' }}>
+              <span style={{ fontFamily: 'Monaco,Consolas,monospace', fontWeight: 600, color: '#0e7490' }}>{f.family}</span>
+              <span>{f.count} files · {f.rows} rows</span>
+            </div>
+          ))}
+        </div>
+
+        <div style={{ display: 'flex', alignItems: 'center', padding: '0 8px' }}>
+          <span style={{ fontSize: 18, color: '#94a3b8' }}>→</span>
+        </div>
+
+        {d.puffins ? (
+          <div style={{ flex: 1, border: '2px solid #7C3AED', borderRadius: 10, padding: '14px 16px', background: '#faf5ff' }}>
+            <div style={{ fontSize: 10, fontWeight: 700, color: '#7C3AED', textTransform: 'uppercase', marginBottom: 10 }}>② Apply Delete Vectors</div>
+            <div style={{ fontSize: 11, color: '#475569', marginBottom: 4 }}>
+              <span style={{ fontFamily: 'Monaco,Consolas,monospace', fontWeight: 600, color: '#7C3AED' }}>{d.puffins.family}</span>
+            </div>
+            <div style={{ fontSize: 11, color: '#475569', marginBottom: 4 }}>{d.puffins.count} puffin files</div>
+            <div style={{ fontSize: 11, color: '#475569', marginBottom: 4 }}>Masks <strong>{d.puffins.deletes}</strong> row positions</div>
+            <div style={{ fontSize: 10, color: '#64748b', fontStyle: 'italic' }}>targets: {d.puffins.targets}</div>
+          </div>
+        ) : (
+          <div style={{ flex: 1, border: '2px dashed #e2e8f0', borderRadius: 10, padding: '14px 16px', background: '#f8fafc', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <div style={{ fontSize: 11, color: '#94a3b8', fontStyle: 'italic' }}>No delete vectors — direct read</div>
+          </div>
+        )}
+
+        <div style={{ display: 'flex', alignItems: 'center', padding: '0 8px' }}>
+          <span style={{ fontSize: 18, color: '#94a3b8' }}>→</span>
+        </div>
+
+        <div style={{ width: 160, flexShrink: 0, border: '2px solid #29B5E8', borderRadius: 10, padding: '14px 16px', background: '#f0fbff', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+          <div style={{ fontSize: 10, fontWeight: 700, color: '#29B5E8', textTransform: 'uppercase', marginBottom: 6 }}>③ Logical Result</div>
+          <div style={{ fontSize: 20, fontWeight: 800, color: '#0e7490' }}>{d.result}</div>
+          <div style={{ fontSize: 10, color: '#64748b' }}>rows returned</div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function IcebergStorage() {
   const [snapIdx, setSnapIdx] = useState(0);
   const [modal, setModal] = useState(null);
@@ -1148,6 +1212,8 @@ export default function IcebergStorage() {
       </div>
 
       <SnapshotDiagram snap={snap} onFileClick={setModal} />
+
+      <MergeOnReadVisual snapNum={snap.num} />
 
       {modal && <JsonModal fileKey={modal.key} label={modal.label} onClose={() => setModal(null)} />}
       {sqlModal && <SqlModal snap={snap} onClose={() => setSqlModal(false)} />}
