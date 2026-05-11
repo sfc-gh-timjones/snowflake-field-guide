@@ -335,6 +335,29 @@ export default function IcebergDetail({ onNavigate }) {
                 </li>
               </ul>
             </div>
+
+            {/* Snowflake Iceberg Storage sub-box */}
+            <div style={{
+              border: '1.5px solid #29B5E860', borderRadius: 10,
+              padding: '12px 16px', background: 'white', marginTop: 12,
+              display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#29B5E8" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <ellipse cx="12" cy="5" rx="9" ry="3"/>
+                  <path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/>
+                  <path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/>
+                </svg>
+                <span style={{ fontSize: 14, fontWeight: 700, color: '#0e7490' }}>Snowflake Iceberg Storage</span>
+              </div>
+              <button
+                onClick={() => onNavigate('iceberg-internal-storage')}
+                style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: 11, color: '#29B5E8', fontWeight: 600, display: 'flex', alignItems: 'center', gap: 3 }}
+              >
+                Explore
+                <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6h8M6 2l4 4-4 4" stroke="#29B5E8" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
+              </button>
+            </div>
           </div>
 
           {/* Bidirectional arrow + External Volume */}

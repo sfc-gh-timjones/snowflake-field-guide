@@ -6,6 +6,7 @@ import CatalogOptions from './pages/CatalogOptions';
 import IcebergStorage from './pages/IcebergStorage';
 import IntegrationTools from './pages/IntegrationTools';
 import AzureDataFactory from './pages/AzureDataFactory';
+import IcebergInternalStorage from './pages/IcebergInternalStorage';
 
 
 const PAGES = {
@@ -15,6 +16,7 @@ const PAGES = {
   'iceberg-storage': { label: 'Iceberg Cloud Storage', component: IcebergStorage },
   integration: { label: 'Integration Tools', component: IntegrationTools },
   adf: { label: 'Azure Data Factory', component: AzureDataFactory },
+  'iceberg-internal-storage': { label: 'Snowflake Iceberg Storage', component: IcebergInternalStorage },
 
 };
 
@@ -25,6 +27,7 @@ const BREADCRUMBS = {
   'iceberg-storage': [{ label: 'Home', page: 'home' }, { label: 'Iceberg Tables', page: 'iceberg' }, { label: 'Iceberg Cloud Storage', page: 'iceberg-storage' }],
   integration: [{ label: 'Home', page: 'home' }, { label: 'Integration Tools', page: 'integration' }],
   adf: [{ label: 'Home', page: 'home' }, { label: 'Integration Tools', page: 'integration' }, { label: 'Azure Data Factory', page: 'adf' }],
+  'iceberg-internal-storage': [{ label: 'Home', page: 'home' }, { label: 'Iceberg Tables', page: 'iceberg' }, { label: 'Snowflake Iceberg Storage', page: 'iceberg-internal-storage' }],
 
 };
 
