@@ -1352,7 +1352,7 @@ data/file3.parquet`}</pre>
                 <div style={{ padding: '14px 16px', display: 'flex', flexDirection: 'column', gap: 12 }}>
                   <div>
                     <div style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.07em', color: '#94a3b8', marginBottom: 6 }}>Storage example (partitioned by c_nationkey)</div>
-                    <pre style={{ background: '#1e293b', color: '#e2e8f0', padding: '10px 14px', borderRadius: 8, fontSize: 12, lineHeight: 1.7, margin: 0 }}>{`data/c_nationkey=1/file1.parquet\ndata/c_nationkey=2/file2.parquet\ndata/c_nationkey=3/file1.parquet`}</pre>
+                    <pre style={{ background: '#1e293b', color: '#e2e8f0', padding: '10px 14px', borderRadius: 8, fontSize: 12, lineHeight: 1.7, margin: 0 }}>{`data/c_nationkey=1/filea.parquet\ndata/c_nationkey=1/fileb.parquet\ndata/c_nationkey=2/filec.parquet\ndata/c_nationkey=3/filed.parquet\ndata/c_nationkey=3/filee.parquet`}</pre>
                   </div>
 
                   <div>
@@ -1368,7 +1368,7 @@ data/file3.parquet`}</pre>
                       </div>
                       <div>
                         <div style={{ fontSize: 11, color: '#64748b', marginBottom: 4 }}>Query confirming 1 partition per unique value (~640k rows each)</div>
-                        <img src={`${import.meta.env.BASE_URL}hierarchical-region-query.png`} alt="Query result showing row counts per region" style={{ width: '100%', borderRadius: 8, border: '1px solid #e2e8f0', display: 'block' }} />
+                        <img src={`${import.meta.env.BASE_URL}hierarchical-region-query.png`} alt="Query result showing row counts per region" style={{ width: '80%', borderRadius: 8, border: '1px solid #e2e8f0', display: 'block' }} />
                       </div>
                     </div>
                   </div>
