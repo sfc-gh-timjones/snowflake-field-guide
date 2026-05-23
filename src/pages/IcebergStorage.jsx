@@ -1164,6 +1164,7 @@ export default function IcebergStorage() {
   const [explainerModal, setExplainerModal] = useState(false);
   const [playing, setPlaying] = useState(false);
   const [showMorRef, setShowMorRef] = useState(false);
+  const [showPathLayout, setShowPathLayout] = useState(false);
   const intervalRef = useRef(null);
   const snap = SNAPSHOTS[snapIdx];
 
@@ -1269,6 +1270,139 @@ export default function IcebergStorage() {
               Source: Jack Vanlightly <svg width={11} height={11} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ display: 'inline', verticalAlign: 'middle', marginLeft: 4 }}><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/></svg>
             </a>
             <img src={`${import.meta.env.BASE_URL}MergeOnReadPositionDeletesSmall.webp`} alt="Merge-on-Read with Position Deletes" style={{ maxWidth: 600, width: '100%', borderRadius: 8, display: 'block' }} />
+          </div>
+        )}
+      </div>
+
+      {/* PATH_LAYOUT collapsible section */}
+      <div style={{ background: 'white', border: '1.5px solid #e2e8f0', borderRadius: 12, padding: '14px 20px', marginTop: 16 }}>
+        <div onClick={() => setShowPathLayout(v => !v)} style={{ display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer', userSelect: 'none' }}>
+          <span style={{ color: '#29B5E8', fontSize: 14 }}>{showPathLayout ? '▾' : '▸'}</span>
+          <span style={{ fontSize: 12, fontWeight: 700, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.05em' }}>PATH_LAYOUT: Flat vs Hierarchical Storage</span>
+        </div>
+        {showPathLayout && (
+          <div style={{ marginTop: 16 }}>
+            <div style={{ fontSize: 13, color: '#475569', lineHeight: 1.6, marginBottom: 16 }}>
+              <code style={{ background: '#f1f5f9', padding: '2px 7px', borderRadius: 4, fontSize: 12, fontWeight: 700 }}>PATH_LAYOUT</code>{' '}
+              controls how Snowflake organizes Parquet files in object storage. This affects the <strong>directory structure in storage</strong>, not the table schema or SQL behavior.{' '}
+              <a href="https://docs.snowflake.com/en/sql-reference/sql/create-iceberg-table" target="_blank" rel="noreferrer" style={{ color: '#29B5E8', fontWeight: 600, textDecoration: 'none', display: 'inline-flex', alignItems: 'center' }} onMouseEnter={e => e.currentTarget.style.textDecoration = 'underline'} onMouseLeave={e => e.currentTarget.style.textDecoration = 'none'}>
+                CREATE ICEBERG TABLE docs
+                <svg width={12} height={12} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ display: 'inline', verticalAlign: 'middle', marginLeft: 4 }}><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/></svg>
+              </a>
+            </div>
+
+            {/* SE Sound Bite */}
+            <div style={{ padding: '10px 16px', background: '#f0fbff', border: '1.5px solid #29B5E860', borderRadius: 8, fontSize: 13, color: '#0e7490', fontStyle: 'italic', marginBottom: 20 }}>
+              "FLAT vs HIERARCHICAL is mostly an object storage layout decision, not a query performance decision."
+            </div>
+
+            {/* Side-by-side comparison */}
+            <div style={{ display: 'flex', gap: 16, marginBottom: 20, flexWrap: 'wrap' }}>
+
+              {/* FLAT */}
+              <div style={{ flex: 1, minWidth: 280, border: '1.5px solid #29B5E860', borderRadius: 10, overflow: 'hidden' }}>
+                <div style={{ background: '#f0fbff', padding: '10px 16px', borderBottom: '1px solid #29B5E830' }}>
+                  <span style={{ fontSize: 13, fontWeight: 700, color: '#0e7490' }}>FLAT</span>
+                  <span style={{ fontSize: 11, fontWeight: 600, color: '#29B5E8', background: '#e0f7fa', borderRadius: 4, padding: '1px 7px', marginLeft: 8 }}>Default</span>
+                </div>
+                <div style={{ padding: '14px 16px', display: 'flex', flexDirection: 'column', gap: 12 }}>
+                  <div>
+                    <div style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.07em', color: '#94a3b8', marginBottom: 6 }}>Storage example</div>
+                    <pre style={{ background: '#1e293b', color: '#e2e8f0', padding: '10px 14px', borderRadius: 8, fontSize: 12, lineHeight: 1.7, margin: 0 }}>{`data/file1.parquet
+data/file2.parquet
+data/file3.parquet`}</pre>
+                  </div>
+                  <ul style={{ paddingLeft: 0, listStyle: 'none', margin: 0, display: 'flex', flexDirection: 'column', gap: 5 }}>
+                    {[
+                      'All files in a single directory structure',
+                      'Partition values NOT visible in storage paths',
+                      'Iceberg metadata tracks partition info internally',
+                    ].map((t, i) => (
+                      <li key={i} style={{ display: 'flex', gap: 7, fontSize: 12, color: '#475569', lineHeight: 1.5 }}>
+                        <span style={{ color: '#29B5E8', fontWeight: 700, flexShrink: 0 }}>•</span>{t}
+                      </li>
+                    ))}
+                  </ul>
+                  <div>
+                    <div style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.07em', color: '#94a3b8', marginBottom: 6 }}>Best for</div>
+                    <ul style={{ paddingLeft: 0, listStyle: 'none', margin: 0, display: 'flex', flexDirection: 'column', gap: 4 }}>
+                      {[
+                        'Snowflake as primary query engine',
+                        'No Hive/Spark interop needed',
+                        'Large-scale tables with many partitions',
+                        'Simpler storage organization',
+                      ].map((t, i) => (
+                        <li key={i} style={{ display: 'flex', gap: 7, fontSize: 12, color: '#475569', lineHeight: 1.5 }}>
+                          <span style={{ color: '#16a34a', fontWeight: 700, flexShrink: 0 }}>✓</span>{t}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                  <div style={{ padding: '8px 12px', background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 7, fontSize: 12, color: '#475569', lineHeight: 1.5 }}>
+                    Partition pruning and query optimization still work — Iceberg metadata handles file elimination.
+                  </div>
+                </div>
+              </div>
+
+              {/* HIERARCHICAL */}
+              <div style={{ flex: 1, minWidth: 280, border: '1.5px solid #94a3b840', borderRadius: 10, overflow: 'hidden' }}>
+                <div style={{ background: '#f8fafc', padding: '10px 16px', borderBottom: '1px solid #e2e8f0' }}>
+                  <span style={{ fontSize: 13, fontWeight: 700, color: '#334155' }}>HIERARCHICAL</span>
+                </div>
+                <div style={{ padding: '14px 16px', display: 'flex', flexDirection: 'column', gap: 12 }}>
+                  <div>
+                    <div style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.07em', color: '#94a3b8', marginBottom: 6 }}>Storage example (partitioned by c_nationkey)</div>
+                    <pre style={{ background: '#1e293b', color: '#e2e8f0', padding: '10px 14px', borderRadius: 8, fontSize: 12, lineHeight: 1.7, margin: 0 }}>{`data/c_nationkey=1/file1.parquet
+data/c_nationkey=2/file2.parquet`}</pre>
+                  </div>
+                  <ul style={{ paddingLeft: 0, listStyle: 'none', margin: 0, display: 'flex', flexDirection: 'column', gap: 5 }}>
+                    {[
+                      'Partition values encoded into folder names',
+                      'Uses Hive-style partition directory conventions',
+                      <span>Directory names: <code style={{ background: '#f1f5f9', padding: '1px 5px', borderRadius: 3, fontSize: 11 }}>{'<column>=<value>'}</code></span>,
+                    ].map((t, i) => (
+                      <li key={i} style={{ display: 'flex', gap: 7, fontSize: 12, color: '#475569', lineHeight: 1.5 }}>
+                        <span style={{ color: '#29B5E8', fontWeight: 700, flexShrink: 0 }}>•</span>{t}
+                      </li>
+                    ))}
+                  </ul>
+                  <div>
+                    <div style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.07em', color: '#94a3b8', marginBottom: 6 }}>Best for</div>
+                    <ul style={{ paddingLeft: 0, listStyle: 'none', margin: 0, display: 'flex', flexDirection: 'column', gap: 4 }}>
+                      {[
+                        'Spark / Hive interoperability',
+                        'External engines reading the same table',
+                        'Browsing object storage directly',
+                        'Human inspection / debugging',
+                      ].map((t, i) => (
+                        <li key={i} style={{ display: 'flex', gap: 7, fontSize: 12, color: '#475569', lineHeight: 1.5 }}>
+                          <span style={{ color: '#16a34a', fontWeight: 700, flexShrink: 0 }}>✓</span>{t}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Key clarification */}
+            <div style={{ padding: '12px 16px', background: '#fefce8', border: '1.5px solid #fde68a', borderRadius: 8, fontSize: 13, color: '#92400e', lineHeight: 1.6, marginBottom: 16 }}>
+              <div style={{ fontWeight: 700, marginBottom: 6 }}>Important clarification</div>
+              <div><code style={{ background: '#fef08a', padding: '1px 5px', borderRadius: 3, fontSize: 12 }}>PARTITION BY</code> controls how rows are logically grouped. <code style={{ background: '#fef08a', padding: '1px 5px', borderRadius: 3, fontSize: 12 }}>PATH_LAYOUT</code> controls how files/directories appear in storage. These are related but NOT the same thing.
+              </div>
+            </div>
+
+            {/* Performance */}
+            <div style={{ padding: '12px 16px', background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 8, fontSize: 13, color: '#475569', lineHeight: 1.6 }}>
+              <div style={{ fontWeight: 700, color: '#1e293b', marginBottom: 8 }}>Performance considerations</div>
+              <div style={{ marginBottom: 8 }}>FLAT and HIERARCHICAL generally have <strong>similar query performance</strong> — Iceberg uses metadata for pruning, not directory traversal (unlike older Hive architectures).</div>
+              <div style={{ fontWeight: 600, color: '#64748b', marginBottom: 6 }}>What actually impacts performance more:</div>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+                {['Partition strategy', 'File sizing & compaction', 'Avoiding small files', 'Clustering / distribution', 'Metadata maintenance', 'Pruning effectiveness'].map(t => (
+                  <span key={t} style={{ padding: '3px 10px', background: 'white', border: '1px solid #e2e8f0', borderRadius: 5, fontSize: 11, color: '#334155', fontWeight: 500 }}>{t}</span>
+                ))}
+              </div>
+            </div>
           </div>
         )}
       </div>

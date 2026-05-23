@@ -78,9 +78,12 @@ export default function IcebergInternalStorage() {
   return (
     <div>
       <h2 style={{ fontSize: 24, fontWeight: 700, color: '#1e293b', marginBottom: 6 }}>Snowflake Iceberg Storage</h2>
-      <p style={{ color: '#64748b', fontSize: 15, marginBottom: 12, maxWidth: 780 }}>
+      <p style={{ color: '#64748b', fontSize: 15, marginBottom: 8, maxWidth: 780 }}>
         With this option, Snowflake stores and manages the Iceberg table files for you by using Snowflake (internal) storage, so you don't need to set up access to external cloud storage.
       </p>
+      <a href="https://docs.snowflake.com/en/user-guide/tables-iceberg-storage#storage-options" target="_blank" rel="noreferrer" style={{ fontSize: 13, color: '#64748b', textDecoration: 'none', display: 'inline-flex', alignItems: 'center', marginBottom: 16 }} onMouseEnter={e => e.currentTarget.style.color = '#29B5E8'} onMouseLeave={e => e.currentTarget.style.color = '#64748b'}>
+        Unsure what's best? See storage options comparison<LinkIcon size={13} />
+      </a>
 
       <div style={{ display: 'flex', gap: 12, marginBottom: 24, flexWrap: 'wrap' }}>
         <a href="https://docs.snowflake.com/en/user-guide/tables-iceberg-internal-storage" target="_blank" rel="noreferrer" style={{ fontSize: 13, fontWeight: 600, color: '#29B5E8', textDecoration: 'none', display: 'inline-flex', alignItems: 'center' }} onMouseEnter={e => e.currentTarget.style.textDecoration = 'underline'} onMouseLeave={e => e.currentTarget.style.textDecoration = 'none'}>
