@@ -47,45 +47,14 @@ export default function SIGovernance() {
         ))}
       </div>
 
-      {/* How They Work Together */}
+      {/* Combined: How they work + typical pattern */}
       <div style={{ border: '1.5px solid #e2e8f0', borderRadius: 12, padding: '18px 20px', background: 'white', marginBottom: 32 }}>
-        <div style={{ fontSize: 15, fontWeight: 700, color: '#1e293b', marginBottom: 12 }}>How the two mechanisms work together</div>
-        <div style={{ fontSize: 13, color: '#475569', lineHeight: 1.7, marginBottom: 14 }}>
-          When a user calls an AI function with a model name, Snowflake uses this lookup order:
-        </div>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginBottom: 16 }}>
-          {[
-            'Look for a matching model object in SNOWFLAKE.MODELS. If found → apply RBAC.',
-            'If no model object found → check the account-level allowlist. If the string matches → allow.',
-            'If neither → deny.',
-          ].map((text, i) => (
-            <div key={i} style={{ display: 'flex', gap: 12, alignItems: 'flex-start' }}>
-              <div style={{ width: 22, height: 22, borderRadius: '50%', flexShrink: 0, background: '#29B5E8', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 11, fontWeight: 700, marginTop: 1 }}>{i + 1}</div>
-              <div style={{ fontSize: 13, color: '#475569', lineHeight: 1.5, paddingTop: 3 }}>{text}</div>
-            </div>
-          ))}
-        </div>
-        <div style={{ borderTop: '1px solid #f1f5f9', paddingTop: 14, display: 'flex', flexDirection: 'column', gap: 8 }}>
-          {[
-            { label: 'Allowlist = open access.', body: 'Models in the allowlist are accessible by simple string name to everyone. If you want to restrict a model, keep it out of the allowlist and use RBAC instead.' },
-            { label: 'RBAC = elevated access.', body: 'RBAC can grant access to models that are not in the allowlist. A role with the right application role can use a model via its qualified identifier even when the allowlist would not allow it.' },
-            { label: 'They are parallel, not hierarchical.', body: 'Either mechanism can independently grant access. To enforce RBAC exclusively with no open baseline, set the allowlist to \'None\' and grant model access entirely through roles.' },
-          ].map(item => (
-            <div key={item.label} style={{ fontSize: 13, color: '#475569', lineHeight: 1.6 }}>
-              <span style={{ fontWeight: 700, color: '#1e293b' }}>{item.label}</span>{' '}{item.body}
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* Typical Pattern */}
-      <div style={{ border: '1.5px solid #e2e8f0', borderRadius: 12, padding: '18px 20px', background: 'white', marginBottom: 32 }}>
-        <div style={{ fontSize: 15, fontWeight: 700, color: '#1e293b', marginBottom: 12 }}>Typical pattern in practice</div>
+        <div style={{ fontSize: 15, fontWeight: 700, color: '#1e293b', marginBottom: 12 }}>How they work together</div>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
           {[
-            { label: 'Allowlist → baseline access.', body: 'Set the allowlist to smaller, cost-effective, broadly-approved models that everyone in the account should be able to use (e.g. mistral-large2, llama3.1-8b). No per-role configuration needed.' },
-            { label: 'RBAC → elevated access.', body: 'Grant premium or higher-capability models (e.g. claude-sonnet-4-6, llama3.1-405b) only to specific roles such as admins, data scientists, or power users who need them.' },
-            { label: 'Lockdown mode.', body: 'Set the allowlist to \'None\' and control everything through RBAC for maximum governance.' },
+            { label: 'Allowlist = open access.', body: 'Models in the allowlist are accessible to everyone in the account — no RBAC needed. Use it for broadly-approved, cost-effective models (e.g. mistral-large2, llama3.1-8b) that all users should have by default.' },
+            { label: 'RBAC = elevated access.', body: 'RBAC can grant access to models not in the allowlist. Use it to give specific roles — admins, data scientists, power users — access to premium or higher-capability models (e.g. claude-sonnet-4-6, llama3.1-405b).' },
+            { label: 'They are parallel, not hierarchical.', body: 'Either mechanism can independently grant access. To enforce RBAC exclusively with no open baseline, set the allowlist to \'None\' and control everything through roles.' },
           ].map(item => (
             <div key={item.label} style={{ display: 'flex', gap: 10, alignItems: 'flex-start' }}>
               <div style={{ width: 5, height: 5, borderRadius: '50%', background: '#29B5E8', marginTop: 8, flexShrink: 0 }} />
