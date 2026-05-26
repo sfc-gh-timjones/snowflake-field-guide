@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Breadcrumb from './components/Breadcrumb';
 import Home from './pages/Home';
 import IcebergDetail from './pages/IcebergDetail';
@@ -7,7 +7,8 @@ import IcebergStorage from './pages/IcebergStorage';
 import IntegrationTools from './pages/IntegrationTools';
 import AzureDataFactory from './pages/AzureDataFactory';
 import IcebergInternalStorage from './pages/IcebergInternalStorage';
-
+import SnowflakeIntelligence from './pages/SnowflakeIntelligence';
+import SIGovernance from './pages/SIGovernance';
 
 const PAGES = {
   home: { label: 'Home', component: Home },
@@ -17,7 +18,8 @@ const PAGES = {
   integration: { label: 'Integration Tools', component: IntegrationTools },
   adf: { label: 'Azure Data Factory', component: AzureDataFactory },
   'iceberg-internal-storage': { label: 'Snowflake Iceberg Storage', component: IcebergInternalStorage },
-
+  si: { label: 'Snowflake Intelligence', component: SnowflakeIntelligence },
+  'si-governance': { label: 'Model Access & Governance', component: SIGovernance },
 };
 
 const BREADCRUMBS = {
@@ -28,11 +30,29 @@ const BREADCRUMBS = {
   integration: [{ label: 'Home', page: 'home' }, { label: 'Integration Tools', page: 'integration' }],
   adf: [{ label: 'Home', page: 'home' }, { label: 'Integration Tools', page: 'integration' }, { label: 'Azure Data Factory', page: 'adf' }],
   'iceberg-internal-storage': [{ label: 'Home', page: 'home' }, { label: 'Iceberg Tables', page: 'iceberg' }, { label: 'Snowflake Iceberg Storage', page: 'iceberg-internal-storage' }],
+  si: [{ label: 'Home', page: 'home' }, { label: 'Snowflake Intelligence', page: 'si' }],
+  'si-governance': [{ label: 'Home', page: 'home' }, { label: 'Snowflake Intelligence', page: 'si' }, { label: 'Model Access & Governance', page: 'si-governance' }],
+};
 
+const getPageFromHash = () => {
+  const hash = window.location.hash.replace('#', '');
+  return (hash && PAGES[hash]) ? hash : 'home';
 };
 
 export default function App() {
-  const [page, setPage] = useState('home');
+  const [page, setPage] = useState(getPageFromHash);
+
+  useEffect(() => {
+    const handler = () => setPage(getPageFromHash());
+    window.addEventListener('hashchange', handler);
+    return () => window.removeEventListener('hashchange', handler);
+  }, []);
+
+  const navigate = (newPage) => {
+    window.location.hash = newPage === 'home' ? '' : newPage;
+    setPage(newPage);
+  };
+
   const PageComponent = PAGES[page].component;
 
   return (
@@ -55,8 +75,8 @@ export default function App() {
       </header>
 
       <main style={{ padding: '16px 40px 48px' }}>
-        <Breadcrumb items={BREADCRUMBS[page]} onNavigate={setPage} />
-        <PageComponent onNavigate={setPage} />
+        <Breadcrumb items={BREADCRUMBS[page]} onNavigate={navigate} />
+        <PageComponent onNavigate={navigate} />
       </main>
     </div>
   );

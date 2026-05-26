@@ -1368,7 +1368,7 @@ data/file3.parquet`}</pre>
                       </div>
                       <div>
                         <div style={{ fontSize: 11, color: '#64748b', marginBottom: 4 }}>Query confirming 1 partition per unique value (~640k rows each)</div>
-                        <img src={`${import.meta.env.BASE_URL}hierarchical-region-query.png`} alt="Query result showing row counts per region" style={{ width: '80%', borderRadius: 8, border: '1px solid #e2e8f0', display: 'block' }} />
+                        <img src={`${import.meta.env.BASE_URL}hierarchical-region-query.png`} alt="Query result showing row counts per region" style={{ width: '56%', borderRadius: 8, border: '1px solid #e2e8f0', display: 'block' }} />
                       </div>
                     </div>
                   </div>
