@@ -131,6 +131,10 @@ function NxMModal({ onClose }) {
               <div style={{ fontSize: 12, color: '#64748b', textAlign: 'center', lineHeight: 1.5, marginTop: 10 }}>
                 3 agent integrations + 3 server integrations = <span style={{ fontWeight: 700, color: '#16a34a' }}>6 total</span>.<br/>Add a new agent: 1 line, not 3.
               </div>
+              <div style={{ marginTop: 12, padding: '10px 14px', background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 8, fontSize: 12, color: '#475569', lineHeight: 1.6 }}>
+                <span style={{ fontWeight: 700, color: '#1e293b' }}>What N+M actually saves: integration code, not auth.</span>{' '}
+                Once a client implements MCP, it can speak the protocol to any MCP server — no new SDK to install, no custom response parsing, no bespoke connector code to write per data source. That's the N+M saving. Authentication is still per-server: connecting to the Snowflake MCP Server requires a Snowflake OAuth token, connecting to GitHub's MCP Server requires a GitHub token. You still configure credentials for each server — MCP doesn't abstract that away. Think of it like HTTP: every app that speaks HTTP can talk to any web server, but you still need the right login for each site.
+              </div>
             </div>
 
           </div>
