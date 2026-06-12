@@ -91,33 +91,45 @@ function NxMModal({ onClose }) {
             {/* N+M */}
             <div style={{ flex: 1, minWidth: 260 }}>
               <div style={{ fontSize: 13, fontWeight: 700, color: '#16a34a', marginBottom: 6, textAlign: 'center' }}>With MCP — N+M integrations</div>
-              <div style={{ fontSize: 11, color: '#64748b', textAlign: 'center', marginBottom: 10, lineHeight: 1.4 }}>Each agent implements MCP once. Each source builds one MCP server. Any combo works.</div>
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}>
+              <div style={{ fontSize: 11, color: '#64748b', textAlign: 'center', marginBottom: 10, lineHeight: 1.4 }}>Each side implements the protocol once. Any agent connects to any MCP server.</div>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
+                {/* Agents — 3 lines going right */}
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
                   {agents.map(a => (
-                    <div key={a} style={{ height: 30, padding: '0 10px', background: '#f0fdf4', border: '1.5px solid #86efac', borderRadius: 7, fontSize: 11, fontWeight: 600, color: '#16a34a', display: 'flex', alignItems: 'center', gap: 4 }}>
-                      <span style={{ fontSize: 9, background: '#bbf7d0', borderRadius: 3, padding: '1px 4px', color: '#15803d' }}>MCP</span>{a}
-                    </div>
+                    <div key={a} style={{ height: 30, padding: '0 10px', background: '#f0fdf4', border: '1.5px solid #86efac', borderRadius: 7, fontSize: 11, fontWeight: 600, color: '#16a34a', display: 'flex', alignItems: 'center' }}>{a}</div>
                   ))}
                 </div>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
-                  {agents.map((_, i) => (
-                    <svg key={i} width="24" height="30" viewBox="0 0 24 30" fill="none">
-                      <line x1="0" y1="15" x2="18" y2="15" stroke="#29B5E8" strokeWidth="1.5"/>
-                      <path d="M14 11l6 4-6 4" fill="none" stroke="#29B5E8" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                    </svg>
+                {/* 3 lines from agents to hub */}
+                <svg width="36" height={svgH} viewBox={`0 0 36 ${svgH}`} fill="none">
+                  {agentYs.map((ay, i) => (
+                    <g key={i}>
+                      <line x1="0" y1={ay} x2="30" y2={svgH / 2} stroke="#29B5E8" strokeWidth="1.5"/>
+                      <path d={`M${26} ${svgH/2 - 4} L${30} ${svgH/2} L${26} ${svgH/2 + 4}`} fill="none" stroke="#29B5E8" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
+                    </g>
                   ))}
-                </div>
+                </svg>
+                {/* Hub */}
+                <div style={{ width: 48, height: 48, borderRadius: '50%', background: '#f0fbff', border: '2px solid #29B5E8', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 10, fontWeight: 700, color: '#0e7490', textAlign: 'center', flexShrink: 0 }}>MCP<br/>Protocol</div>
+                {/* 3 lines from hub to servers */}
+                <svg width="36" height={svgH} viewBox={`0 0 36 ${svgH}`} fill="none">
+                  {sourceYs.map((sy, i) => (
+                    <g key={i}>
+                      <line x1="6" y1={svgH / 2} x2="36" y2={sy} stroke="#29B5E8" strokeWidth="1.5"/>
+                      <path d={`M${32} ${sy - 4} L${36} ${sy} L${32} ${sy + 4}`} fill="none" stroke="#29B5E8" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
+                    </g>
+                  ))}
+                </svg>
+                {/* MCP Servers */}
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
-                  {[['Snowflake', 'MCP Server'], ['GitHub', 'MCP Server'], ['Salesforce', 'MCP Server']].map(([src, lbl]) => (
-                    <div key={src} style={{ height: 30, padding: '0 10px', background: '#f0fbff', border: '1.5px solid #7dd3fc', borderRadius: 7, fontSize: 11, fontWeight: 600, color: '#0369a1', display: 'flex', alignItems: 'center', gap: 4, whiteSpace: 'nowrap' }}>
-                      {src} <span style={{ fontSize: 9, background: '#e0f2fe', borderRadius: 3, padding: '1px 4px', color: '#0369a1' }}>{lbl}</span>
+                  {[['Snowflake', 'MCP Server'], ['GitHub', 'MCP Server'], ['Salesforce', 'MCP Server']].map(([src]) => (
+                    <div key={src} style={{ height: 30, padding: '0 10px', background: '#f0fbff', border: '1.5px solid #7dd3fc', borderRadius: 7, fontSize: 11, fontWeight: 600, color: '#0369a1', display: 'flex', alignItems: 'center', whiteSpace: 'nowrap' }}>
+                      {src} MCP
                     </div>
                   ))}
                 </div>
               </div>
               <div style={{ fontSize: 12, color: '#64748b', textAlign: 'center', lineHeight: 1.5, marginTop: 10 }}>
-                3 agents + 3 MCP servers = <span style={{ fontWeight: 700, color: '#16a34a' }}>6 integrations</span>.<br/>Add a new agent: implement MCP once, connect to all 3.
+                3 agent integrations + 3 server integrations = <span style={{ fontWeight: 700, color: '#16a34a' }}>6 total</span>.<br/>Add a new agent: 1 line, not 3.
               </div>
             </div>
 
@@ -189,7 +201,7 @@ export default function MCPServer() {
           <div style={{ borderTop: '1px solid #f1f5f9', paddingTop: 12 }}>
             <div style={{ fontSize: 12, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.07em', color: '#94a3b8', marginBottom: 6 }}>What is an MCP client?</div>
             <div style={{ fontSize: 12, color: '#475569', lineHeight: 1.6, marginBottom: 8 }}>
-              An MCP client is any code that speaks the MCP protocol — technically it could be a plain Python script that deterministically lists and invokes tools. But the real value comes when the client is an Agent or LLM that can reason about which tools to use.
+              An MCP client is any code that speaks the MCP protocol — technically it could be a plain Python script that deterministically lists and invokes tools. But the real value comes when the client is an Agent that can reason about which tools to use.
             </div>
             <div style={{ fontSize: 12, color: '#475569', lineHeight: 1.6, padding: '8px 12px', background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 7 }}>
               <span style={{ fontWeight: 700, color: '#1e293b' }}>Where MCP's value inflects:</span> When the client is an Agent/LLM. The agent can discover tools at runtime instead of hardcoding endpoints, dynamically compose multi-step workflows without you coding each one, and automatically pick up new tools without code changes. Without LLM reasoning on the client side, MCP is just another API protocol — you lose the dynamic discovery and composition that makes the abstraction worthwhile.
