@@ -168,10 +168,10 @@ export default function MCPServer() {
           <div style={{ borderTop: '1px solid #f1f5f9', paddingTop: 12 }}>
             <div style={{ fontSize: 12, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.07em', color: '#94a3b8', marginBottom: 6 }}>What is an MCP client?</div>
             <div style={{ fontSize: 12, color: '#475569', lineHeight: 1.6, marginBottom: 8 }}>
-              An MCP client is any code that speaks the MCP protocol — connects to a server, discovers tools, and invokes them. That could be Claude Desktop, a custom Python script, or anything else. <span style={{ fontWeight: 600 }}>No LLM required.</span>
+              An MCP client is any code that speaks the MCP protocol — technically it could be a plain Python script that deterministically lists and invokes tools. But the real value comes when the client is an Agent or LLM that can reason about which tools to use.
             </div>
             <div style={{ fontSize: 12, color: '#475569', lineHeight: 1.6, padding: '8px 12px', background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 7 }}>
-              <span style={{ fontWeight: 700, color: '#1e293b' }}>Where MCP's value inflects:</span> When the caller has an LLM reasoning loop. The agent can discover tools at runtime instead of hardcoding endpoints, compose multiple tools in sequence, and automatically pick up new tools without code changes. Without LLM reasoning, MCP is just another API protocol — you lose the dynamic discovery and composition that makes the abstraction worthwhile.
+              <span style={{ fontWeight: 700, color: '#1e293b' }}>Where MCP's value inflects:</span> When the client is an Agent/LLM. The agent can discover tools at runtime instead of hardcoding endpoints, compose multiple tools in sequence, and automatically pick up new tools without code changes. Without LLM reasoning on the client side, MCP is just another API protocol — you lose the dynamic discovery and composition that makes the abstraction worthwhile.
             </div>
           </div>
         </div>
