@@ -1,33 +1,24 @@
-const CARDS = [
-  {
-    id: 'integration',
-    title: 'Integration Tools',
-    description: 'Data pipeline and ETL tools that connect to Snowflake.',
-    color: '#f97316',
-  },
-  {
-    id: 'iceberg',
-    title: 'Iceberg Tables',
-    description: 'Open table format for large analytic datasets on cloud storage.',
-    color: '#00BCD4',
-  },
-  {
-    id: 'ai',
-    title: 'AI',
-    description: 'Snowflake Intelligence, MCP Server, and AI governance.',
-    color: '#7c3aed',
-  },
+export default function AI({ onNavigate }) {
+  const CARDS = [
+    {
+      id: 'si',
+      title: 'Snowflake Intelligence',
+      description: 'Governance, model access control, and configuration for Snowflake AI products.',
+      color: '#7c3aed',
+    },
+    {
+      id: 'mcp-server',
+      title: 'MCP Server',
+      description: 'Connect AI agents and clients to Snowflake data via the Model Context Protocol.',
+      color: '#0891b2',
+    },
+  ];
 
-];
-
-export default function Home({ onNavigate }) {
   return (
     <div>
-      <h2 style={{ fontSize: 22, fontWeight: 700, color: '#1e293b', marginBottom: 6 }}>
-        Snowflake Field Guide
-      </h2>
-      <p style={{ color: '#64748b', fontSize: 14, marginBottom: 28 }}>
-        Click a topic to explore.
+      <h2 style={{ fontSize: 24, fontWeight: 700, color: '#1e293b', marginBottom: 6 }}>AI</h2>
+      <p style={{ color: '#64748b', fontSize: 15, marginBottom: 28, maxWidth: 680 }}>
+        Guides for Snowflake AI products, governance, and integration.
       </p>
       <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap' }}>
         {CARDS.map(card => (
@@ -35,7 +26,7 @@ export default function Home({ onNavigate }) {
             key={card.id}
             onClick={() => onNavigate(card.id)}
             style={{
-              width: 200,
+              width: 220,
               padding: '20px 16px',
               background: 'white',
               border: `1.5px solid ${card.color}50`,

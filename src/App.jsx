@@ -7,8 +7,10 @@ import IcebergStorage from './pages/IcebergStorage';
 import IntegrationTools from './pages/IntegrationTools';
 import AzureDataFactory from './pages/AzureDataFactory';
 import IcebergInternalStorage from './pages/IcebergInternalStorage';
+import AI from './pages/AI';
 import SnowflakeIntelligence from './pages/SnowflakeIntelligence';
 import SIGovernance from './pages/SIGovernance';
+import MCPServer from './pages/MCPServer';
 
 const PAGES = {
   home: { label: 'Home', component: Home },
@@ -18,8 +20,10 @@ const PAGES = {
   integration: { label: 'Integration Tools', component: IntegrationTools },
   adf: { label: 'Azure Data Factory', component: AzureDataFactory },
   'iceberg-internal-storage': { label: 'Snowflake Iceberg Storage', component: IcebergInternalStorage },
+  ai: { label: 'AI', component: AI },
   si: { label: 'Snowflake Intelligence', component: SnowflakeIntelligence },
   'si-governance': { label: 'Model Access & Governance', component: SIGovernance },
+  'mcp-server': { label: 'MCP Server', component: MCPServer },
 };
 
 const BREADCRUMBS = {
@@ -30,8 +34,10 @@ const BREADCRUMBS = {
   integration: [{ label: 'Home', page: 'home' }, { label: 'Integration Tools', page: 'integration' }],
   adf: [{ label: 'Home', page: 'home' }, { label: 'Integration Tools', page: 'integration' }, { label: 'Azure Data Factory', page: 'adf' }],
   'iceberg-internal-storage': [{ label: 'Home', page: 'home' }, { label: 'Iceberg Tables', page: 'iceberg' }, { label: 'Snowflake Iceberg Storage', page: 'iceberg-internal-storage' }],
-  si: [{ label: 'Home', page: 'home' }, { label: 'Snowflake Intelligence', page: 'si' }],
-  'si-governance': [{ label: 'Home', page: 'home' }, { label: 'Snowflake Intelligence', page: 'si' }, { label: 'Model Access & Governance', page: 'si-governance' }],
+  ai: [{ label: 'Home', page: 'home' }, { label: 'AI', page: 'ai' }],
+  si: [{ label: 'Home', page: 'home' }, { label: 'AI', page: 'ai' }, { label: 'Snowflake Intelligence', page: 'si' }],
+  'si-governance': [{ label: 'Home', page: 'home' }, { label: 'AI', page: 'ai' }, { label: 'Snowflake Intelligence', page: 'si' }, { label: 'Model Access & Governance', page: 'si-governance' }],
+  'mcp-server': [{ label: 'Home', page: 'home' }, { label: 'AI', page: 'ai' }, { label: 'MCP Server', page: 'mcp-server' }],
 };
 
 const getPageFromHash = () => {
