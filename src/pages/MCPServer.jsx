@@ -20,86 +20,111 @@ function PopupIcon({ size = 14 }) {
 }
 
 function NxMModal({ onClose }) {
+  // Box layout constants — agents and sources are vertically stacked
+  // Each box: height 30px, gap 14px → center y positions: 15, 59, 103
+  const agentYs = [15, 59, 103];
+  const sourceYs = [15, 59, 103];
+  const svgW = 80;
+  const svgH = 118;
+
+  const agents = ['Claude', 'Cursor', 'ChatGPT'];
+  const sources = ['Snowflake', 'GitHub', 'Salesforce'];
+
   return (
     <div onClick={onClose} style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.55)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 200, padding: 24 }}>
-      <div onClick={e => e.stopPropagation()} style={{ background: 'white', borderRadius: 14, overflow: 'hidden', width: '90vw', maxWidth: 720, boxShadow: '0 24px 60px rgba(0,0,0,0.3)' }}>
+      <div onClick={e => e.stopPropagation()} style={{ background: 'white', borderRadius: 14, overflow: 'hidden', width: '90vw', maxWidth: 740, boxShadow: '0 24px 60px rgba(0,0,0,0.3)' }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px 18px', borderBottom: '1px solid #e2e8f0', background: '#f8fafc' }}>
           <span style={{ fontSize: 14, fontWeight: 700, color: '#1e293b' }}>N×M vs N+M — Why MCP reduces integration complexity</span>
           <button onClick={onClose} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: 22, color: '#64748b', lineHeight: 1, padding: '0 4px' }}>×</button>
         </div>
         <div style={{ padding: '20px 24px' }}>
+          <div style={{ fontSize: 12, color: '#64748b', marginBottom: 16, lineHeight: 1.5 }}>
+            <span style={{ fontWeight: 600, color: '#475569' }}>N</span> = number of agents &nbsp;|&nbsp; <span style={{ fontWeight: 600, color: '#475569' }}>M</span> = number of data sources (Snowflake, GitHub, Salesforce, etc.)
+          </div>
           <div style={{ display: 'flex', gap: 20, flexWrap: 'wrap' }}>
 
-            {/* N x M */}
+            {/* N×M — all 9 crossed lines */}
             <div style={{ flex: 1, minWidth: 260 }}>
-              <div style={{ fontSize: 13, fontWeight: 700, color: '#ef4444', marginBottom: 10, textAlign: 'center' }}>Without MCP — N×M integrations</div>
-              <div style={{ display: 'flex', gap: 12, justifyContent: 'center', marginBottom: 8 }}>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-                  {['Agent A', 'Agent B', 'Agent C'].map(a => (
-                    <div key={a} style={{ padding: '6px 14px', background: '#fef2f2', border: '1.5px solid #fca5a5', borderRadius: 7, fontSize: 12, fontWeight: 600, color: '#dc2626', textAlign: 'center' }}>{a}</div>
+              <div style={{ fontSize: 13, fontWeight: 700, color: '#ef4444', marginBottom: 12, textAlign: 'center' }}>Without MCP — N×M integrations</div>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 0 }}>
+                {/* Agents */}
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+                  {agents.map(a => (
+                    <div key={a} style={{ height: 30, padding: '0 12px', background: '#fef2f2', border: '1.5px solid #fca5a5', borderRadius: 7, fontSize: 11, fontWeight: 600, color: '#dc2626', display: 'flex', alignItems: 'center' }}>{a}</div>
                   ))}
                 </div>
-                <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', gap: 4 }}>
-                  {[0,1,2].map(i => (
-                    <div key={i} style={{ display: 'flex', gap: 4 }}>
-                      {[0,1,2].map(j => (
-                        <svg key={j} width="28" height="14" viewBox="0 0 28 14" fill="none">
-                          <line x1="0" y1="7" x2="22" y2="7" stroke="#cbd5e1" strokeWidth="1.5"/>
-                          <path d="M18 3l6 4-6 4" fill="none" stroke="#cbd5e1" strokeWidth="1.5" strokeLinecap="round"/>
-                        </svg>
-                      ))}
-                    </div>
-                  ))}
-                </div>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-                  {['Snowflake', 'DB 2', 'DB 3'].map(s => (
-                    <div key={s} style={{ padding: '6px 14px', background: '#f8fafc', border: '1.5px solid #e2e8f0', borderRadius: 7, fontSize: 12, fontWeight: 600, color: '#475569', textAlign: 'center' }}>{s}</div>
+                {/* SVG with all 9 crossing lines */}
+                <svg width={svgW} height={svgH} viewBox={`0 0 ${svgW} ${svgH}`} fill="none" style={{ flexShrink: 0 }}>
+                  {agentYs.flatMap((ay, ai) =>
+                    sourceYs.map((sy, si) => (
+                      <line key={`${ai}-${si}`} x1={0} y1={ay} x2={svgW} y2={sy} stroke="#fca5a5" strokeWidth="1.5"/>
+                    ))
+                  )}
+                  {/* Arrowheads at right side */}
+                  {agentYs.flatMap((ay, ai) =>
+                    sourceYs.map((sy, si) => {
+                      const angle = Math.atan2(sy - ay, svgW);
+                      const x2 = svgW, y2 = sy;
+                      const dx = Math.cos(angle) * 7, dy = Math.sin(angle) * 7;
+                      return (
+                        <path key={`arr-${ai}-${si}`}
+                          d={`M${x2 - dx - dy * 0.5} ${y2 - dy + dx * 0.5} L${x2} ${y2} L${x2 - dx + dy * 0.5} ${y2 - dy - dx * 0.5}`}
+                          stroke="#fca5a5" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
+                      );
+                    })
+                  )}
+                </svg>
+                {/* Sources */}
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+                  {sources.map(s => (
+                    <div key={s} style={{ height: 30, padding: '0 12px', background: '#f8fafc', border: '1.5px solid #e2e8f0', borderRadius: 7, fontSize: 11, fontWeight: 600, color: '#475569', display: 'flex', alignItems: 'center' }}>{s}</div>
                   ))}
                 </div>
               </div>
-              <div style={{ fontSize: 12, color: '#64748b', textAlign: 'center', lineHeight: 1.5 }}>
-                3 agents × 3 data sources = <span style={{ fontWeight: 700, color: '#dc2626' }}>9 custom integrations</span>.<br/>Every new agent or source adds more.
+              <div style={{ fontSize: 12, color: '#64748b', textAlign: 'center', lineHeight: 1.5, marginTop: 10 }}>
+                3 agents × 3 sources = <span style={{ fontWeight: 700, color: '#dc2626' }}>9 custom integrations</span>.<br/>Every new agent or source multiplies the work.
               </div>
             </div>
 
             <div style={{ width: 1, background: '#e2e8f0', flexShrink: 0 }} />
 
-            {/* N + M */}
+            {/* N+M */}
             <div style={{ flex: 1, minWidth: 260 }}>
-              <div style={{ fontSize: 13, fontWeight: 700, color: '#16a34a', marginBottom: 10, textAlign: 'center' }}>With MCP — N+M integrations</div>
-              <div style={{ display: 'flex', gap: 10, justifyContent: 'center', alignItems: 'center', marginBottom: 8 }}>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-                  {['Agent A', 'Agent B', 'Agent C'].map(a => (
-                    <div key={a} style={{ padding: '6px 14px', background: '#f0fdf4', border: '1.5px solid #86efac', borderRadius: 7, fontSize: 12, fontWeight: 600, color: '#16a34a', textAlign: 'center' }}>{a}</div>
+              <div style={{ fontSize: 13, fontWeight: 700, color: '#16a34a', marginBottom: 12, textAlign: 'center' }}>With MCP — N+M integrations</div>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+                  {agents.map(a => (
+                    <div key={a} style={{ height: 30, padding: '0 12px', background: '#f0fdf4', border: '1.5px solid #86efac', borderRadius: 7, fontSize: 11, fontWeight: 600, color: '#16a34a', display: 'flex', alignItems: 'center' }}>{a}</div>
                   ))}
                 </div>
-                <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
-                  {[0,1,2].map(i => (
-                    <svg key={i} width="28" height="14" viewBox="0 0 28 14" fill="none">
-                      <line x1="0" y1="7" x2="22" y2="7" stroke="#29B5E8" strokeWidth="1.5"/>
-                      <path d="M18 3l6 4-6 4" fill="none" stroke="#29B5E8" strokeWidth="1.5" strokeLinecap="round"/>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+                  {agents.map((_, i) => (
+                    <svg key={i} width="24" height="30" viewBox="0 0 24 30" fill="none">
+                      <line x1="0" y1="15" x2="18" y2="15" stroke="#29B5E8" strokeWidth="1.5"/>
+                      <path d="M14 11l6 4-6 4" fill="none" stroke="#29B5E8" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
                     </svg>
                   ))}
                 </div>
-                <div style={{ padding: '18px 14px', background: '#f0fbff', border: '2px solid #29B5E8', borderRadius: 10, fontSize: 12, fontWeight: 700, color: '#0e7490', textAlign: 'center', minWidth: 70 }}>MCP<br/>Server</div>
-                <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
-                  {[0,1,2].map(i => (
-                    <svg key={i} width="28" height="14" viewBox="0 0 28 14" fill="none">
-                      <line x1="0" y1="7" x2="22" y2="7" stroke="#29B5E8" strokeWidth="1.5"/>
-                      <path d="M18 3l6 4-6 4" fill="none" stroke="#29B5E8" strokeWidth="1.5" strokeLinecap="round"/>
+                <div style={{ padding: '14px 12px', background: '#f0fbff', border: '2px solid #29B5E8', borderRadius: 10, fontSize: 11, fontWeight: 700, color: '#0e7490', textAlign: 'center', minWidth: 52 }}>MCP<br/>Server</div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+                  {sources.map((_, i) => (
+                    <svg key={i} width="24" height="30" viewBox="0 0 24 30" fill="none">
+                      <line x1="0" y1="15" x2="18" y2="15" stroke="#29B5E8" strokeWidth="1.5"/>
+                      <path d="M14 11l6 4-6 4" fill="none" stroke="#29B5E8" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
                     </svg>
                   ))}
                 </div>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-                  {['Snowflake', 'DB 2', 'DB 3'].map(s => (
-                    <div key={s} style={{ padding: '6px 14px', background: '#f8fafc', border: '1.5px solid #e2e8f0', borderRadius: 7, fontSize: 12, fontWeight: 600, color: '#475569', textAlign: 'center' }}>{s}</div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+                  {sources.map(s => (
+                    <div key={s} style={{ height: 30, padding: '0 12px', background: '#f8fafc', border: '1.5px solid #e2e8f0', borderRadius: 7, fontSize: 11, fontWeight: 600, color: '#475569', display: 'flex', alignItems: 'center' }}>{s}</div>
                   ))}
                 </div>
               </div>
-              <div style={{ fontSize: 12, color: '#64748b', textAlign: 'center', lineHeight: 1.5 }}>
-                3 agents + 3 data sources = <span style={{ fontWeight: 700, color: '#16a34a' }}>6 integrations</span>.<br/>Add a new agent: 1 connection, not 3.
+              <div style={{ fontSize: 12, color: '#64748b', textAlign: 'center', lineHeight: 1.5, marginTop: 10 }}>
+                3 agents + 3 sources = <span style={{ fontWeight: 700, color: '#16a34a' }}>6 connections</span>.<br/>Add a new agent: 1 connection, not 3.
               </div>
             </div>
+
           </div>
         </div>
       </div>
